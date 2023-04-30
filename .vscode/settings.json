@@ -1,0 +1,16 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+  "editor.tabSize": 2,
+  "standard.autoFixOnSave": true,
+  "editor.formatOnSave": true,
+  "solidity.formatter": "forge",
+  "solidity.compileUsingRemoteVersion": "v0.8.17",
+  "cSpell.words": [
+    "divu",
+    "genhtml",
+    "lcov",
+    "mulu",
+    "tokenholder"
+  ]
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>veNpm Boost Curve</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="calculate-boost.js"></script>
+  <style>
+    :root {
+      --main-bg-color: #f8f9fa;
+      --main-text-color: #5a5a5a;
+      --container-bg-color: #ffffff;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--main-bg-color);
+      color: var(--main-text-color);
+    }
+
+    body[data-theme="dark"] .container {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.24);
+    }
+
+    h1 {
+      max-width: 912px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 2em 0;
+      font-size: 2.5em;
+    }
+
+    .summary {
+      max-width: 912px;
+      margin: 0 auto;
+      padding: 1em 1em;
+      font-size: 0.8em;
+      line-height: 1.5;
+      text-align: justify;
+      color: var(--main-text-color);
+      transition: color 0.3s;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 912px;
+      margin: 0 auto;
+      padding: 2em;
+      background-color: var(--container-bg-color);
+      border-radius: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.3s;
+    }
+
+
+    .container.animate {
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #boostChart {
+      width: 100%;
+      height: 500px;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 1em;
+      font-size: 1.1em;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5em;
+    }
+
+    .color-box {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      margin: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .color-box:hover {
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>veNpm Boost Curve</h1>
+  <div class="container">
+    <label>
+      <input type="checkbox" id="reverseXAxisCheckbox"> Reverse Lockup Duration
+    </label>
+    <div id="boostChart"></div>
+  </div>
+  <div id="colorBoxes" style="text-align: center; padding: 1em;">
+    <div class="color-box" data-color="#f8f9fa" style="background-color: #f8f9fa;"></div>
+    <div class="color-box" data-color="#34495e" style="background-color: #34495e;"></div>
+    <div class="color-box" data-color="#2c3e50" style="background-color: #2c3e50;"></div>
+    <div class="color-box" data-color="#212529" style="background-color: #212529;"></div>
+    <div class="color-box" data-color="#1f2833" style="background-color: #1f2833;"></div>
+    <div class="color-box" data-color="#0b3d91" style="background-color: #0b3d91;"></div>
+    <div class="color-box" data-color="#6b8e23" style="background-color: #6b8e23;"></div>
+    <div class="color-box" data-color="#8b4513" style="background-color: #8b4513;"></div>
+    <div class="color-box" data-color="#483d8b" style="background-color: #483d8b;"></div>
+    <div class="color-box" data-color="#bd2130" style="background-color: #bd2130;"></div>
+    <div class="color-box" data-color="#1c587e" style="background-color: #1c587e;"></div>
+    <div class="color-box" data-color="#00753a" style="background-color: #00753a;"></div>
+    <div class="color-box" data-color="#d68910" style="background-color: #a96e0f;"></div>
+    <div class="color-box" data-color="#c23616" style="background-color: #c23616;"></div>
+    <div class="color-box" data-color="#6f1e51" style="background-color: #6f1e51;"></div>
+    <div class="color-box" data-color="#1e824c" style="background-color: #1e824c;"></div>
+    <div class="color-box" data-color="#b71540" style="background-color: #b71540;"></div>
+    <div class="color-box" data-color="#2d3436" style="background-color: #2d3436;"></div>
+    <div class="color-box" data-color="#273c75" style="background-color: #273c75;"></div>
+    <div class="color-box" data-color="#4cd137" style="background-color: #419c33;"></div>
+    <div class="color-box" data-color="#fbc531" style="background-color: #a30cc9;"></div>
+    <div class="color-box" data-color="#e84118" style="background-color: #e84118;"></div>
+  </div>
+
+  <div class="summary">
+    <p>
+      Calculate the boost you receive based on your lockup duration.
+    </p>
+  </div>
+
+  <script>
+    const relativeTime = (days) => {
+      const years = Math.floor(days / 365);
+      days %= 365;
+      const months = Math.floor(days / 30);
+      days %= 30;
+
+      let result = '';
+      if (years > 0) {
+        result += `${years} year${years > 1 ? 's' : ''} `;
+      }
+      if (months > 0) {
+        result += `${months} month${months > 1 ? 's' : ''} `;
+      }
+      if (days > 0) {
+        result += `${days} day${days > 1 ? 's' : ''}`;
+      }
+
+      return result.trim();
+    };
+
+    const generateChartData = () => {
+      const data = [];
+      for (let i = 1; i <= 1490; i++) {
+        const lockupDuration = i * _ONE_DAY;
+        const boost = calculateBoost(lockupDuration) / _MULTIPLIER;
+        data.push({ x: i, y: boost });
+      }
+      return data;
+    }
+
+    const chartData = generateChartData();
+
+    const trace = {
+      x: chartData.map(point => point.x),
+      y: chartData.map(point => point.y),
+      mode: 'lines',
+      type: 'scatter',
+      name: 'Boost Calculation',
+      line: { shape: 'spline' },
+      marker: { size: 1 },
+      hovertemplate: 'Lockup Duration: %{x} days (%{customdata})<br>Boost: %{y:.6f}<extra></extra>',
+      customdata: chartData.map(point => relativeTime(point.x))
+    };
+
+    const layout = {
+      title: '',
+      xaxis: { title: 'Lockup Duration (Days)' },
+      yaxis: {
+        title: 'Boost Value (Normalized)',
+        range: [0, 4]
+      },
+      hovermode: 'closest',
+      autosize: true,
+    };
+
+    const updateChart = () => {
+      const reverseXAxis = document.getElementById('reverseXAxisCheckbox').checked;
+      const xRange = reverseXAxis ? [1490, 1] : [1, 1490];
+      Plotly.update('boostChart', {}, { ...layout, xaxis: { ...layout.xaxis, range: xRange } });
+    };
+
+
+    document.getElementById('reverseXAxisCheckbox').addEventListener('change', updateChart);
+
+    const setColorMode = (bgColor) => {
+      console.log(bgColor)
+      document.documentElement.style.setProperty('--main-bg-color', bgColor);
+      document.documentElement.style.setProperty('--main-text-color', (bgColor === '#f8f9fa') ? '#5a5a5a' : '#f1f1f1');
+
+      const chartBackgroundColor = bgColor;
+      const chartTextColor = bgColor === '#f8f9fa' ? '#5a5a5a' : '#f1f1f1';
+      const gridLineColor = bgColor === '#f8f9fa' ? 'rgba(128, 128, 128, 0.2)' : 'rgba(255, 255, 255, 0.2)';
+      const spikeColor = bgColor === '#f8f9fa' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+      document.documentElement.style.setProperty('--container-bg-color', chartBackgroundColor);
+      document.body.setAttribute('data-theme', bgColor === '#f8f9fa' ? 'light' : 'dark');
+      Plotly.update('boostChart', {}, { ...layout, plot_bgcolor: chartBackgroundColor, paper_bgcolor: chartBackgroundColor, xaxis: { ...layout.xaxis, titlefont: { color: chartTextColor }, tickfont: { color: chartTextColor }, gridcolor: gridLineColor, zerolinecolor: gridLineColor, spikecolor: spikeColor }, yaxis: { ...layout.yaxis, titlefont: { color: chartTextColor }, tickfont: { color: chartTextColor }, gridcolor: gridLineColor, zerolinecolor: gridLineColor, spikecolor: spikeColor } });
+
+      localStorage.setItem('selectedColor', bgColor);
+    };
+
+
+    const colorBoxes = document.querySelectorAll('.color-box');
+    for (const colorBox of colorBoxes) {
+      colorBox.addEventListener('click', () => {
+        const selectedColor = colorBox.getAttribute('data-color');
+        setColorMode(selectedColor);
+      });
+    }
+
+    layout.xaxis.showspikes = true;
+    layout.xaxis.spikesnap = 'cursor';
+    layout.xaxis.spikemode = 'across';
+    layout.xaxis.spikedash = 'solid';
+    layout.xaxis.spikethickness = 1;
+
+    layout.yaxis.showspikes = true;
+    layout.yaxis.spikesnap = 'cursor';
+    layout.yaxis.spikemode = 'across';
+    layout.yaxis.spikedash = 'solid';
+    layout.yaxis.spikethickness = 1;
+
+    Plotly.newPlot('boostChart', [trace], layout, { responsive: true });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load the saved color from localStorage
+      const savedColor = localStorage.getItem('selectedColor');
+
+      // Set the color mode to the saved color, or use the default light mode color
+      setColorMode(savedColor || '#f8f9fa');
+    });
+
+
+    const rgbToHex = (rgb) => {
+      const regex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
+      const [, r, g, b] = rgb.match(regex);
+      return `#${((1 << 24) + (parseInt(r) << 16) + (parseInt(g) << 8) + parseInt(b)).toString(16).slice(1)}`;
+    };
+
+    document.addEventListener('keydown', (event) => {
+      if (event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+        const colorBoxes = Array.from(document.querySelectorAll('.color-box'));
+        const colors = colorBoxes.map(box => rgbToHex(box.style.backgroundColor));
+
+        const currentColor = localStorage.getItem('selectedColor') || '#f8f9fa';
+        const currentIndex = colors.findIndex(color => color === currentColor);
+        let newIndex;
+
+        if (event.key === 'ArrowLeft') {
+          newIndex = (currentIndex - 1 + colors.length) % colors.length;
+        } else {
+          newIndex = (currentIndex + 1) % colors.length;
+        }
+
+        const newColor = colors[newIndex];
+        setColorMode(newColor);
+      }
+    });
+
+  </script>
+</body>
+
+</html>
