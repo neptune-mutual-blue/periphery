@@ -21,3 +21,8 @@ package*
 .*
 artifacts_hardhat
 cache_hardhat
+
+# Dotenv file
+.env
+lib
+.*
