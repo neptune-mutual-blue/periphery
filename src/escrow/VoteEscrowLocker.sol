@@ -21,6 +21,7 @@ contract VoteEscrowLocker {
 
     emit VoteEscrowLock(account, amount, durationInWeeks, _unlockAt[account], newUnlockTimestamp, previousBalance, _balances[account]);
 
+    _balances[account] += amount;
     _unlockAt[account] = newUnlockTimestamp;
     _minUnlockHeights[account] = block.number + _MIN_LOCK_HEIGHT;
   }

@@ -2,6 +2,7 @@
   "1": {
     "name": "Ethereum",
     "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
     "npm": "0xd197D59e64caecce9C7dC43Cf5635A4A86694623",
     "veNPM": "",
     "gaugeControllerRegistry": "",
@@ -14,6 +15,7 @@
   "42161": {
     "name": "Arbitrum One",
     "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
     "npm": "0xB32be027134C35354E16e7E6813469baabFff38c",
     "veNPM": "",
     "gaugeControllerRegistry": "",
@@ -26,10 +28,11 @@
   "84531": {
     "name": "Base Goerli",
     "store": "0x52b124a19023edf0386a3d9e674fdd7e02b8a8a8",
+    "protocol": "0x3B60152bFEA33B894e06291aA2bB3404b8dfdC2B",
     "npm": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
-    "veNPM": "0x834Fda4F2013Fb35a4D5587b396237B662aBD601",
+    "veNPM": "0x8bc190401E04df70Ff92D38Ce235f836d5558230",
     "gaugeControllerRegistry": "0x53430FB8f53338b02BdcE15C1b7312290Bc46c52",
-    "liquidityGaugePool": "0x5FA8D6851BDF10fA9e56844D70ACC8bEBB779cCa",
+    "liquidityGaugePool": "0xe92deF3cB6e4448DC5ecE64Dd18CD2f5dBb6a933",
     "stablecoin": "0xbdCDBD278467b84F67AEE5737Ddc83A9C054cC29",
     "stablecoinName": "Fake USD Coin",
     "stablecoinSymbol": "USDC",

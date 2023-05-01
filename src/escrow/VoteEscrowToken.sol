@@ -62,13 +62,13 @@ contract VoteEscrowToken is IVoteEscrowToken, ReentrancyGuard, ERC20, WithPausab
     _unlockWithPenalty(penalty);
   }
 
-  function lock(address account, uint256 amount, uint256 durationInWeeks) external override nonReentrant {
+  function lock(uint256 amount, uint256 durationInWeeks) external override nonReentrant {
     super._lock(msg.sender, amount, durationInWeeks);
 
     // Zero value locks signify lock extension
     if (amount > 0) {
-      npm.safeTransferFrom(account, address(this), amount);
-      super._mint(account, amount);
+      npm.safeTransferFrom(msg.sender, address(this), amount);
+      super._mint(msg.sender, amount);
     }
   }
 

@@ -25,8 +25,19 @@ const deploy = async () => {
   console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { veNPM, gaugeControllerRegistry, store } = await getDependencies(chainId)
-  await factory.deploy('LiquidityGaugePool', veNPM, gaugeControllerRegistry, store, deployer.address)
+  let { veNPM, gaugeControllerRegistry, store, liquidityGaugePool, protocol } = await getDependencies(chainId)
+
+  if (!liquidityGaugePool) {
+    const contract = await factory.deploy('LiquidityGaugePool', veNPM, gaugeControllerRegistry, store, deployer.address)
+    liquidityGaugePool = contract.address
+  }
+
+  const iProtocol = await factory.attachAbi(deployer, protocol, 'IProtocol')
+  const namespace = ethers.utils.formatBytes32String('cns:pools:liquidity:gauge')
+  await iProtocol.addContract(namespace, liquidityGaugePool)
+
+  const registry = await factory.attach(gaugeControllerRegistry, 'GaugeControllerRegistry')
+  await registry.setController(liquidityGaugePool)
 }
 
 deploy().catch(console.error)
