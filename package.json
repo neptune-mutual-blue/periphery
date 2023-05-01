@@ -7,7 +7,8 @@
   "license": "Apache-2",
   "scripts": {
     "build": "forge build --sizes",
-    "clean": "forge clean && npx hardhat clean && rm -rf cache_hardhat"
+    "clean": "forge clean && npx hardhat clean && rm -rf cache_hardhat",
+    "abi": "rm -rf ./abis && mkdir abis && node ./script/util/extract-abis.js"
   },
   "devDependencies": {
     "@neptunemutual/solidoc": "^0.0.2-beta",
