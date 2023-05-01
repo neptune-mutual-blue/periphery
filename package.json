@@ -1,0 +1,31 @@
+{
+  "name": "periphery",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/neptune-mutual-blue/periphery",
+  "author": "Neptune Mutual",
+  "license": "Apache-2",
+  "scripts": {
+    "build": "forge build --sizes",
+    "clean": "forge clean && npx hardhat clean && rm -rf cache_hardhat"
+  },
+  "devDependencies": {
+    "@neptunemutual/solidoc": "^0.0.2-beta",
+    "@nomiclabs/hardhat-ethers": "^2.2.2",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "bignumber.js": "9.0.2",
+    "chai": "4.3.4",
+    "chai-as-promised": "7.1.1",
+    "chai-bignumber": "3.0.0",
+    "dotenv": "10.0.0",
+    "ethereum-waffle": "3.4.0",
+    "ethers": "5.5.2",
+    "hardhat": "2.12.2",
+    "hardhat-contract-sizer": "2.1.1",
+    "hardhat-gas-reporter": "1.0.6",
+    "openzeppelin-solidity": "^4.8.1",
+    "solidity-coverage": "0.7.17",
+    "standard": "16.0.4"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "solidity.formatter": "forge",
+  "solidity.compileUsingRemoteVersion": "v0.8.17",
+  "standard.autoFixOnSave": true,
+  "javascript.suggestionActions.enabled": false,
+  "tsImportSorter.configuration.development.enableDebug": false,
+  "tsImportSorter.configuration.hasSemicolon": false,
+  "tsImportSorter.configuration.trailingComma": "none",
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "standard.vscode-standard"
+  },
+  "cSpell.words": [
+    "ARBISCAN",
+    "Arbitrum",
+    "basegoerli",
+    "divu",
+    "genhtml",
+    "lcov",
+    "mulu",
+    "nomiclabs",
+    "tokenholder"
+  ]
+}
