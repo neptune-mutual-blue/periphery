@@ -4,22 +4,19 @@ pragma solidity ^0.8.12;
 
 import "openzeppelin-solidity/contracts/access/Ownable.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../util/interfaces/IControlledVault.sol";
 import "../util/ProtocolMembership.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
-import "./interfaces/IGaugeControllerRegistry.sol";
-import "../dependencies/interfaces/IMember.sol";
 import "./LiquidityGaugePoolReward.sol";
 
-contract LiquidityGaugePool is IMember, LiquidityGaugePoolReward, ProtocolMembership, Ownable, WithPausability, TokenRecovery {
+contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Ownable, WithPausability, TokenRecovery {
   using SafeERC20 for IERC20;
 
   mapping(bytes32 => mapping(address => uint256)) _canWithdrawFrom;
 
   constructor(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, IStore protocolStore, address treasury) ProtocolMembership(protocolStore) LiquidityGaugePoolReward(veNpm, registry, treasury) {}
 
-  function intialize(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, address treasury) external onlyOwner {
+  function intialize(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, address treasury) external override onlyOwner {
     _throwIfProtocolPaused();
     super._intialize(veNpm, registry, treasury);
   }
@@ -27,7 +24,7 @@ contract LiquidityGaugePool is IMember, LiquidityGaugePoolReward, ProtocolMember
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-  function deposit(bytes32 key, uint256 amount) external nonReentrant {
+  function deposit(bytes32 key, uint256 amount) external override nonReentrant {
     _throwIfProtocolPaused();
     require(_registry.isValid(key), "Error: pool not found");
     require(_registry.isActive(key), "Error: pool inactive");
@@ -45,9 +42,11 @@ contract LiquidityGaugePool is IMember, LiquidityGaugePoolReward, ProtocolMember
 
     _poolStakedByMe[key][msg.sender] += amount;
     _poolStakedByEveryone[key] += amount;
+
+    emit LiquidityGaugeDeposited(key, msg.sender, stakingToken, amount);
   }
 
-  function withdraw(bytes32 key, uint256 amount) external nonReentrant {
+  function withdraw(bytes32 key, uint256 amount) external override nonReentrant {
     _throwIfProtocolPaused();
     require(_registry.isValid(key), "Error: pool not found");
 
@@ -69,9 +68,11 @@ contract LiquidityGaugePool is IMember, LiquidityGaugePoolReward, ProtocolMember
     _poolStakedByEveryone[key] -= amount;
 
     stakingToken.safeTransfer(msg.sender, amount);
+
+    emit LiquidityGaugeWithdrawn(key, msg.sender, stakingToken, amount);
   }
 
-  function withdrawRewards(bytes32 key) external nonReentrant returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
+  function withdrawRewards(bytes32 key) external override nonReentrant returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
     return _withdrawRewards(key);
   }
 
