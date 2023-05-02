@@ -5,7 +5,7 @@ pragma solidity ^0.8.12;
 import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 
 interface IVoteEscrowToken is IERC20 {
-  function lock(address account, uint256 amount, uint256 durationInWeeks) external;
+  function lock(uint256 amount, uint256 durationInWeeks) external;
   function unlock() external;
   function unlockPrematurely() external;
 

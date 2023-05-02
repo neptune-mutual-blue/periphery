@@ -9,18 +9,24 @@ import "../util/ProtocolMembership.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "./interfaces/IGaugeControllerRegistry.sol";
+import "../dependencies/interfaces/IMember.sol";
 import "./LiquidityGaugePoolReward.sol";
 
-contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Ownable, WithPausability, TokenRecovery {
+contract LiquidityGaugePool is IMember, LiquidityGaugePoolReward, ProtocolMembership, Ownable, WithPausability, TokenRecovery {
   using SafeERC20 for IERC20;
 
   mapping(bytes32 => mapping(address => uint256)) _canWithdrawFrom;
 
   constructor(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, IStore protocolStore, address treasury) ProtocolMembership(protocolStore) LiquidityGaugePoolReward(veNpm, registry, treasury) {}
 
+  function intialize(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, address treasury) external onlyOwner {
+    _throwIfProtocolPaused();
+    super._intialize(veNpm, registry, treasury);
+  }
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
   function deposit(bytes32 key, uint256 amount) external nonReentrant {
     _throwIfProtocolPaused();
     require(_registry.isValid(key), "Error: pool not found");
@@ -67,5 +73,13 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
   function withdrawRewards(bytes32 key) external nonReentrant returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
     return _withdrawRewards(key);
+  }
+
+  function version() external pure override returns (bytes32) {
+    return "v0.1";
+  }
+
+  function getName() external pure override returns (bytes32) {
+    return "Liquidity Gauge Pool";
   }
 }
