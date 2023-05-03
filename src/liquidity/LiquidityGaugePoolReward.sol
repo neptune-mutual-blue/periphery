@@ -6,9 +6,10 @@ import "openzeppelin-solidity/contracts/access/Ownable.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
 import "openzeppelin-solidity/contracts/security/ReentrancyGuard.sol";
 import "./interfaces/IGaugeControllerRegistry.sol";
+import "./interfaces/ILiquidityGaugePool.sol";
 import "../escrow/interfaces/IVoteEscrowToken.sol";
 
-abstract contract LiquidityGaugePoolReward is ReentrancyGuard {
+abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ReentrancyGuard {
   using SafeERC20 for IERC20;
 
   struct Reward {
@@ -27,10 +28,6 @@ abstract contract LiquidityGaugePoolReward is ReentrancyGuard {
 
   uint256 internal _totalVotingPower;
   mapping(address => uint256) internal _myVotingPower;
-
-  event VotingPowersUpdated(address triggeredBy, uint256 previous, uint256 current, uint256 previousTotal, uint256 currentTotal);
-  event LiquidityGaugeRewardsWithdrawn(bytes32 indexed key, address indexed account, address indexed token, address treasury, uint256 rewards, uint256 platformFee);
-  event LiquidityGaugePoolInitialized(IVoteEscrowToken previousVeNpm, IVoteEscrowToken veNpm, IGaugeControllerRegistry previousRegistry, IGaugeControllerRegistry registry, address previousTreasury, address treasury);
 
   constructor(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, address treasury) {
     require(address(veNpm) != address(0), "Error: invalid veNPM");
@@ -86,7 +83,11 @@ abstract contract LiquidityGaugePoolReward is ReentrancyGuard {
     return block.number - from;
   }
 
-  function _calculateReward(uint256 veBoostRatio, uint256 emissionPerBlock, uint256 totalBlocks, uint256 stakedByMe, uint256 stakedByEveryone, uint256 myVotingPower, uint256 totalVotingPower) internal pure returns (uint256) {
+  function _calculateReward(uint256 veBoostRatio, uint256 emissionPerBlock, uint256 totalBlocks, uint256 stakedByMe, uint256 stakedByEveryone, uint256 myVotingPower, uint256 totalVotingPower)
+    internal
+    pure
+    returns (uint256)
+  {
     uint256 myWeight = stakedByMe + ((myVotingPower * veBoostRatio) / _DENOMINATOR);
     uint256 totalWeight = stakedByEveryone + ((totalVotingPower * veBoostRatio) / _DENOMINATOR);
 
