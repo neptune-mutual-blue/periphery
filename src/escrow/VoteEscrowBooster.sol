@@ -11,7 +11,7 @@ contract VoteEscrowBooster {
   uint256 public constant _DENOMINATOR = 10_000;
 
   function _calculateBoost(uint256 expiryDuration) internal pure returns (uint256) {
-    uint256 _BOOST_FLOOR = 11_000;
+    uint256 _BOOST_FLOOR = 10_000;
     uint256 _BOOST_CEILING = 40_000;
 
     if (expiryDuration > 1460 days) {

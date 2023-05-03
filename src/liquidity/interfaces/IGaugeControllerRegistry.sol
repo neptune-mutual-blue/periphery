@@ -7,50 +7,45 @@ import "../../dependencies/interfaces/IVault.sol";
 interface IGaugeControllerRegistry {
   struct PodArgs {
     IVault pod;
-    uint256 lockupPeriod;
+    uint256 lockupPeriodInBlocks;
     uint256 ratio; // Approximate ratio (%) of the POD <--> veNpm for boosted emmission
-  }
-
-  struct RewardArgs {
-    address token;
-    uint256 emissionPerBlock;
-    uint256 tokensToDeposit;
   }
 
   struct PoolSetupArgs {
     string name;
+    string description;
     bytes data;
     uint256 platformFee;
     PodArgs staking;
-    RewardArgs npmEmission;
-    RewardArgs[] rewards;
   }
 
-  struct KeyValuePair {
+  struct Gauge {
     bytes32 key;
-    uint256 value;
+    uint256 emissionPerBlock;
   }
 
-  function setGauge(uint256 epoch, KeyValuePair[] calldata distribution) external;
-  function addPool(bytes32 key, PoolSetupArgs calldata args) external;
-  function editPool(bytes32 key, PoolSetupArgs calldata args) external;
-  function withdrawRewards(bytes32 key, IERC20 token, uint256 amount) external;
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
+  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external;
+  function withdrawRewards(bytes32 key, uint256 amount) external;
   function deactivatePool(bytes32 key) external;
+  function activatePool(bytes32 key) external;
   function deletePool(bytes32 key) external;
 
   function isValid(bytes32 key) external view returns (bool);
-  function isValidRewardToken(bytes32 key, address rewardToken) external view returns (bool);
   function isActive(bytes32 key) external view returns (bool);
   function get(bytes32 key) external view returns (PoolSetupArgs memory);
-  function npmBalanceOf(bytes32 key) external view returns (uint256);
-  function sumRewardTokensDeposited(bytes32 key, address token) external view returns (uint256);
-  function sumRewardTokensWithdrawn(bytes32 key, address token) external view returns (uint256);
+  function sumNpmDeposited() external view returns (uint256);
+  function sumNpmWithdrawn() external view returns (uint256);
   function getLastEpoch() external view returns (uint256);
-  function getAllocation(uint256 epoch, bytes32 key) external view returns (uint256);
+  function getEmissionPerBlock(bytes32 key) external view returns (uint256);
+  function getAllocation(uint256 epoch) external view returns (uint256);
 
-  event StakingPoolAdded(address indexed sender, bytes32 indexed key, PoolSetupArgs args);
-  event StakingPoolEdited(address indexed sender, bytes32 indexed key, PoolSetupArgs args);
-  event StakingPoolDeactivated(address indexed sender, bytes32 indexed key);
-  event StakingPoolDeleted(address indexed sender, bytes32 key);
-  event GaugeSet(uint256 indexed epoch, KeyValuePair[] distribution);
+  event GaugeControllerRegistryConstructed(address protocolStore, address owner);
+  event GaugeControllerRegistryRewardsWithdrawn(bytes32 key, uint256 amount);
+  event GaugeControllerRegistryPoolAddedOrEdited(address indexed sender, bytes32 indexed key, PoolSetupArgs args);
+  event GaugeControllerRegistryPoolDeactivated(address indexed sender, bytes32 indexed key);
+  event GaugeControllerRegistryPoolActivated(address indexed sender, bytes32 indexed key);
+  event GaugeControllerRegistryPoolDeleted(address indexed sender, bytes32 key);
+  event GaugeSet(uint256 indexed epoch, uint256 distribution);
+  event GaugeAllocationTransferred(uint256 indexed epoch, uint256 totalAllocation);
 }

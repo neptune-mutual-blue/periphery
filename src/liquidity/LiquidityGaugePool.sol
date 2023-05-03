@@ -14,12 +14,13 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
   mapping(bytes32 => mapping(address => uint256)) _canWithdrawFrom;
 
-  constructor(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, IStore protocolStore, address treasury) ProtocolMembership(protocolStore) LiquidityGaugePoolReward(veNpm, registry, treasury) {}
+  constructor(IVoteEscrowToken veNpm, IERC20 npm, IGaugeControllerRegistry registry, IStore protocolStore, address treasury) ProtocolMembership(protocolStore) LiquidityGaugePoolReward(veNpm, npm, registry, treasury) {}
 
-  function intialize(IVoteEscrowToken veNpm, IGaugeControllerRegistry registry, address treasury) external override onlyOwner {
+  function intialize(IVoteEscrowToken veNpm, IERC20 npm, IGaugeControllerRegistry registry, address treasury) external override onlyOwner {
     _throwIfProtocolPaused();
-    super._intialize(veNpm, registry, treasury);
+    super._intialize(veNpm, npm, registry, treasury);
   }
+
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -34,7 +35,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
     // First withdraw your rewards
     IGaugeControllerRegistry.PoolSetupArgs memory pool = _withdrawRewards(key);
 
-    _canWithdrawFrom[key][msg.sender] = block.number + pool.staking.lockupPeriod;
+    _canWithdrawFrom[key][msg.sender] = block.number + pool.staking.lockupPeriodInBlocks;
 
     IERC20 stakingToken = IERC20(pool.staking.pod);
 
@@ -74,6 +75,34 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
   function withdrawRewards(bytes32 key) external override nonReentrant returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
     return _withdrawRewards(key);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                            Getters
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function calculateReward(bytes32 key, address account) external view returns (uint256) {
+    IGaugeControllerRegistry.PoolSetupArgs memory pool = _registry.get(key);
+    return _calculateReward(pool.staking.ratio, key, account);
+  }
+
+  function getTotalBlocksSinceLastReward(bytes32 key, address account) external view override returns (uint256) {
+    return _getTotalBlocksSinceLastReward(key, account);
+  }
+
+  function getVeNpm() external view override returns (IVoteEscrowToken) {
+    return _veNpm;
+  }
+
+  function getNpm() external view override returns (IERC20) {
+    return _npm;
+  }
+
+  function getRegistry() external view override returns (IGaugeControllerRegistry) {
+    return _registry;
+  }
+
+  function getTreasury() external view override returns (address) {
+    return _treasury;
   }
 
   function version() external pure override returns (bytes32) {

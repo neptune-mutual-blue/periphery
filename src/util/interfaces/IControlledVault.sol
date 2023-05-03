@@ -8,7 +8,7 @@ interface IControlledVault {
   function setController(address controller) external;
   function getController() external view returns (address);
 
-  event ControlledVaultInitialized(address previousController, address currentController);
+  event ControlledVaultControllerSet(address previousController, address currentController);
   event ControlledVaultDeposited(address indexed caller, IERC20 indexed token, uint256 amount);
   event ControlledVaultWithdrawn(address indexed caller, IERC20 indexed token, uint256 amount);
 }

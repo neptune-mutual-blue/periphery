@@ -18,12 +18,17 @@
     "ARBISCAN",
     "Arbitrum",
     "basegoerli",
+    "bignumber",
+    "defi",
     "divu",
     "genhtml",
     "IERC",
+    "Keccak",
     "lcov",
     "mulu",
+    "nomicfoundation",
     "nomiclabs",
-    "tokenholder"
+    "tokenholder",
+    "zerox"
   ]
 }

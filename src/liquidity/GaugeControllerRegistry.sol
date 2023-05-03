@@ -8,122 +8,92 @@ import "../dependencies/interfaces/IVault.sol";
 import "./interfaces/IGaugeControllerRegistry.sol";
 
 contract GaugeControllerRegistry is IGaugeControllerRegistry, ControlledVault {
-  uint256 private constant _DENOMINATOR = 10_000;
+  using SafeERC20 for IERC20;
 
+  uint256 private constant _DENOMINATOR = 10_000;
   uint256 private _epoch = 0;
 
   mapping(bytes32 => bool) private _validPools;
-  mapping(bytes32 => mapping(address => bool)) private _validRewardTokens;
   mapping(bytes32 => bool) private _activePools;
   mapping(bytes32 => PoolSetupArgs) private _pools;
-  mapping(bytes32 => uint256) private _npmBalances;
-  mapping(bytes32 => mapping(address => uint256)) private _sumRewardTokenDeposits;
-  mapping(bytes32 => mapping(address => uint256)) private _sumRewardTokenWithdrawals;
-  mapping(uint256 => mapping(bytes32 => uint256)) private _Gauges;
+  mapping(bytes32 => uint256) private _emissionsPerBlock;
+  mapping(uint256 => uint256) private _guageAllocations;
 
-  constructor(IStore protocolStore, address owner) ControlledVault(protocolStore, owner) {}
+  uint256 private _sumNpmDeposits;
+  uint256 private _sumNpmWithdrawals;
 
-  function setGauge(uint256 epoch, KeyValuePair[] calldata distribution) external override onlyOwner {
+  constructor(IStore protocolStore, address owner) ControlledVault(protocolStore, owner) {
+    emit GaugeControllerRegistryConstructed(address(protocolStore), owner);
+  }
+
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyOwner {
     require(epoch > 0, "Error: enter epoch value");
     require(epoch == _epoch + 1, "Error: invalid epoch");
 
     _epoch = epoch;
-
-    uint256 sum = 0;
+    uint256 total = 0;
 
     for (uint256 i = 0; i < distribution.length; i++) {
-      _Gauges[epoch][distribution[i].key] = distribution[i].value;
-      sum += distribution[i].value;
+      bytes32 key = distribution[i].key;
+
+      require(_validPools[key], "Error: pool invalid");
+      require(_activePools[key], "Error: pool deactivated");
+
+      _emissionsPerBlock[key] = distribution[i].emissionPerBlock;
+      total += distribution[i].emissionPerBlock;
+
+      emit GaugeSet(epoch, distribution[i].emissionPerBlock);
     }
 
-    require(sum == _DENOMINATOR, "Error: sum must be 100%");
+    require(amountToDeposit >= total, "Error: deposit not enough");
 
-    emit GaugeSet(epoch, distribution);
+    IERC20 npm = IERC20(super._getNpm());
+    npm.safeTransferFrom(msg.sender, address(this), amountToDeposit);
+
+    _guageAllocations[epoch] = amountToDeposit;
+    _sumNpmDeposits += amountToDeposit;
+
+    emit GaugeAllocationTransferred(epoch, amountToDeposit);
   }
 
-  function addPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
+  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
     _throwIfProtocolPaused();
 
-    require(bytes(args.name).length > 0, "Error: invalid pool name");
-    require(_validPools[key] == false, "Error: duplicate pool");
-    require(address(args.staking.pod) != address(0), "Error: invalid POD contract");
+    bool adding = _validPools[key] == false;
 
-    _validPools[key] = true;
-    _activePools[key] = true;
+    if (adding) {
+      require(bytes(args.name).length > 0, "Error: invalid pool name");
+      require(_validPools[key] == false, "Error: duplicate pool");
+      require(address(args.staking.pod) != address(0), "Error: invalid POD contract");
 
-    _pools[key] = args;
+      _validPools[key] = true;
+      _activePools[key] = true;
 
-    for (uint256 i = 0; i < args.rewards.length; i++) {
-      RewardArgs memory reward = args.rewards[i];
+      _pools[key] = args;
+    } else {
+      require(_validPools[key], "Error: invalid pool");
+      require(_activePools[key], "Error: pool deactivated");
 
-      _validRewardTokens[key][reward.token] = true;
-
-      if (reward.tokensToDeposit > 0) {
-        super._deposit(IERC20(reward.token), reward.tokensToDeposit);
-        _sumRewardTokenDeposits[key][reward.token] = reward.tokensToDeposit;
+      if (bytes(args.name).length > 0) {
+        _pools[key].name = args.name;
       }
+
+      _pools[key].platformFee = args.platformFee;
     }
 
-    if (args.npmEmission.tokensToDeposit > 0) {
-      super._deposit(IERC20(args.npmEmission.token), args.npmEmission.tokensToDeposit);
-
-      _npmBalances[key] += args.npmEmission.tokensToDeposit;
-    }
-
-    emit StakingPoolAdded(msg.sender, key, args);
+    emit GaugeControllerRegistryPoolAddedOrEdited(msg.sender, key, args);
   }
 
-  function withdrawRewards(bytes32 key, IERC20 token, uint256 amount) external override onlyController {
+  function withdrawRewards(bytes32 key, uint256 amount) external override onlyController {
     _throwIfProtocolPaused();
     _throwIfNotProtocolMember(msg.sender);
 
-    require(_validRewardTokens[key][address(token)], "Error: invalid reward token");
+    IERC20 npm = IERC20(super._getNpm());
 
-    _sumRewardTokenWithdrawals[key][address(token)] += amount;
+    _sumNpmWithdrawals += amount;
 
-    super._withdraw(token, amount);
-    // @todo: emit
-  }
-
-  function editPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
-    _throwIfProtocolPaused();
-    require(_validPools[key], "Error: pool does not exist");
-    // require(_activePools[key], "Error: pool already deactivated");
-
-    if (address(args.staking.pod) != address(0)) {
-      require(address(_pools[key].staking.pod) == address(args.staking.pod), "Error: invalid POD contract");
-    }
-
-    if (bytes(args.name).length > 0) {
-      _pools[key].name = args.name;
-    }
-
-    if (args.data.length > 0) {
-      _pools[key].data = args.data;
-    }
-
-    _pools[key].platformFee = args.platformFee;
-    _pools[key].staking.lockupPeriod = args.staking.lockupPeriod;
-    _pools[key].npmEmission = args.npmEmission;
-
-    if (args.rewards.length > 0) {
-      for (uint256 i = 0; i < args.rewards.length; i++) {
-        require(_pools[key].rewards[i].token == args.rewards[i].token, "Error: invalid reward token");
-
-        _validRewardTokens[key][_pools[key].rewards[i].token] = true;
-
-        _pools[key].rewards[i].emissionPerBlock = args.rewards[i].emissionPerBlock;
-        _pools[key].rewards[i].tokensToDeposit = args.rewards[i].tokensToDeposit;
-
-        _sumRewardTokenDeposits[key][args.rewards[i].token] += args.rewards[i].tokensToDeposit;
-
-        if (args.rewards[i].tokensToDeposit > 0) {
-          super._deposit(IERC20(args.rewards[i].token), args.rewards[i].tokensToDeposit);
-        }
-      }
-    }
-
-    emit StakingPoolEdited(msg.sender, key, args);
+    super._withdraw(npm, amount);
+    emit GaugeControllerRegistryRewardsWithdrawn(key, amount);
   }
 
   function deactivatePool(bytes32 key) external override onlyOwner {
@@ -133,19 +103,29 @@ contract GaugeControllerRegistry is IGaugeControllerRegistry, ControlledVault {
 
     _activePools[key] = false;
 
-    emit StakingPoolDeactivated(msg.sender, key);
+    emit GaugeControllerRegistryPoolDeactivated(msg.sender, key);
+  }
+
+  function activatePool(bytes32 key) external override onlyOwner {
+    _throwIfProtocolPaused();
+    require(_validPools[key], "Error: pool does not exist");
+    require(_activePools[key] == false, "Error: pool not deactivated");
+
+    _activePools[key] = true;
+
+    emit GaugeControllerRegistryPoolActivated(msg.sender, key);
   }
 
   function deletePool(bytes32 key) external override onlyOwner {
     _throwIfProtocolPaused();
 
     require(_validPools[key], "Error: pool does not exist");
-    require(_activePools[key] == false, "Error: first deactivat the pool");
+    require(_activePools[key] == false, "Error: first deactivate the pool");
 
     delete _validPools[key];
     delete _pools[key];
 
-    emit StakingPoolDeleted(msg.sender, key);
+    emit GaugeControllerRegistryPoolDeleted(msg.sender, key);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -163,10 +143,6 @@ contract GaugeControllerRegistry is IGaugeControllerRegistry, ControlledVault {
     return _validPools[key];
   }
 
-  function isValidRewardToken(bytes32 key, address rewardToken) external view override returns (bool) {
-    return _validRewardTokens[key][rewardToken];
-  }
-
   function isActive(bytes32 key) external view override returns (bool) {
     return _activePools[key];
   }
@@ -175,23 +151,23 @@ contract GaugeControllerRegistry is IGaugeControllerRegistry, ControlledVault {
     return _pools[key];
   }
 
-  function npmBalanceOf(bytes32 key) external view override returns (uint256) {
-    return _npmBalances[key];
+  function sumNpmDeposited() external view override returns (uint256) {
+    return _sumNpmDeposits;
   }
 
-  function sumRewardTokensDeposited(bytes32 key, address token) external view override returns (uint256) {
-    return _sumRewardTokenDeposits[key][token];
-  }
-
-  function sumRewardTokensWithdrawn(bytes32 key, address token) external view override returns (uint256) {
-    return _sumRewardTokenWithdrawals[key][token];
+  function sumNpmWithdrawn() external view override returns (uint256) {
+    return _sumNpmWithdrawals;
   }
 
   function getLastEpoch() external view override returns (uint256) {
     return _epoch;
   }
 
-  function getAllocation(uint256 epoch, bytes32 key) external view override returns (uint256) {
-    return _Gauges[epoch][key];
+  function getAllocation(uint256 epoch) external view override returns (uint256) {
+    return _guageAllocations[epoch];
+  }
+
+  function getEmissionPerBlock(bytes32 key) external view override returns (uint256) {
+    return _emissionsPerBlock[key];
   }
 }
