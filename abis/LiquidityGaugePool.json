@@ -7,6 +7,11 @@
         "type": "address"
       },
       {
+        "internalType": "contract IERC20",
+        "name": "npm",
+        "type": "address"
+      },
+      {
         "internalType": "contract IGaugeControllerRegistry",
         "name": "registry",
         "type": "address"
@@ -29,6 +34,74 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "stakingToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityGaugeDeposited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "treasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "rewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "platformFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityGaugeEmissionWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "contract IVoteEscrowToken",
         "name": "previousVeNpm",
@@ -38,6 +111,18 @@
         "indexed": false,
         "internalType": "contract IVoteEscrowToken",
         "name": "veNpm",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "contract IERC20",
+        "name": "previousNpm",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "contract IERC20",
+        "name": "npm",
         "type": "address"
       },
       {
@@ -84,12 +169,6 @@
         "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
         "indexed": false,
         "internalType": "address",
         "name": "treasury",
@@ -109,6 +188,37 @@
       }
     ],
     "name": "LiquidityGaugeRewardsWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "stakingToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityGaugeWithdrawn",
     "type": "event"
   },
   {
@@ -220,7 +330,7 @@
   },
   {
     "inputs": [],
-    "name": "_CNS_CORE",
+    "name": "CNS_CORE",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -233,12 +343,49 @@
   },
   {
     "inputs": [],
-    "name": "_NS_MEMBERS",
+    "name": "CNS_NPM",
     "outputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "NS_MEMBERS",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "calculateReward",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -273,6 +420,82 @@
       }
     ],
     "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getNpm",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRegistry",
+    "outputs": [
+      {
+        "internalType": "contract IGaugeControllerRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getTotalBlocksSinceLastReward",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTreasury",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getVeNpm",
+    "outputs": [
+      {
+        "internalType": "contract IVoteEscrowToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -317,6 +540,11 @@
       {
         "internalType": "contract IVoteEscrowToken",
         "name": "veNpm",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "npm",
         "type": "address"
       },
       {
@@ -449,6 +677,11 @@
             "type": "string"
           },
           {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
@@ -467,7 +700,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "lockupPeriod",
+                "name": "lockupPeriodInBlocks",
                 "type": "uint256"
               },
               {
@@ -479,50 +712,6 @@
             "internalType": "struct IGaugeControllerRegistry.PodArgs",
             "name": "staking",
             "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
           }
         ],
         "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",

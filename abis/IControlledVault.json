@@ -3,6 +3,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousController",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "currentController",
+        "type": "address"
+      }
+    ],
+    "name": "ControlledVaultControllerSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "caller",
@@ -22,25 +41,6 @@
       }
     ],
     "name": "ControlledVaultDeposited",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousController",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "currentController",
-        "type": "address"
-      }
-    ],
-    "name": "ControlledVaultInitialized",
     "type": "event"
   },
   {
