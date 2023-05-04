@@ -19,6 +19,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousController",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "currentController",
+        "type": "address"
+      }
+    ],
+    "name": "ControlledVaultControllerSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "caller",
@@ -38,25 +57,6 @@
       }
     ],
     "name": "ControlledVaultDeposited",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousController",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "currentController",
-        "type": "address"
-      }
-    ],
-    "name": "ControlledVaultInitialized",
     "type": "event"
   },
   {
@@ -94,22 +94,193 @@
         "type": "uint256"
       },
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalAllocation",
+        "type": "uint256"
+      }
+    ],
+    "name": "GaugeAllocationTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "protocolStore",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "GaugeControllerRegistryConstructed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "GaugeControllerRegistryPoolActivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
         "components": [
           {
-            "internalType": "bytes32",
-            "name": "key",
-            "type": "bytes32"
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
           },
           {
             "internalType": "uint256",
-            "name": "value",
+            "name": "platformFee",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "contract IVault",
+                "name": "pod",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "lockupPeriodInBlocks",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "ratio",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct IGaugeControllerRegistry.PodArgs",
+            "name": "staking",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct IGaugeControllerRegistry.KeyValuePair[]",
+        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
+        "name": "args",
+        "type": "tuple"
+      }
+    ],
+    "name": "GaugeControllerRegistryPoolAddedOrEdited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "GaugeControllerRegistryPoolDeactivated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "GaugeControllerRegistryPoolDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "GaugeControllerRegistryRewardsWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "distribution",
-        "type": "tuple[]"
+        "type": "uint256"
       }
     ],
     "name": "GaugeSet",
@@ -176,260 +347,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          },
-          {
-            "internalType": "uint256",
-            "name": "platformFee",
-            "type": "uint256"
-          },
-          {
-            "components": [
-              {
-                "internalType": "contract IVault",
-                "name": "pod",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "lockupPeriod",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "ratio",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
-            "name": "staking",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
-        "name": "args",
-        "type": "tuple"
-      }
-    ],
-    "name": "StakingPoolAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "StakingPoolDeactivated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "StakingPoolDeleted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          },
-          {
-            "internalType": "uint256",
-            "name": "platformFee",
-            "type": "uint256"
-          },
-          {
-            "components": [
-              {
-                "internalType": "contract IVault",
-                "name": "pod",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "lockupPeriod",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "ratio",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
-            "name": "staking",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
-        "name": "args",
-        "type": "tuple"
-      }
-    ],
-    "name": "StakingPoolEdited",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "address",
         "name": "account",
@@ -441,7 +358,7 @@
   },
   {
     "inputs": [],
-    "name": "_CNS_CORE",
+    "name": "CNS_CORE",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -454,7 +371,20 @@
   },
   {
     "inputs": [],
-    "name": "_NS_MEMBERS",
+    "name": "CNS_NPM",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "NS_MEMBERS",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -471,12 +401,30 @@
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"
+      }
+    ],
+    "name": "activatePool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
       {
         "components": [
           {
             "internalType": "string",
             "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
             "type": "string"
           },
           {
@@ -498,7 +446,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "lockupPeriod",
+                "name": "lockupPeriodInBlocks",
                 "type": "uint256"
               },
               {
@@ -510,50 +458,6 @@
             "internalType": "struct IGaugeControllerRegistry.PodArgs",
             "name": "staking",
             "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
           }
         ],
         "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
@@ -561,7 +465,7 @@
         "type": "tuple"
       }
     ],
-    "name": "addPool",
+    "name": "addOrEditPool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -598,107 +502,6 @@
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
-          },
-          {
-            "internalType": "uint256",
-            "name": "platformFee",
-            "type": "uint256"
-          },
-          {
-            "components": [
-              {
-                "internalType": "contract IVault",
-                "name": "pod",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "lockupPeriod",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "ratio",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
-            "name": "staking",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
-          }
-        ],
-        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
-        "name": "args",
-        "type": "tuple"
-      }
-    ],
-    "name": "editPool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
       }
     ],
     "name": "get",
@@ -711,6 +514,11 @@
             "type": "string"
           },
           {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
             "internalType": "bytes",
             "name": "data",
             "type": "bytes"
@@ -729,7 +537,7 @@
               },
               {
                 "internalType": "uint256",
-                "name": "lockupPeriod",
+                "name": "lockupPeriodInBlocks",
                 "type": "uint256"
               },
               {
@@ -741,50 +549,6 @@
             "internalType": "struct IGaugeControllerRegistry.PodArgs",
             "name": "staking",
             "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs",
-            "name": "npmEmission",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "emissionPerBlock",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "tokensToDeposit",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.RewardArgs[]",
-            "name": "rewards",
-            "type": "tuple[]"
           }
         ],
         "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
@@ -801,11 +565,6 @@
         "internalType": "uint256",
         "name": "epoch",
         "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
       }
     ],
     "name": "getAllocation",
@@ -827,6 +586,25 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getEmissionPerBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -940,49 +718,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "rewardToken",
-        "type": "address"
-      }
-    ],
-    "name": "isValidRewardToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "npmBalanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -1074,6 +809,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "amountToDeposit",
+        "type": "uint256"
+      },
+      {
         "components": [
           {
             "internalType": "bytes32",
@@ -1082,11 +822,11 @@
           },
           {
             "internalType": "uint256",
-            "name": "value",
+            "name": "emissionPerBlock",
             "type": "uint256"
           }
         ],
-        "internalType": "struct IGaugeControllerRegistry.KeyValuePair[]",
+        "internalType": "struct IGaugeControllerRegistry.Gauge[]",
         "name": "distribution",
         "type": "tuple[]"
       }
@@ -1115,19 +855,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "sumRewardTokensDeposited",
+    "inputs": [],
+    "name": "sumNpmDeposited",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1139,19 +868,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "sumRewardTokensWithdrawn",
+    "inputs": [],
+    "name": "sumNpmWithdrawn",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1188,11 +906,6 @@
         "internalType": "bytes32",
         "name": "key",
         "type": "bytes32"
-      },
-      {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
       },
       {
         "internalType": "uint256",

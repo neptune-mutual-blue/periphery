@@ -3,6 +3,8 @@ const { ethers, network } = require('hardhat')
 const factory = require('./util/factory')
 const deployments = require('../deployments.json')
 
+const OLD_GAUGE_POOL = '0xe92deF3cB6e4448DC5ecE64Dd18CD2f5dBb6a933'
+
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
     return deployments[chainId]
@@ -34,7 +36,12 @@ const deploy = async () => {
 
   const iProtocol = await factory.attachAbi(deployer, protocol, 'IProtocol')
   const namespace = ethers.utils.formatBytes32String('cns:pools:liquidity:gauge')
-  await iProtocol.addContract(namespace, liquidityGaugePool)
+
+  if (OLD_GAUGE_POOL) {
+    await iProtocol.upgradeContract(namespace, OLD_GAUGE_POOL, liquidityGaugePool)
+  } else {
+    await iProtocol.addContract(namespace, liquidityGaugePool)
+  }
 
   const registry = await factory.attach(gaugeControllerRegistry, 'GaugeControllerRegistry')
   await registry.setController(liquidityGaugePool)

@@ -25,7 +25,7 @@ contract ControlledVault is IControlledVault, ProtocolMembership, Ownable, WithP
     _throwIfNotProtocolMember(controller);
     _throwIfProtocolPaused();
 
-    emit ControlledVaultInitialized(_controller, controller);
+    emit ControlledVaultControllerSet(_controller, controller);
 
     _controller == controller;
   }

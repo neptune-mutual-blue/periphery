@@ -12,13 +12,14 @@ out/
 lib
 node_modules
 lcov.info
-coverage
+coverage*
 build
 truffle*
 solidoc*
 yarn*
 package*
 .*
+artifacts
 artifacts_hardhat
 cache_hardhat
 

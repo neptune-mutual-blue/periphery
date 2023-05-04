@@ -1,8 +1,8 @@
 require('hardhat-contract-sizer')
-require('@nomiclabs/hardhat-waffle')
-require('solidity-coverage')
 require('hardhat-gas-reporter')
-require('@nomiclabs/hardhat-etherscan')
+require('solidity-coverage')
+require('@nomicfoundation/hardhat-verify')
+require('@nomicfoundation/hardhat-chai-matchers')
 require('dotenv').config()
 
 const GWEI = 1000000000
@@ -78,7 +78,7 @@ const config = {
     ]
   },
   paths: {
-    tests: './test',
+    tests: './specs',
     sources: './src',
     cache: './cache_hardhat',
     artifacts: './artifacts_hardhat'

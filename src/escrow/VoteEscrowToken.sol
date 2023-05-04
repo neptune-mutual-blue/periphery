@@ -10,11 +10,10 @@ import "../util/Store.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "../util/WhitelistedTransfer.sol";
-import "./interfaces/IVoteEscrowToken.sol";
 import "./VoteEscrowBooster.sol";
 import "./VoteEscrowLocker.sol";
 
-contract VoteEscrowToken is IVoteEscrowToken, ReentrancyGuard, ERC20, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, VoteEscrowLocker {
+contract VoteEscrowToken is ReentrancyGuard, ERC20, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, VoteEscrowLocker {
   using SafeERC20 for IERC20;
 
   IStore public s;
@@ -25,6 +24,8 @@ contract VoteEscrowToken is IVoteEscrowToken, ReentrancyGuard, ERC20, WithPausab
     s = store;
     npm = npmToken;
     feeTo = feeToAccount;
+
+    emit VoteEscrowTokenConstructed(address(store), address(npmToken), feeToAccount, tokenName, tokenSymbol);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
