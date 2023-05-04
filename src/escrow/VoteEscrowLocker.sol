@@ -14,9 +14,11 @@ abstract contract VoteEscrowLocker is IVoteEscrowLocker {
 
     require(durationInWeeks >= 4 && durationInWeeks <= 208, "Error: invalid period");
 
-    uint256 previousBalance = _balances[account];
-
     uint256 newUnlockTimestamp = block.timestamp + (durationInWeeks * 7 days);
+
+    require(newUnlockTimestamp >= _unlockAt[account], "Error: cannot decrease lockup period");
+
+    uint256 previousBalance = _balances[account];
 
     emit VoteEscrowLock(account, amount, durationInWeeks, _unlockAt[account], newUnlockTimestamp, previousBalance, _balances[account]);
 

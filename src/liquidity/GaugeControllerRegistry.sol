@@ -10,7 +10,6 @@ import "./interfaces/IGaugeControllerRegistry.sol";
 contract GaugeControllerRegistry is IGaugeControllerRegistry, ControlledVault {
   using SafeERC20 for IERC20;
 
-  uint256 private constant _DENOMINATOR = 10_000;
   uint256 private _epoch = 0;
 
   mapping(bytes32 => bool) private _validPools;

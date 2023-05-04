@@ -10,6 +10,10 @@ abstract contract WhitelistedTransfer is IWhitelistedTransfer {
   bytes32 private constant _NS_MEMBERS = "ns:members";
   mapping(address => bool) private _whitelist;
 
+  constructor () {
+    _whitelist[address(this)] = true;
+  }
+
   function isInTransferWhitelist(address account) public view returns (bool) {
     return _whitelist[account];
   }
