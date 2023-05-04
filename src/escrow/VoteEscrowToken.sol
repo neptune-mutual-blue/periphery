@@ -12,8 +12,9 @@ import "../util/WithPausability.sol";
 import "../util/WhitelistedTransfer.sol";
 import "./VoteEscrowBooster.sol";
 import "./VoteEscrowLocker.sol";
+import "./interfaces/IVoteEscrowToken.sol";
 
-contract VoteEscrowToken is ReentrancyGuard, ERC20, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, VoteEscrowLocker {
+contract VoteEscrowToken is IVoteEscrowToken, ReentrancyGuard, ERC20, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, VoteEscrowLocker {
   using SafeERC20 for IERC20;
 
   IStore public s;

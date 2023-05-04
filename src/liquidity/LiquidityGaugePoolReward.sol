@@ -17,20 +17,19 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ReentrancyGua
     uint256 amount;
   }
 
-  IVoteEscrowToken internal _veNpm;
+  IVoteEscrowToken private _veNpm;
   IERC20 internal _npm;
-  IGaugeControllerRegistry internal _registry;
-  address internal _treasury;
+  IGaugeControllerRegistry private _registry;
+  address private _treasury;
 
-  uint256 internal constant _DENOMINATOR = 10_000;
-  uint256 internal constant _MILLISECONDS_IN_WEEK = 604_800_000;
+  uint256 private constant _DENOMINATOR = 10_000;
 
-  mapping(bytes32 => mapping(address => uint256)) internal _poolLastRewardHeights;
-  mapping(bytes32 => mapping(address => uint256)) internal _poolStakedByMe;
-  mapping(bytes32 => uint256) internal _poolStakedByEveryone;
+  mapping(bytes32 => mapping(address => uint256)) private _poolLastRewardHeights;
+  mapping(bytes32 => mapping(address => uint256)) private _poolStakedByMe;
+  mapping(bytes32 => uint256) private _poolStakedByEveryone;
 
-  uint256 internal _totalVotingPower;
-  mapping(address => uint256) internal _myVotingPower;
+  uint256 private _totalVotingPower;
+  mapping(address => uint256) private _myVotingPower;
 
   constructor(IVoteEscrowToken veNpm, IERC20 npm, IGaugeControllerRegistry registry, address treasury) {
     require(address(veNpm) != address(0), "Error: invalid veNPM");
@@ -156,5 +155,28 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ReentrancyGua
     _myVotingPower[msg.sender] = current;
 
     emit VotingPowersUpdated(msg.sender, previous, current, previousTotal, _totalVotingPower);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                            Getters
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function _getVeNpm() internal view returns (IVoteEscrowToken) {
+    return _veNpm;
+  }
+
+  function _getRegistry() internal view returns (IGaugeControllerRegistry) {
+    return _registry;
+  }
+
+  function _getTreasury() internal view returns (address) {
+    return _treasury;
+  }
+
+  function _getPoolStakedByMe(bytes32 key, address me) internal view returns (uint256) {
+    return _poolStakedByMe[key][me];
+  }
+
+  function _getPoolStakedByEveryone(bytes32 key) internal view returns (uint256) {
+    return _poolStakedByEveryone[key];
   }
 }

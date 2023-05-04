@@ -12,7 +12,7 @@ import "./LiquidityGaugePoolReward.sol";
 contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Ownable, WithPausability, TokenRecovery {
   using SafeERC20 for IERC20;
 
-  mapping(bytes32 => mapping(address => uint256)) _canWithdrawFrom;
+  mapping(bytes32 => mapping(address => uint256)) private _canWithdrawFrom;
 
   constructor(IVoteEscrowToken veNpm, IERC20 npm, IGaugeControllerRegistry registry, IStore protocolStore, address treasury) ProtocolMembership(protocolStore) LiquidityGaugePoolReward(veNpm, npm, registry, treasury) {}
 
@@ -27,10 +27,13 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
   function deposit(bytes32 key, uint256 amount) external override nonReentrant {
     _throwIfProtocolPaused();
-    require(_registry.isValid(key), "Error: pool not found");
-    require(_registry.isActive(key), "Error: pool inactive");
+    require(_getRegistry().isValid(key), "Error: pool not found");
+    require(_getRegistry().isActive(key), "Error: pool inactive");
 
     require(amount > 0, "Error: invalid amount");
+
+    uint256 poolStakedByMe = _getPoolStakedByMe(key, msg.sender);
+    uint256 poolStakedByEveryone = _getPoolStakedByEveryone(key);
 
     // First withdraw your rewards
     IGaugeControllerRegistry.PoolSetupArgs memory pool = _withdrawRewards(key);
@@ -41,22 +44,25 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
     stakingToken.safeTransferFrom(msg.sender, address(this), amount);
 
-    _poolStakedByMe[key][msg.sender] += amount;
-    _poolStakedByEveryone[key] += amount;
+    poolStakedByMe += amount;
+    poolStakedByEveryone += amount;
 
     emit LiquidityGaugeDeposited(key, msg.sender, stakingToken, amount);
   }
 
   function withdraw(bytes32 key, uint256 amount) external override nonReentrant {
     _throwIfProtocolPaused();
-    require(_registry.isValid(key), "Error: pool not found");
+    require(_getRegistry().isValid(key), "Error: pool not found");
 
     // @note: do not uncomment the following line
     // Inactive pools permit withdrawals but do not accept deposits or offer rewards.
-    // require(_registry.isActive(key), "Error: pool inactive");
+    // require(_getRegistry().isActive(key), "Error: pool inactive");
+
+    uint256 poolStakedByMe = _getPoolStakedByMe(key, msg.sender);
+    uint256 poolStakedByEveryone = _getPoolStakedByEveryone(key);
 
     require(amount > 0, "Error: invalid amount");
-    require(_poolStakedByMe[key][msg.sender] >= amount, "Error: insufficient balance");
+    require(poolStakedByMe >= amount, "Error: insufficient balance");
 
     require(block.number >= _canWithdrawFrom[key][msg.sender], "Error: too early");
 
@@ -65,8 +71,8 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
 
     IERC20 stakingToken = IERC20(pool.staking.pod);
 
-    _poolStakedByMe[key][msg.sender] -= amount;
-    _poolStakedByEveryone[key] -= amount;
+    poolStakedByMe -= amount;
+    poolStakedByEveryone -= amount;
 
     stakingToken.safeTransfer(msg.sender, amount);
 
@@ -81,7 +87,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
   //                                            Getters
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function calculateReward(bytes32 key, address account) external view returns (uint256) {
-    IGaugeControllerRegistry.PoolSetupArgs memory pool = _registry.get(key);
+    IGaugeControllerRegistry.PoolSetupArgs memory pool = _getRegistry().get(key);
     return _calculateReward(pool.staking.ratio, key, account);
   }
 
@@ -90,7 +96,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
   }
 
   function getVeNpm() external view override returns (IVoteEscrowToken) {
-    return _veNpm;
+    return _getVeNpm();
   }
 
   function getNpm() external view override returns (IERC20) {
@@ -98,11 +104,11 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Own
   }
 
   function getRegistry() external view override returns (IGaugeControllerRegistry) {
-    return _registry;
+    return _getRegistry();
   }
 
   function getTreasury() external view override returns (address) {
-    return _treasury;
+    return _getTreasury();
   }
 
   function version() external pure override returns (bytes32) {
