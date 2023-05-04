@@ -4,12 +4,11 @@
 pragma solidity ^0.8.0;
 
 import "../dependencies/interfaces/IStore.sol";
+import "./interfaces/IWhitelistedTransfer.sol";
 
-abstract contract WhitelistedTransfer {
+abstract contract WhitelistedTransfer is IWhitelistedTransfer {
   bytes32 private constant _NS_MEMBERS = "ns:members";
   mapping(address => bool) private _whitelist;
-
-  event TransferWhitelistUpdated(address indexed updatedBy, address[] accounts, bool[] statuses);
 
   function isInTransferWhitelist(address account) public view returns (bool) {
     return _whitelist[account];

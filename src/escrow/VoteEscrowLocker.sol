@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.12;
 
-import "./interfaces/IVoteEscrowToken.sol";
+import "./interfaces/IVoteEscrowLocker.sol";
 
-abstract contract VoteEscrowLocker is IVoteEscrowToken {
+abstract contract VoteEscrowLocker is IVoteEscrowLocker {
   mapping(address => uint256) private _balances;
   mapping(address => uint256) private _unlockAt;
   mapping(address => uint256) private _minUnlockHeights;
