@@ -9,7 +9,6 @@ out/
 
 # Dotenv file
 .env
-lib
 node_modules
 lcov.info
 coverage*
@@ -25,5 +24,4 @@ cache_hardhat
 
 # Dotenv file
 .env
-lib
 .*
