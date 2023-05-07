@@ -5,34 +5,29 @@ pragma solidity ^0.8.0;
 
 import "../dependencies/interfaces/IStore.sol";
 import "./interfaces/IWhitelistedTransfer.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
-abstract contract WhitelistedTransfer is IWhitelistedTransfer {
-  bytes32 private constant _NS_MEMBERS = "ns:members";
-  mapping(address => bool) private _whitelist;
+abstract contract WhitelistedTransfer is IWhitelistedTransfer, ContextUpgradeable {
+  function _updateTransferWhitelist(mapping(address => bool) storage _whitelist, address[] calldata accounts, bool[] memory statuses) internal {
+    if (accounts.length == 0) {
+      revert NoAccountSpecifiedError();
+    }
 
-  constructor () {
-    _whitelist[address(this)] = true;
-  }
-
-  function isInTransferWhitelist(address account) public view returns (bool) {
-    return _whitelist[account];
-  }
-
-  function _updateTransferWhitelist(address[] calldata accounts, bool[] memory statuses) internal {
-    require(accounts.length > 0, "No account");
-    require(accounts.length == statuses.length, "Invalid args");
+    if (accounts.length != statuses.length) {
+      revert RelatedArrayItemCountMismatchError();
+    }
 
     for (uint256 i = 0; i < accounts.length; i++) {
       _whitelist[accounts[i]] = statuses[i];
     }
 
-    emit TransferWhitelistUpdated(msg.sender, accounts, statuses);
+    emit TransferWhitelistUpdated(_msgSender(), accounts, statuses);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Validations
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function _throwIfNonWhitelistedTransfer(IStore s, address from, address to, uint256) internal view {
+  function _throwIfNonWhitelistedTransfer(IStore s, mapping(address => bool) storage _whitelist, address from, address to, uint256) internal view {
     // Token mints
     if (from == address(0)) {
       // aren't restricted
@@ -43,15 +38,17 @@ abstract contract WhitelistedTransfer is IWhitelistedTransfer {
     // ............................ can still transfer to a whitelisted address
     if (_whitelist[from] == false && _whitelist[to] == false) {
       // and to the Neptune Mutual Protocol contracts but nowhere else
-      _throwIfNotProtocolMember(s, to);
+      __throwIfNotProtocolMember(s, to);
     }
   }
 
-  function _throwIfNotProtocolMember(IStore s, address account) internal view {
+  function __throwIfNotProtocolMember(IStore s, address account) private view {
+    bytes32 _NS_MEMBERS = "ns:members";
     bytes32 key = keccak256(abi.encodePacked(_NS_MEMBERS, account));
     bool isMember = s.getBool(key);
 
-    // veNpm can only be used within the Neptune Mutual protocol
-    require(isMember == true, "Access denied");
+    if (isMember == false) {
+      revert AccessDeniedError("ProtocolMember");
+    }
   }
 }

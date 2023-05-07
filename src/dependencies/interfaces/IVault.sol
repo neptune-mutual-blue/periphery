@@ -3,9 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "./IMember.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 
-interface IVault is IMember, IERC20 {
+interface IVault is IMember, IERC20Upgradeable {
   struct VaultInfoType {
     uint256 totalPods;
     uint256 balance;
@@ -46,8 +46,8 @@ interface IVault is IMember, IERC20 {
 
   function transferGovernance(bytes32 coverKey, address to, uint256 amount) external;
 
-  function transferToStrategy(IERC20 token, bytes32 coverKey, bytes32 strategyName, uint256 amount) external;
-  function receiveFromStrategy(IERC20 token, bytes32 coverKey, bytes32 strategyName, uint256 amount) external;
+  function transferToStrategy(IERC20Upgradeable token, bytes32 coverKey, bytes32 strategyName, uint256 amount) external;
+  function receiveFromStrategy(IERC20Upgradeable token, bytes32 coverKey, bytes32 strategyName, uint256 amount) external;
 
   function calculatePods(uint256 forStablecoinUnits) external view returns (uint256);
   function calculateLiquidity(uint256 podsToBurn) external view returns (uint256);

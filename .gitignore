@@ -1,5 +1,6 @@
 # Compiler files
 cache/
+cache_foundry/
 out/
 
 # Ignores development broadcast logs
@@ -9,7 +10,6 @@ out/
 
 # Dotenv file
 .env
-lib
 node_modules
 lcov.info
 coverage*
@@ -20,10 +20,8 @@ yarn*
 package*
 .*
 artifacts
-artifacts_hardhat
-cache_hardhat
+
 
 # Dotenv file
 .env
-lib
 .*

@@ -3,26 +3,29 @@
 pragma solidity ^0.8.12;
 
 import "./interfaces/IVoteEscrowLocker.sol";
+import "../util/interfaces/IThrowable.sol";
+import "./VoteEscrowTokenState.sol";
 
-abstract contract VoteEscrowLocker is IVoteEscrowLocker {
-  mapping(address => uint256) private _balances;
-  mapping(address => uint256) private _unlockAt;
-  mapping(address => uint256) private _minUnlockHeights;
-
+abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowTokenState {
   function _lock(address account, uint256 amount, uint256 durationInWeeks) internal {
     uint256 _MIN_LOCK_HEIGHT = 10;
-
-    require(durationInWeeks >= 4 && durationInWeeks <= 208, "Error: invalid period");
-
     uint256 newUnlockTimestamp = block.timestamp + (durationInWeeks * 7 days);
 
-    require(newUnlockTimestamp >= _unlockAt[account], "Error: cannot decrease lockup period");
+    if (durationInWeeks < 4 || durationInWeeks > 208) {
+      revert InvalidVoteLockPeriodError(4, 208);
+    }
+
+    if (newUnlockTimestamp < _unlockAt[account]) {
+      // Can't decrease the lockup period
+      revert InvalidVoteLockExtensionError(_unlockAt[account], newUnlockTimestamp);
+    }
 
     uint256 previousBalance = _balances[account];
 
     emit VoteEscrowLock(account, amount, durationInWeeks, _unlockAt[account], newUnlockTimestamp, previousBalance, _balances[account]);
 
     _balances[account] += amount;
+    _totalLocked += amount;
     _unlockAt[account] = newUnlockTimestamp;
     _minUnlockHeights[account] = block.number + _MIN_LOCK_HEIGHT;
   }
@@ -31,23 +34,14 @@ abstract contract VoteEscrowLocker is IVoteEscrowLocker {
     amount = _balances[account];
     uint256 unlockAt = _unlockAt[account];
 
-    require(amount > 0, "Error: nothing to withdraw");
+    if (amount == 0) {
+      revert ZeroAmountError("balance");
+    }
 
     _unlockAt[account] = 0;
     _balances[account] = 0;
+    _totalLocked -= amount;
 
     emit VoteEscrowUnlock(account, amount, unlockAt, penalty);
-  }
-
-  function _getLockedTokenBalance(address account) internal view returns (uint256) {
-    return _balances[account];
-  }
-
-  function _getUnlockTimestamp(address account) internal view returns (uint256) {
-    return _unlockAt[account];
-  }
-
-  function _getMinUnlockHeight(address account) internal view returns (uint256) {
-    return _minUnlockHeights[account];
   }
 }

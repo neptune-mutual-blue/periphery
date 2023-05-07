@@ -2,20 +2,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.12;
 
-import "openzeppelin-solidity/contracts/access/AccessControl.sol";
-import "openzeppelin-solidity/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../dependencies/interfaces/IStore.sol";
 import "../dependencies/interfaces/IProtocol.sol";
 
-contract FakeProtocol is IProtocol, AccessControl, Pausable {
-  bool public initialized = false;
+contract FakeProtocol is IProtocol, AccessControlUpgradeable, PausableUpgradeable {
+  bool public initialized;
   IStore public s;
 
-  constructor(IStore store) {
+  function initialize(IStore store) public initializer {
     s = store;
   }
-
-  function initialize(InitializeArgs calldata args) external override {}
 
   function addMember(address member) external override {}
 
@@ -33,15 +31,15 @@ contract FakeProtocol is IProtocol, AccessControl, Pausable {
 
   function grantRoles(AccountWithRoles[] calldata detail) external override {}
 
-  function grantRole(bytes32 role, address account) public override(AccessControl, IAccessControl) {
+  function grantRole(bytes32 role, address account) public override(AccessControlUpgradeable, IAccessControlUpgradeable) {
     super.grantRole(role, account);
   }
 
-  function revokeRole(bytes32 role, address account) public override(AccessControl, IAccessControl) {
+  function revokeRole(bytes32 role, address account) public override(AccessControlUpgradeable, IAccessControlUpgradeable) {
     super.revokeRole(role, account);
   }
 
-  function renounceRole(bytes32 role, address account) public override(AccessControl, IAccessControl) {
+  function renounceRole(bytes32 role, address account) public override(AccessControlUpgradeable, IAccessControlUpgradeable) {
     super.renounceRole(role, account);
   }
 

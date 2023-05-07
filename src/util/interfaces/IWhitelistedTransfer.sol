@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-interface IWhitelistedTransfer {
+import "../../util/interfaces/IThrowable.sol";
+
+interface IWhitelistedTransfer is IThrowable {
   event TransferWhitelistUpdated(address indexed updatedBy, address[] accounts, bool[] statuses);
 
-  function isInTransferWhitelist(address account) external view returns (bool);
+  error NoAccountSpecifiedError();
 }

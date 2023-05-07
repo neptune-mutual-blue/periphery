@@ -1,11 +1,14 @@
+require('@nomicfoundation/hardhat-foundry')
+require('@openzeppelin/hardhat-upgrades')
 require('hardhat-contract-sizer')
 require('hardhat-gas-reporter')
 require('solidity-coverage')
 require('@nomicfoundation/hardhat-verify')
 require('@nomicfoundation/hardhat-chai-matchers')
+
 require('dotenv').config()
 
-const GWEI = 1000000000
+const GWEI = 1_000_000_000
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -14,7 +17,7 @@ const config = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
-      blockGasLimit: 19000000
+      blockGasLimit: 19_000_000
     },
     basegoerli: {
       url: 'https://goerli.base.org',
@@ -24,7 +27,7 @@ const config = {
       explorer: 'https://goerli.basescan.org'
     },
     ethereum: {
-      blockGasLimit: 19000000, // 19M
+      blockGasLimit: 19_000_000, // 19M
       url: process.env.ETHEREUM_RPC_URL,
       chainId: 1,
       accounts: [process.env.PRIVATE_KEY],
@@ -49,7 +52,7 @@ const config = {
     }
   },
   mocha: {
-    timeout: 20000
+    timeout: 20_000
   },
   gasReporter: {
     currency: 'ETH',
@@ -79,9 +82,7 @@ const config = {
   },
   paths: {
     tests: './specs',
-    sources: './src',
-    cache: './cache_hardhat',
-    artifacts: './artifacts_hardhat'
+    sources: './src'
   }
 }
 

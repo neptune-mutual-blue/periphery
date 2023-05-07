@@ -2,44 +2,15 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/access/IAccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable.sol";
 import "./IMember.sol";
 
-interface IProtocol is IMember, IAccessControl {
+interface IProtocol is IMember, IAccessControlUpgradeable {
   struct AccountWithRoles {
     address account;
     bytes32[] roles;
   }
 
-  struct InitializeArgs {
-    address burner;
-    address uniswapV2RouterLike;
-    address uniswapV2FactoryLike;
-    address npm;
-    address treasury;
-    address priceOracle;
-    uint256 coverCreationFee;
-    uint256 minCoverCreationStake;
-    uint256 minStakeToAddLiquidity;
-    uint256 firstReportingStake;
-    uint256 claimPeriod;
-    uint256 reportingBurnRate;
-    uint256 governanceReporterCommission;
-    uint256 claimPlatformFee;
-    uint256 claimReporterCommission;
-    uint256 flashLoanFee;
-    uint256 flashLoanFeeProtocol;
-    uint256 resolutionCoolDownPeriod;
-    uint256 stateUpdateInterval;
-    uint256 maxLendingRatio;
-    uint256 lendingPeriod;
-    uint256 withdrawalWindow;
-    uint256 policyFloor;
-    uint256 policyCeiling;
-  }
-
-  event Initialized(InitializeArgs args);
   event ContractAdded(bytes32 indexed namespace, bytes32 indexed key, address indexed contractAddress);
   event ContractUpgraded(bytes32 indexed namespace, bytes32 indexed key, address previous, address indexed current);
   event MemberAdded(address member);
@@ -50,8 +21,6 @@ interface IProtocol is IMember, IAccessControl {
   function addContracts(bytes32[] calldata namespaces, bytes32[] calldata keys, address[] calldata contractAddresses) external;
 
   function addContractWithKey(bytes32 namespace, bytes32 coverKey, address contractAddress) external;
-
-  function initialize(InitializeArgs calldata args) external;
 
   function upgradeContract(bytes32 namespace, address previous, address current) external;
 

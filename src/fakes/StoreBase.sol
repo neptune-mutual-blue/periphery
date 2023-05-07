@@ -3,13 +3,14 @@
 pragma solidity ^0.8.0;
 
 import "../dependencies/interfaces/IStore.sol";
-import "openzeppelin-solidity/contracts/security/Pausable.sol";
-import "openzeppelin-solidity/contracts/access/Ownable.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/utils/SafeERC20.sol";
 
-abstract contract StoreBase is IStore, Pausable, Ownable {
-  using SafeERC20 for IERC20;
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+
+abstract contract StoreBase is IStore, PausableUpgradeable, OwnableUpgradeable {
+  using SafeERC20Upgradeable for IERC20Upgradeable;
 
   mapping(bytes32 => int256) public intStorage;
   mapping(bytes32 => uint256) public uintStorage;
@@ -27,17 +28,7 @@ abstract contract StoreBase is IStore, Pausable, Ownable {
 
   mapping(address => bool) public pausers;
 
-  bytes32 private constant _NS_MEMBERS = "ns:store:members";
-
-  constructor(address[] memory members, address owner) {
-    boolStorage[keccak256(abi.encodePacked(_NS_MEMBERS, address(this)))] = true;
-
-    for (uint256 i = 0; i < members.length; i++) {
-      boolStorage[keccak256(abi.encodePacked(_NS_MEMBERS, members[i]))] = true;
-    }
-
-    super.transferOwnership(owner);
-  }
+  bytes32 public constant _NS_MEMBERS = "ns:store:members";
 
   /**
    *
@@ -79,7 +70,7 @@ abstract contract StoreBase is IStore, Pausable, Ownable {
    * @param token IERC-20 The address of the token contract
    */
   function recoverToken(address token, address sendTo) external onlyOwner {
-    IERC20 erc20 = IERC20(token);
+    IERC20Upgradeable erc20 = IERC20Upgradeable(token);
 
     uint256 balance = erc20.balanceOf(address(this));
 
