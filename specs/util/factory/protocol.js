@@ -1,11 +1,11 @@
 const key = require('../key')
-const { deploy } = require('./deployer')
+const { deployUpgradeable } = require('./deployer')
 
 const deployProtocol = async (signer) => {
-  const store = await deploy('Store', [signer.address], signer.address)
+  const store = await deployUpgradeable('Store', [signer.address], signer.address)
 
-  const npm = await deploy('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-  const protocol = await deploy('FakeProtocol', store.address)
+  const npm = await deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
+  const protocol = await deployUpgradeable('FakeProtocol', store.address)
 
   await store.setBool(key.qualify(protocol.address), true)
   await store.setBool(key.qualifyMember(protocol.address), true)

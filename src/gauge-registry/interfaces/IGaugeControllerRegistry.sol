@@ -40,7 +40,7 @@ interface IGaugeControllerRegistry {
   function getEmissionPerBlock(bytes32 key) external view returns (uint256);
   function getAllocation(uint256 epoch) external view returns (uint256);
 
-  event GaugeControllerRegistryConstructed(address protocolStore, address owner);
+  event GaugeControllerRegistryOperatorSet(address previousOperator, address operator);
   event GaugeControllerRegistryRewardsWithdrawn(bytes32 key, uint256 amount);
   event GaugeControllerRegistryPoolAddedOrEdited(address indexed sender, bytes32 indexed key, PoolSetupArgs args);
   event GaugeControllerRegistryPoolDeactivated(address indexed sender, bytes32 indexed key);
@@ -48,4 +48,13 @@ interface IGaugeControllerRegistry {
   event GaugeControllerRegistryPoolDeleted(address indexed sender, bytes32 key);
   event GaugeSet(uint256 indexed epoch, uint256 distribution);
   event GaugeAllocationTransferred(uint256 indexed epoch, uint256 totalAllocation);
+
+  error InvalidGaugeEpochError();
+  error PoolNotFoundError(bytes32 key);
+  error PoolNotActiveError(bytes32 key);
+  error PoolDeactivatedError(bytes32 key);
+  error PoolAlreadyDeactivatedError(bytes32 key);
+  error PoolNotDeactivatedError(bytes32 key);
+  error PoolAlreadyActiveError(bytes32 key);
+  error PoolAlreadyExistsError(bytes32 key);
 }

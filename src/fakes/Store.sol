@@ -5,7 +5,17 @@ pragma solidity ^0.8.0;
 import "./StoreBase.sol";
 
 contract Store is StoreBase {
-  constructor(address[] memory members, address owner) StoreBase(members, owner) {}
+  function initialize(address[] memory members, address owner) public initializer {
+    boolStorage[keccak256(abi.encodePacked(_NS_MEMBERS, address(this)))] = true;
+
+    for (uint256 i = 0; i < members.length; i++) {
+      boolStorage[keccak256(abi.encodePacked(_NS_MEMBERS, members[i]))] = true;
+    }
+
+    __Ownable_init();
+
+    super.transferOwnership(owner);
+  }
 
   function setAddress(bytes32 k, address v) external override {
     _throwIfPaused();

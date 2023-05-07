@@ -1,15 +1,15 @@
 const { deployProtocol } = require('./protocol')
-const { deploy } = require('./deployer')
+const { deployUpgradeable } = require('./deployer')
 const key = require('../key')
 
 const deployPool = async (signer) => {
   const { npm, store, protocol } = await deployProtocol(signer)
 
-  const primeDappsPod = await deploy('FakeToken', 'Yield Earning USDC', 'iUSDC-PRI')
-  const popularDefiAppsPod = await deploy('FakeToken', 'Yield Earning USDC', 'iUSDC-POP')
+  const primeDappsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-PRI')
+  const popularDefiAppsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-POP')
 
-  const veNpm = await deploy('VoteEscrowToken', store.address, npm.address, signer.address, 'Vote Escrow NPM', 'veNPM')
-  const registry = await deploy('GaugeControllerRegistry', store.address, signer.address)
+  const veNpm = await deployUpgradeable('VoteEscrowToken', signer.address, store.address, signer.address, 'Vote Escrow NPM', 'veNPM')
+  const registry = await deployUpgradeable('GaugeControllerRegistry', signer.address, store.address)
 
   const candidates = [{
     key: key.toBytes32('prime'),

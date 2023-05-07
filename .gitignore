@@ -1,5 +1,6 @@
 # Compiler files
 cache/
+cache_foundry/
 out/
 
 # Ignores development broadcast logs
@@ -19,8 +20,7 @@ yarn*
 package*
 .*
 artifacts
-artifacts_hardhat
-cache_hardhat
+
 
 # Dotenv file
 .env

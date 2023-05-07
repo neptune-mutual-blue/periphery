@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "streetsidesoftware.code-spell-checker",
+    "eamodio.gitlens",
+    "juanblanco.solidity",
+    "standard.vscode-standard",
+    "wayou.vscode-todo-highlight"
+  ]
+}

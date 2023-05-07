@@ -168,9 +168,9 @@
 
     const generateChartData = () => {
       const data = [];
-      for (let i = 1; i <= 1490; i++) {
+      for (let i = 1; i <= 1460; i++) {
         const lockupDuration = i * _ONE_DAY;
-        const boost = calculateBoost(lockupDuration) / _MULTIPLIER;
+        const boost = calculateBoost(lockupDuration) / _DENOMINATOR;
         data.push({ x: i, y: boost });
       }
       return data;

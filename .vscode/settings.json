@@ -30,5 +30,31 @@
     "nomiclabs",
     "tokenholder",
     "zerox"
+  ],
+  "todohighlight.include": [
+    "**/*.sol",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.html",
+    "**/*.php",
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "todohighlight.keywords": [
+    {
+      "text": "revert",
+      "color": "#000000",
+      "backgroundColor": "#f5bcb3",
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "function initialize",
+      "color": "#000000",
+      "isWholeLine": true,
+      "backgroundColor": "#f7e9d0",
+      "overviewRulerColor": "#f7e9d0"
+    },
   ]
 }
