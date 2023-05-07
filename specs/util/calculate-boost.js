@@ -42,4 +42,6 @@ const calculateBoost = (expiryDuration) => {
   return result
 }
 
-module.exports = { calculateBoost }
+if (typeof module !== 'undefined') {
+  module.exports = { calculateBoost }
+}
