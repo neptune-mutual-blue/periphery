@@ -9,14 +9,14 @@ const deployPool = async (signer) => {
   const popularDefiAppsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-POP')
 
   const veNpm = await deployUpgradeable('VoteEscrowToken', signer.address, store.address, signer.address, 'Vote Escrow NPM', 'veNPM')
+
   const registry = await deployUpgradeable('GaugeControllerRegistry', signer.address, store.address)
 
   const candidates = [{
     key: key.toBytes32('prime'),
     pool: {
       name: 'Prime dApps',
-      description: 'N/A',
-      data: key.toBytes32(''),
+      info: '',
       platformFee: 1000,
       staking: {
         pod: primeDappsPod.address,
@@ -29,8 +29,7 @@ const deployPool = async (signer) => {
     key: key.toBytes32('popular-defi-apps'),
     pool: {
       name: 'Popular DeFi Apps',
-      description: 'N/A',
-      data: key.toBytes32(''),
+      info: '',
       platformFee: 1500,
       staking: {
         pod: popularDefiAppsPod.address,

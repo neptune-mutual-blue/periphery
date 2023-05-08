@@ -29,6 +29,46 @@ contract GaugeControllerRegistry is GaugeControllerRegistryState, ProtocolMember
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
+    _throwIfProtocolPaused(_s);
+
+    bool adding = _validPools[key] == false;
+
+    if (adding) {
+      if (bytes(args.name).length == 0) {
+        revert EmptyArgumentError("args.name");
+      }
+
+      if (_validPools[key]) {
+        revert PoolAlreadyExistsError(key);
+      }
+
+      if (address(args.staking.pod) == address(0)) {
+        revert ZeroAddressError("args.staking.pod");
+      }
+
+      _validPools[key] = true;
+      _activePools[key] = true;
+
+      _pools[key] = args;
+    } else {
+      if (_validPools[key] == false) {
+        revert PoolNotFoundError(key);
+      }
+
+      if (_activePools[key] == false) {
+        revert PoolDeactivatedError(key);
+      }
+
+      if (bytes(args.name).length > 0) {
+        _pools[key].name = args.name;
+      }
+
+      _pools[key].platformFee = args.platformFee;
+    }
+
+    emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
+  }
 
   function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyOwner {
     if (epoch == 0) {
@@ -73,47 +113,6 @@ contract GaugeControllerRegistry is GaugeControllerRegistryState, ProtocolMember
     _sumNpmDeposits += amountToDeposit;
 
     emit GaugeAllocationTransferred(epoch, amountToDeposit);
-  }
-
-  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
-    _throwIfProtocolPaused(_s);
-
-    bool adding = _validPools[key] == false;
-
-    if (adding) {
-      if (bytes(args.name).length == 0) {
-        revert EmptyArgumentError("args.name");
-      }
-
-      if (_validPools[key]) {
-        revert PoolAlreadyExistsError(key);
-      }
-
-      if (address(args.staking.pod) == address(0)) {
-        revert ZeroAddressError("args.staking.pod");
-      }
-
-      _validPools[key] = true;
-      _activePools[key] = true;
-
-      _pools[key] = args;
-    } else {
-      if (_validPools[key] == false) {
-        revert PoolNotFoundError(key);
-      }
-
-      if (_activePools[key] == false) {
-        revert PoolDeactivatedError(key);
-      }
-
-      if (bytes(args.name).length > 0) {
-        _pools[key].name = args.name;
-      }
-
-      _pools[key].platformFee = args.platformFee;
-    }
-
-    emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
   }
 
   function withdrawRewards(bytes32 key, uint256 amount) external override onlyOperator {

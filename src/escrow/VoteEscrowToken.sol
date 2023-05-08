@@ -32,7 +32,6 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     super.__ReentrancyGuard_init();
 
     super.transferOwnership(contractOwner);
-    emit VoteEscrowTokenConstructed(address(store), feeToAccount, tokenName, tokenSymbol);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -43,7 +42,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
 
     // Pull and burn veNpm
     // slither-disable-start arbitrary-send-erc20
-    SafeERC20Upgradeable.safeTransferFrom(this, _msgSender(), address(this), amount);
+    super._transfer(_msgSender(), address(this), amount);
     // slither-disable-end arbitrary-send-erc20
     super._burn(address(this), amount);
 
@@ -51,7 +50,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_msgSender(), amount - penalty);
 
     if (penalty > 0) {
-      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_feeTo, amount - penalty);
+      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_feeTo, penalty);
     }
   }
 
@@ -135,8 +134,8 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                             Boost
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function calculateBoost(uint256 expiryDuration) external pure override returns (uint256) {
-    return super._calculateBoost(expiryDuration);
+  function calculateBoost(uint256 durationInWeeks) external pure override returns (uint256) {
+    return super._calculateBoost(durationInWeeks);
   }
 
   function getVotingPower(address account) external view override returns (uint256) {

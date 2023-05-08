@@ -3,6 +3,7 @@
   "solidity.packageDefaultDependenciesDirectory": "lib",
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
+  "editor.copyWithSyntaxHighlighting": false,
   "solidity.formatter": "forge",
   "solidity.compileUsingRemoteVersion": "v0.8.17",
   "standard.autoFixOnSave": true,

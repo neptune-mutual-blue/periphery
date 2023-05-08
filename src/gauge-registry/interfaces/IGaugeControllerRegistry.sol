@@ -8,13 +8,12 @@ interface IGaugeControllerRegistry {
   struct PodArgs {
     IVault pod;
     uint256 lockupPeriodInBlocks;
-    uint256 ratio; // Approximate ratio (%) of the POD <--> veNpm for boosted emmission
+    uint256 ratio;
   }
 
   struct PoolSetupArgs {
     string name;
-    string description;
-    bytes data;
+    string info;
     uint256 platformFee;
     PodArgs staking;
   }
@@ -24,8 +23,8 @@ interface IGaugeControllerRegistry {
     uint256 emissionPerBlock;
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
   function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external;
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
   function withdrawRewards(bytes32 key, uint256 amount) external;
   function deactivatePool(bytes32 key) external;
   function activatePool(bytes32 key) external;

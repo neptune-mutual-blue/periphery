@@ -9,8 +9,9 @@ import "../gauge-registry/GaugeControllerRegistry.sol";
 import "./interfaces/ILiquidityGaugePool.sol";
 import "../escrow/interfaces/IVoteEscrowToken.sol";
 import "./LiquidityGaugePoolState.sol";
+import "../util/ProtocolMembership.sol";
 
-abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaugePoolState, ReentrancyGuardUpgradeable, ContextUpgradeable {
+abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ProtocolMembership, LiquidityGaugePoolState, ReentrancyGuardUpgradeable, ContextUpgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   function _denominator() private pure returns (uint256) {
@@ -101,11 +102,11 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
 
     // Avoid underflow
     if (rewards > platformFee) {
-      IERC20Upgradeable(_npm).safeTransfer(_msgSender(), rewards - platformFee);
+      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_msgSender(), rewards - platformFee);
     }
 
     if (platformFee > 0) {
-      IERC20Upgradeable(_npm).safeTransfer(_treasury, platformFee);
+      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_treasury, platformFee);
     }
 
     emit LiquidityGaugeRewardsWithdrawn(key, _msgSender(), _treasury, rewards, platformFee);

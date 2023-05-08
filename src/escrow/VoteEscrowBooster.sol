@@ -12,15 +12,15 @@ abstract contract VoteEscrowBooster {
     return 10_000;
   }
 
-  function _calculateBoost(uint256 expiryDuration) internal pure returns (uint256) {
+  function _calculateBoost(uint256 durationInWeeks) internal pure returns (uint256) {
     uint256 _BOOST_FLOOR = 10_000;
     uint256 _BOOST_CEILING = 40_000;
 
-    if (expiryDuration > 1460 days) {
+    if (durationInWeeks > 1460 days) {
       return _BOOST_CEILING;
     }
 
-    uint256 result = expiryDuration.divu(1 days).div(uint256(1460).fromUInt()).mul(_BOOST_CEILING.divu(_denominator()).log_2()).exp_2().mulu(_denominator());
+    uint256 result = durationInWeeks.divu(1 days).div(uint256(1460).fromUInt()).mul(_BOOST_CEILING.divu(_denominator()).log_2()).exp_2().mulu(_denominator());
 
     if (result < _BOOST_FLOOR) {
       return _BOOST_FLOOR;

@@ -3,12 +3,11 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "../util/ProtocolMembership.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 
-contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, WithPausability, TokenRecovery {
+contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenRecovery {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -16,7 +15,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Wit
     super._disableInitializers();
   }
 
-  function initialize(address contractOwner, address veNpm, address npm, address registry, IStore protocolStore, address treasury) external initializer {
+  function initialize(address contractOwner, address veNpm, address registry, IStore protocolStore, address treasury) external initializer {
     if (veNpm == address(0)) {
       revert ZeroAddressError("veNPM");
     }
@@ -30,7 +29,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Wit
     }
 
     _s = protocolStore;
-    _setAddresses(veNpm, npm, registry, treasury);
+    _setAddresses(veNpm, registry, treasury);
 
     super.__Ownable_init();
     super.__Pausable_init();
@@ -39,15 +38,11 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Wit
     super.transferOwnership(contractOwner);
   }
 
-  function _setAddresses(address veNpm, address npm, address registry, address treasury) internal {
-    emit LiquidityGaugePoolInitialized(_veNpm, veNpm, _npm, npm, _registry, registry, _treasury, treasury);
+  function _setAddresses(address veNpm, address registry, address treasury) internal {
+    emit LiquidityGaugePoolInitialized(_veNpm, veNpm, _registry, registry, _treasury, treasury);
 
     if (veNpm != address(0)) {
       _veNpm = veNpm;
-    }
-
-    if (npm != address(0)) {
-      _npm = npm;
     }
 
     if (registry != address(0)) {
@@ -59,9 +54,9 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, ProtocolMembership, Wit
     }
   }
 
-  function setAddresses(address veNpm, address npm, address registry, address treasury) external override onlyOwner {
+  function setAddresses(address veNpm, address registry, address treasury) external override onlyOwner {
     _throwIfProtocolPaused(_s);
-    _setAddresses(veNpm, npm, registry, treasury);
+    _setAddresses(veNpm, registry, treasury);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
