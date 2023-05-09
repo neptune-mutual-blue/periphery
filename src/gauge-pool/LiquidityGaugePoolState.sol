@@ -12,7 +12,6 @@ abstract contract LiquidityGaugePoolState {
   //                                        Primitive Types
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   address public _veNpm;
-  address public _npm;
   address public _registry;
   address public _treasury;
   address[46] public __address_gap;

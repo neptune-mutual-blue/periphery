@@ -34,6 +34,12 @@ abstract contract WhitelistedTransfer is IWhitelistedTransfer, ContextUpgradeabl
       return;
     }
 
+    // Token burns
+    if (to == address(0)) {
+      // aren't restricted either
+      return;
+    }
+
     // Someone not whitelisted
     // ............................ can still transfer to a whitelisted address
     if (_whitelist[from] == false && _whitelist[to] == false) {

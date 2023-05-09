@@ -11,8 +11,7 @@ const candidates = [{
   key: key.toBytes32('prime'),
   pool: {
     name: 'Prime dApps',
-    description: 'N/A',
-    data: key.toBytes32(''),
+    info: '',
     platformFee: 1000,
     staking: {
       pod: helper.randomAddress(),
@@ -25,8 +24,7 @@ const candidates = [{
   key: key.toBytes32('popular-defi-apps'),
   pool: {
     name: 'Popular DeFi Apps',
-    description: 'N/A',
-    data: key.toBytes32(''),
+    info: '',
     platformFee: 1500,
     staking: {
       pod: helper.randomAddress(),

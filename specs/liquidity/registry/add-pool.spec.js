@@ -23,8 +23,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
 
     const pool = {
       name: 'Prime dApps',
-      description: 'N/A',
-      data: key.toBytes32(''),
+      info: '',
       platformFee: 1000,
       staking: {
         pod: helper.randomAddress(),
@@ -38,8 +37,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     const result = await registry.get(k)
 
     result.name.should.equal(pool.name)
-    result.description.should.equal(pool.description)
-    result.data.should.equal(pool.data)
+    result.info.should.equal(pool.info)
     result.platformFee.should.equal(pool.platformFee)
     result.staking.pod.should.equal(pool.staking.pod)
     result.staking.lockupPeriodInBlocks.should.equal(pool.staking.lockupPeriodInBlocks)

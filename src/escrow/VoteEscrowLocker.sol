@@ -1,5 +1,5 @@
 // Neptune Mutual Protocol (https://neptunemutual.com)
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.12;
 
 import "./interfaces/IVoteEscrowLocker.sol";
@@ -8,6 +8,11 @@ import "./VoteEscrowTokenState.sol";
 
 abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowTokenState {
   function _lock(address account, uint256 amount, uint256 durationInWeeks) internal {
+    if (_balances[account] == 0 && amount == 0) {
+      // You need existing balance before you can extend the vote lock period
+      revert ZeroAmountError("amount");
+    }
+
     uint256 _MIN_LOCK_HEIGHT = 10;
     uint256 newUnlockTimestamp = block.timestamp + (durationInWeeks * 7 days);
 
@@ -32,6 +37,7 @@ abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowT
 
   function _unlock(address account, uint256 penalty) internal returns (uint256 amount) {
     amount = _balances[account];
+
     uint256 unlockAt = _unlockAt[account];
 
     if (amount == 0) {
