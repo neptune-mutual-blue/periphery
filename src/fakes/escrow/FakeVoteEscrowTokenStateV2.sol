@@ -1,13 +1,10 @@
 // Neptune Mutual Protocol (https://neptunemutual.com)
 // SPDX-License-Identifier: Apache-2.0
-// slither-disable-start constable-states
-// slither-disable-start unused-state
-// slither-disable-start uninitialized-state
 pragma solidity ^0.8.12;
 
-import "../dependencies/interfaces/IStore.sol";
+import "../../dependencies/interfaces/IStore.sol";
 
-abstract contract VoteEscrowTokenState {
+abstract contract FakeVoteEscrowTokenStateV2 {
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                           Version 1
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -21,8 +18,13 @@ abstract contract VoteEscrowTokenState {
   mapping(address => uint256) public _minUnlockHeights;
 
   IStore public _s;
-}
 
-// slither-disable-end uninitialized-state
-// slither-disable-end unused-state
-// slither-disable-end constable-states
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                           Version 2
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  string public _name;
+  address public _treasury;
+  uint256 public _lastInitializedOn;
+  mapping(address => bool) public _members;
+  mapping(address => uint256) public _boosts;
+}

@@ -5,16 +5,16 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "../dependencies/interfaces/IStore.sol";
-import "../util/TokenRecovery.sol";
-import "../util/ProtocolMembership.sol";
-import "../util/WithPausability.sol";
-import "../util/WhitelistedTransfer.sol";
-import "./VoteEscrowBooster.sol";
-import "./VoteEscrowLocker.sol";
-import "./interfaces/IVoteEscrowToken.sol";
+import "../../dependencies/interfaces/IStore.sol";
+import "../../util/TokenRecovery.sol";
+import "../../util/ProtocolMembership.sol";
+import "../../util/WithPausability.sol";
+import "../../util/WhitelistedTransfer.sol";
+import "./FakeVoteEscrowBoosterV2.sol";
+import "./FakeVoteEscrowLockerV2.sol";
+import "../../escrow/interfaces/IVoteEscrowToken.sol";
 
-contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, ReentrancyGuardUpgradeable, ERC20Upgradeable, VoteEscrowLocker {
+contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPausability, WhitelistedTransfer, TokenRecovery, FakeVoteEscrowBoosterV2, ReentrancyGuardUpgradeable, ERC20Upgradeable, FakeVoteEscrowLockerV2 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -34,6 +34,21 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     super.transferOwnership(contractOwner);
   }
 
+  function upgradeToV2(address treasury) external onlyOwner {
+    if (_lastInitializedOn > 0) {
+      revert AlreadyInitializedError();
+    }
+
+    _treasury = treasury;
+    _lastInitializedOn = block.timestamp;
+    _members[_msgSender()] = true;
+    _boosts[_msgSender()] = 10;
+    _name = "Fake";
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                         Lock & Unlock
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function _unlockWithPenalty(uint256 penalty) internal {
     uint256 amount = super._unlock(_msgSender(), penalty);
 
@@ -87,9 +102,6 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     }
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // ----------------------------------------ACL/RBAC---------------------------------------------
-  // ---------------------------------------------------------------------------------------------
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                      Transfer Restriction
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -131,9 +143,6 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     super._unpause();
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // ------------------------------------------Views----------------------------------------------
-  // ---------------------------------------------------------------------------------------------
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                             Boost
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
