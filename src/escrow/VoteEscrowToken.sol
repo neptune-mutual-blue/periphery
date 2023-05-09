@@ -115,7 +115,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setPausers(address[] calldata accounts, bool[] calldata statuses) external onlyOwner whenNotPaused {
+  function setPausers(address[] calldata accounts, bool[] calldata statuses) external onlyOwner {
     super._setPausers(_pausers, accounts, statuses);
   }
 
@@ -134,8 +134,8 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                             Boost
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function calculateBoost(uint256 durationInWeeks) external pure override returns (uint256) {
-    return super._calculateBoost(durationInWeeks);
+  function calculateBoost(uint256 duration) external pure override returns (uint256) {
+    return super._calculateBoost(duration);
   }
 
   function getVotingPower(address account) external view override returns (uint256) {

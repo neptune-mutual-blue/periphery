@@ -1,5 +1,4 @@
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
-const BigNumber = require('bignumber.js')
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
 const DAYS = 86400
@@ -45,7 +44,7 @@ describe('Vote Escrow Token: lock', () => {
     heights.push(await ethers.provider.getBlockNumber())
     timestamps.push(await time.latest())
 
-    ;(await contracts.veNpm._totalLocked()).should.equal(BigNumber(amounts[0]).plus(amounts[1]))
+    ;(await contracts.veNpm._totalLocked()).should.equal(amounts[0] + amounts[1])
 
     ;(await contracts.veNpm._balances(owner.address)).should.equal(amounts[0])
     ;(await contracts.veNpm._unlockAt(owner.address)).should.equal(timestamps[0] + (durations[0] * WEEKS))
