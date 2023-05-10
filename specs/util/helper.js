@@ -1,20 +1,15 @@
 const ethers = require('ethers')
 const crypto = require('crypto')
-const BigNumber = require('bignumber.js')
-
-BigNumber.config({ EXPONENTIAL_AT: 99 })
 
 const MULTIPLIER = 10_000
 const STABLECOIN_DECIMALS = 6
 
 const randomPrivateKey = () => `0x${crypto.randomBytes(32).toString('hex')}`
 const randomAddress = () => new ethers.Wallet(randomPrivateKey()).address
-const bn = (x) => BigNumber(x.toString()).toString()
-const ether = (x, decimals = 18) => BigNumber((parseFloat(x.toString()) * 10 ** decimals).toString()).toString()
-const percentage = (x) => BigNumber((x * MULTIPLIER).toString()).dividedBy(100).toString()
-const weiToEther = (x, decimals = 18) => parseInt(x.toString()) / (10 ** decimals)
+const ether = (x, decimals = 18) => BigInt(parseFloat(x)) * BigInt(Math.pow(10, decimals))
+const percentage = (x) => BigInt((parseInt(x) * MULTIPLIER)) / BigInt(100)
+const weiToEther = (x, decimals = 18) => parseInt(x.toString()) /  Math.pow(10, decimals)
 const toPercentageString = (x) => (100 * parseInt(x.toString()) / MULTIPLIER).toFixed(2)
-const add = (x, y) => BigNumber(x.toString()).plus(y.toString()).toString()
 const zerox = '0x0000000000000000000000000000000000000000'
 const zero1 = '0x0000000000000000000000000000000000000001'
 const emptyBytes32 = '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -38,17 +33,10 @@ const formatPercent = (x) => {
   }).format(x)
 }
 
-const formatPercentBn = (x) => {
-  return formatPercent(x.toNumber() / MULTIPLIER) + ' (BN)'
+const formatPercentSolidity = (x) => {
+  return formatPercent(x.toNumber() / MULTIPLIER) + ' (Solidity)'
 }
 
-const productStatus = {
-  normal: 0,
-  stopped: 1, // Stopped
-  incidentHappened: 2, // Reporting, incident happened
-  falseReporting: 3, // Reporting, false reporting
-  claimable: 4 // Claimable, claims accepted for payout
-}
 
 module.exports = {
   randomAddress,
@@ -57,18 +45,15 @@ module.exports = {
   percentage,
   weiToEther,
   toPercentageString,
-  bn,
-  add,
   zerox,
   zero1,
   emptyBytes32,
-  productStatus,
   sum,
   getRandomNumber,
   weiAsToken,
   formatCurrency,
   formatPercent,
-  formatPercentBn,
+  formatPercentSolidity,
   stringToHex,
   MULTIPLIER,
   STABLECOIN_DECIMALS

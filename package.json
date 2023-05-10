@@ -51,7 +51,5 @@
     "node": "16.13.1",
     "yarn": "1.22.19"
   },
-  "dependencies": {
-    "bignumber.js": "9.0.2"
-  }
+  "dependencies": {}
 }

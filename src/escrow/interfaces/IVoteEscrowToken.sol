@@ -11,7 +11,7 @@ interface IVoteEscrowToken is IThrowable, IERC20Upgradeable, IVoteEscrowLocker {
   function unlock() external;
   function unlockPrematurely() external;
 
-  function calculateBoost(uint256 durationInWeeks) external pure returns (uint256);
+  function calculateBoost(uint256 duration) external pure returns (uint256);
   function getVotingPower(address account) external view returns (uint256);
 
   error VoteEscrowUnlockError(uint256 unlocksAt);

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.12;
 
-import "../dependencies/ABDKMath64x64.sol";
+import "../../dependencies/ABDKMath64x64.sol";
 
-abstract contract VoteEscrowBooster {
+abstract contract FakeVoteEscrowBoosterV2 {
   using ABDKMath64x64 for uint256;
   using ABDKMath64x64 for int128;
 

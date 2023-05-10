@@ -1,10 +1,9 @@
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
-const BigNumber = require('bignumber.js')
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
 const key = require('../../util/key')
 const MIN_LOCK_HEIGHT = 10
-const PENALTY_RATE = 25
+const PENALTY_RATE = 25n
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -41,7 +40,7 @@ describe('Vote Escrow Token: unlock', () => {
 
   it('must correctly perform premature unlocks', async () => {
     const signers = await ethers.getSigners()
-    let fees = BigNumber(0)
+    let fees = 0n
 
     for (let i = 0; i < 2; i++) {
       const account = signers[i + 1]
@@ -53,8 +52,8 @@ describe('Vote Escrow Token: unlock', () => {
       await contracts.veNpm.connect(account).unlockPrematurely()
 
       const balance = await contracts.npm.balanceOf(account.address)
-      balance.should.equal(BigNumber(amounts[i]).multipliedBy(100 - PENALTY_RATE).dividedBy(100))
-      fees = fees.plus(BigNumber(amounts[i]).multipliedBy(PENALTY_RATE).dividedBy(100))
+      balance.should.equal((amounts[i] * (100n - PENALTY_RATE)) / 100n)
+      fees +=  (amounts[i] * PENALTY_RATE) / 100n
     }
 
     const [owner] = signers

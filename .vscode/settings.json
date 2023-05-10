@@ -11,6 +11,7 @@
   "tsImportSorter.configuration.development.enableDebug": false,
   "tsImportSorter.configuration.hasSemicolon": false,
   "tsImportSorter.configuration.trailingComma": "none",
+  "terminal.integrated.scrollback": 50000,
   "[javascript]": {
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "standard.vscode-standard"
