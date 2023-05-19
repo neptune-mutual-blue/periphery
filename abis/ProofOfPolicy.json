@@ -43,8 +43,24 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "expiredOn",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExpiredProofError",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "ExternalContractInvocationRevertError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidProofError",
     "type": "error"
   },
   {
