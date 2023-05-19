@@ -6,13 +6,13 @@
 pragma solidity ^0.8.12;
 
 import "./interfaces/IGaugeControllerRegistry.sol";
-import "../dependencies/interfaces/IStore.sol";
 
 abstract contract GaugeControllerRegistryState is IGaugeControllerRegistry {
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                           Version 1
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   address public _operator;
+  address public _rewardToken;
 
   uint256 public _epoch;
   uint256 public _sumNpmDeposits;
@@ -24,7 +24,6 @@ abstract contract GaugeControllerRegistryState is IGaugeControllerRegistry {
   mapping(bytes32 => uint256) public _emissionsPerBlock;
   mapping(uint256 => uint256) public _guageAllocations;
 
-  IStore public _s;
   mapping(bytes32 => PoolSetupArgs) public _pools;
 }
 // slither-disable-end uninitialized-state

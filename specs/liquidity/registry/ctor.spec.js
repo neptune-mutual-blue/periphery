@@ -5,22 +5,22 @@ require('chai')
   .should()
 
 describe('Gauge Controller Registry: Constructor', () => {
-  let store, registry
+  let npm, registry
 
   before(async () => {
     const [owner] = await ethers.getSigners()
 
-    store = await factory.deployUpgradeable('Store', [owner.address], owner.address)
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, store.address)
+    npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, npm.address)
   })
 
   it('must correctly set the state upon construction', async () => {
     const [owner] = await ethers.getSigners()
 
-    const contractStore = await registry._s()
+    const contractRewardToken = await registry._rewardToken()
     const contractOwner = await registry.owner()
 
-    contractStore.should.equal(store.address)
+    contractRewardToken.should.equal(npm.address)
     contractOwner.should.equal(owner.address)
   })
 })

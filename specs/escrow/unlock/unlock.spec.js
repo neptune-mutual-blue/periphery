@@ -16,7 +16,7 @@ describe('Vote Escrow Token: unlock', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.store.address, owner.address, name, symbol)
+    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     await contracts.store.setBool(key.qualifyMember(veNpm.address), true)
 

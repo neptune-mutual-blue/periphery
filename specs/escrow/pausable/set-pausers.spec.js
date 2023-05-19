@@ -13,7 +13,7 @@ describe('Vote Escrow Token: setPausers', () => {
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.store.address, owner.address, name, symbol)
+    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     contracts.veNpm = veNpm
   })
@@ -26,7 +26,7 @@ describe('Vote Escrow Token: setPausers', () => {
 
     await contracts.veNpm.setPausers(pausers, statuses)
 
-    for(const account of signers) {
+    for (const account of signers) {
       const isPauser = pausers.indexOf(account.address) > -1
       ; (await contracts.veNpm._pausers(account.address)).should.equal(isPauser)
     }

@@ -2,11 +2,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.12;
 
-import "../../dependencies/interfaces/IVault.sol";
-
 interface IGaugeControllerRegistry {
-  struct PodArgs {
-    IVault pod;
+  struct StakingArgs {
+    address token;
     uint256 lockupPeriodInBlocks;
     uint256 ratio;
   }
@@ -15,7 +13,7 @@ interface IGaugeControllerRegistry {
     string name;
     string info;
     uint256 platformFee;
-    PodArgs staking;
+    StakingArgs staking;
   }
 
   struct Gauge {
@@ -56,4 +54,5 @@ interface IGaugeControllerRegistry {
   error PoolNotDeactivatedError(bytes32 key);
   error PoolAlreadyActiveError(bytes32 key);
   error PoolAlreadyExistsError(bytes32 key);
+  error PlatformFeeTooHighError(bytes32 key, uint256 platformFee);
 }

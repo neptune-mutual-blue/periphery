@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 import "../../util/interfaces/IThrowable.sol";
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.12;
 
 interface IWithPausability is IThrowable {
   event PausersSet(address indexed addedBy, address[] accounts, bool[] statuses);

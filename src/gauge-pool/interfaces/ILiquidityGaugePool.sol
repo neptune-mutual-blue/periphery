@@ -3,10 +3,9 @@
 pragma solidity ^0.8.12;
 
 import "../../gauge-registry/interfaces/IGaugeControllerRegistry.sol";
-import "../../dependencies/interfaces/IMember.sol";
 
-interface ILiquidityGaugePool is IMember {
-  function setAddresses(address veNpm, address registry, address treasury) external;
+interface ILiquidityGaugePool {
+  function setAddresses(address veToken, address rewardToken, address registry, address treasury) external;
   function deposit(bytes32 key, uint256 amount) external;
   function withdraw(bytes32 key, uint256 amount) external;
   function withdrawRewards(bytes32 key) external returns (IGaugeControllerRegistry.PoolSetupArgs memory);
@@ -18,7 +17,7 @@ interface ILiquidityGaugePool is IMember {
   event LiquidityGaugeRewardsWithdrawn(bytes32 indexed key, address indexed account, address treasury, uint256 rewards, uint256 platformFee);
   event LiquidityGaugeDeposited(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);
   event LiquidityGaugeWithdrawn(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);
-  event LiquidityGaugePoolInitialized(address previousVeNpm, address veNpm, address previousRegistry, address registry, address previousTreasury, address treasury);
+  event LiquidityGaugePoolInitialized(address previousVeToken, address veToken, address previousRegistry, address registry, address previousTreasury, address treasury);
 
   error PoolNotFoundError(bytes32 key);
   error PoolNotActiveError(bytes32 key);

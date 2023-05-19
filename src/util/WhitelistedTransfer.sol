@@ -1,11 +1,11 @@
 // solhint-disable
 // Neptune Mutual Protocol (https://neptunemutual.com)
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.12;
 
-import "../dependencies/interfaces/IStore.sol";
 import "./interfaces/IWhitelistedTransfer.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 
 abstract contract WhitelistedTransfer is IWhitelistedTransfer, ContextUpgradeable {
   function _updateTransferWhitelist(mapping(address => bool) storage _whitelist, address[] calldata accounts, bool[] memory statuses) internal {
@@ -27,7 +27,7 @@ abstract contract WhitelistedTransfer is IWhitelistedTransfer, ContextUpgradeabl
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Validations
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function _throwIfNonWhitelistedTransfer(IStore s, mapping(address => bool) storage _whitelist, address from, address to, uint256) internal view {
+  function _throwIfNonWhitelistedTransfer(mapping(address => bool) storage _whitelist, address from, address to, uint256) internal view {
     // Token mints
     if (from == address(0)) {
       // aren't restricted
@@ -43,18 +43,8 @@ abstract contract WhitelistedTransfer is IWhitelistedTransfer, ContextUpgradeabl
     // Someone not whitelisted
     // ............................ can still transfer to a whitelisted address
     if (_whitelist[from] == false && _whitelist[to] == false) {
-      // and to the Neptune Mutual Protocol contracts but nowhere else
-      __throwIfNotProtocolMember(s, to);
-    }
-  }
-
-  function __throwIfNotProtocolMember(IStore s, address account) private view {
-    bytes32 _NS_MEMBERS = "ns:members";
-    bytes32 key = keccak256(abi.encodePacked(_NS_MEMBERS, account));
-    bool isMember = s.getBool(key);
-
-    if (isMember == false) {
-      revert AccessDeniedError("ProtocolMember");
+      // but nowhere else
+      revert TransferRestrictedError();
     }
   }
 }

@@ -8,9 +8,8 @@ const deployPool = async (signer) => {
   const primeDappsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-PRI')
   const popularDefiAppsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-POP')
 
-  const veNpm = await deployUpgradeable('VoteEscrowToken', signer.address, store.address, signer.address, 'Vote Escrow NPM', 'veNPM')
-
-  const registry = await deployUpgradeable('GaugeControllerRegistry', signer.address, store.address)
+  const veNpm = await deployUpgradeable('VoteEscrowToken', signer.address, npm.address, signer.address, 'Vote Escrow NPM', 'veNPM')
+  const registry = await deployUpgradeable('GaugeControllerRegistry', signer.address, npm.address)
 
   const candidates = [{
     key: key.toBytes32('prime'),
@@ -19,7 +18,7 @@ const deployPool = async (signer) => {
       info: '',
       platformFee: 1000,
       staking: {
-        pod: primeDappsPod.address,
+        token: primeDappsPod.address,
         lockupPeriodInBlocks: 10_000,
         ratio: 2000
       }
@@ -32,7 +31,7 @@ const deployPool = async (signer) => {
       info: '',
       platformFee: 1500,
       staking: {
-        pod: popularDefiAppsPod.address,
+        token: popularDefiAppsPod.address,
         lockupPeriodInBlocks: 10_000,
         ratio: 2000
       }

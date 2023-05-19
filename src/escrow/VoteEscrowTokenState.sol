@@ -5,12 +5,11 @@
 // slither-disable-start uninitialized-state
 pragma solidity ^0.8.12;
 
-import "../dependencies/interfaces/IStore.sol";
-
 abstract contract VoteEscrowTokenState {
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                           Version 1
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  address public _underlyingToken;
   address public _feeTo;
   uint256 public _totalLocked;
   mapping(address => bool) public _whitelist;
@@ -19,8 +18,6 @@ abstract contract VoteEscrowTokenState {
   mapping(address => uint256) public _balances;
   mapping(address => uint256) public _unlockAt;
   mapping(address => uint256) public _minUnlockHeights;
-
-  IStore public _s;
 }
 
 // slither-disable-end uninitialized-state

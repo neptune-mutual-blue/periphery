@@ -5,7 +5,7 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "../../dependencies/interfaces/IStore.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../../util/TokenRecovery.sol";
 import "../../util/ProtocolMembership.sol";
 import "../../util/WithPausability.sol";
@@ -14,7 +14,7 @@ import "./FakeVoteEscrowBoosterV2.sol";
 import "./FakeVoteEscrowLockerV2.sol";
 import "../../escrow/interfaces/IVoteEscrowToken.sol";
 
-contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPausability, WhitelistedTransfer, TokenRecovery, FakeVoteEscrowBoosterV2, ReentrancyGuardUpgradeable, ERC20Upgradeable, FakeVoteEscrowLockerV2 {
+contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, WithPausability, WhitelistedTransfer, TokenRecovery, FakeVoteEscrowBoosterV2, FakeVoteEscrowLockerV2 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -22,9 +22,10 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPaus
     super._disableInitializers();
   }
 
-  function initialize(address contractOwner, IStore store, address feeToAccount, string memory tokenName, string memory tokenSymbol) external initializer {
-    _s = store;
+  function initialize(address contractOwner, address underlyingToken, address feeToAccount, string memory tokenName, string memory tokenSymbol) external initializer {
+    _underlyingToken = underlyingToken;
     _feeTo = feeToAccount;
+    _whitelist[address(this)] = true;
 
     super.__ERC20_init(tokenName, tokenSymbol);
     super.__Ownable_init();
@@ -52,17 +53,17 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPaus
   function _unlockWithPenalty(uint256 penalty) internal {
     uint256 amount = super._unlock(_msgSender(), penalty);
 
-    // Pull and burn veNpm
+    // Pull and burn veToken
     // slither-disable-start arbitrary-send-erc20
     super._transfer(_msgSender(), address(this), amount);
     // slither-disable-end arbitrary-send-erc20
     super._burn(address(this), amount);
 
     // Transfer NPM
-    IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_msgSender(), amount - penalty);
+    IERC20Upgradeable(_underlyingToken).safeTransfer(_msgSender(), amount - penalty);
 
     if (penalty > 0) {
-      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_feeTo, penalty);
+      IERC20Upgradeable(_underlyingToken).safeTransfer(_feeTo, penalty);
     }
   }
 
@@ -96,7 +97,7 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPaus
     // Zero value locks signify lock extension
     if (amount > 0) {
       // slither-disable-start arbitrary-send-erc20
-      IERC20Upgradeable(super._getNpm(_s)).safeTransferFrom(_msgSender(), address(this), amount);
+      IERC20Upgradeable(_underlyingToken).safeTransferFrom(_msgSender(), address(this), amount);
       // slither-disable-end arbitrary-send-erc20
       super._mint(_msgSender(), amount);
     }
@@ -110,7 +111,7 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ProtocolMembership, WithPaus
   }
 
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override whenNotPaused {
-    super._throwIfNonWhitelistedTransfer(_s, _whitelist, from, to, amount);
+    super._throwIfNonWhitelistedTransfer(_whitelist, from, to, amount);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

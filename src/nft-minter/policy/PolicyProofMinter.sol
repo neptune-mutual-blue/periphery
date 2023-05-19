@@ -1,0 +1,111 @@
+// Neptune Mutual Protocol (https://neptunemutual.com)
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.12;
+
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "../../util/interfaces/IAccessControlUtil.sol";
+import "../../util/TokenRecovery.sol";
+import "./interfaces/IPolicyProofMinter.sol";
+import "./ProofOfPolicy.sol";
+import "./PolicyProofMinterState.sol";
+
+contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, ProofOfPolicy, PolicyProofMinterState {
+  constructor() {
+    super._disableInitializers();
+  }
+
+  function initialize(IStore store, INeptuneLegends nft, uint256 min, uint256 max) external initializer {
+    super.__AccessControl_init();
+    super.__Pausable_init();
+
+    _s = store;
+    _nft = nft;
+    _min = min;
+    _max = max;
+  }
+
+  function mint(ICxToken proofOfPolicy, uint256 tokenId) external whenNotPaused {
+    _throwIfInvalidProof(_s, proofOfPolicy, _msgSender());
+
+    if (tokenId < _min || tokenId > _max) {
+      revert TokenIdOutOfBoundsError(_min, _max);
+    }
+
+    if (_nft._minted(tokenId)) {
+      revert TokenAlreadyMintedError(tokenId);
+    }
+
+    if (_nft._soulbound(tokenId)) {
+      revert TokenAlreadySoulbound(tokenId);
+    }
+
+    if (_souls[tokenId] != address(0)) {
+      revert TokenAlreadySoulbound(tokenId);
+    }
+
+    _souls[tokenId] = _msgSender();
+
+    _nft.mint(_getMintInfo(tokenId, _msgSender()));
+
+    emit SoulboundMinted(_msgSender(), tokenId);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                         Access Control
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function grantRoles(AccountWithRoles[] calldata detail) external override whenNotPaused {
+    if (detail.length == 0) {
+      revert EmptyArgumentError("detail");
+    }
+
+    for (uint256 i = 0; i < detail.length; i++) {
+      for (uint256 j = 0; j < detail[i].roles.length; j++) {
+        super.grantRole(detail[i].roles[j], detail[i].account);
+      }
+    }
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                          Recoverable
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+    super._recoverEther(sendTo);
+  }
+
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+    super._recoverToken(malicious, sendTo);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                            Pausable
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function pause() external onlyRole(NS_ROLES_PAUSER) {
+    super._pause();
+  }
+
+  function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    super._unpause();
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                             Views
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function validateProof(ICxToken proofOfPolicy) external view returns (bool) {
+    return _validateProof(_s, proofOfPolicy, _msgSender());
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                       Private Functions
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function _getMintInfo(uint256 tokenId, address account) private pure returns (INeptuneLegends.MintInfo memory) {
+    INeptuneLegends.MintInfo memory info;
+
+    info.sendTo = account;
+    info.id = tokenId;
+    info.soulbound = true;
+
+    return info;
+  }
+}
