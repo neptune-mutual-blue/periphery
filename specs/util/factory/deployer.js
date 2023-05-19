@@ -9,8 +9,6 @@ const deploy = async (contractName, ...args) => {
 
   if (explorer) {
     console.log('%s Deployed: %s/address/%s', contractName, network.config.explorer, instance.address)
-  } else {
-    console.log('%s Deployed: %s', contractName, instance.address)
   }
 
   return instance
@@ -25,8 +23,6 @@ const deployUpgradeable = async (contractName, ...args) => {
 
   if (explorer) {
     console.log('%s Deployed: %s/address/%s', contractName, network.config.explorer, instance.address)
-  } else {
-    console.log('%s Deployed: %s', contractName, instance.address)
   }
 
   return instance
