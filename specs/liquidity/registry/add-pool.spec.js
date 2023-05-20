@@ -14,7 +14,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     const [owner] = await ethers.getSigners()
 
     contracts = await factory.deployProtocol(owner)
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, contracts.npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
   })
 
   it('must correctly add a new pool', async () => {

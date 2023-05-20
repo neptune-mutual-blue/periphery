@@ -42,7 +42,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
 
     contracts = await factory.deployProtocol(owner)
 
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, contracts.npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
 
     for (const candidate of candidates) {
       await registry.addOrEditPool(candidate.key, candidate.pool)

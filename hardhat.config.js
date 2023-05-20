@@ -1,9 +1,9 @@
-require('@openzeppelin/hardhat-upgrades')
 require('hardhat-contract-sizer')
 require('hardhat-gas-reporter')
 require('solidity-coverage')
 require('@nomicfoundation/hardhat-verify')
 require('@nomicfoundation/hardhat-chai-matchers')
+require('@openzeppelin/hardhat-upgrades')
 
 require('dotenv').config()
 
@@ -22,7 +22,7 @@ const config = {
       url: 'https://goerli.base.org',
       chainId: 84531,
       accounts: [process.env.PRIVATE_KEY],
-      gasPrice: 1 * GWEI,
+      gasPrice: 0.1 * GWEI,
       explorer: 'https://goerli.basescan.org'
     },
     ethereum: {

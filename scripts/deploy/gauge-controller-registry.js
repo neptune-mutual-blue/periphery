@@ -22,7 +22,7 @@ const deploy = async () => {
   const { chainId } = network.config
   const { npm } = await getDependencies(chainId)
 
-  await factory.deployUpgradeable('GaugeControllerRegistry', deployer.address, npm)
+  await factory.deployUpgradeable('GaugeControllerRegistry', deployer.address, deployer.address, [deployer.address], npm)
 }
 
 deploy().catch(console.error)

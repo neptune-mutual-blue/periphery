@@ -3,15 +3,15 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../util/ProtocolMembership.sol";
 import "../util/TokenRecovery.sol";
-import "../util/WithPausability.sol";
 import "../dependencies/interfaces/IVault.sol";
 import "../dependencies/interfaces/IStore.sol";
 import "./GaugeControllerRegistryState.sol";
 
-contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryState, WithPausability, TokenRecovery {
+contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeable, TokenRecovery, GaugeControllerRegistryState {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -23,15 +23,27 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     return 10_000;
   }
 
-  function initialize(address contractOwner, address rewardToken) external initializer {
-    super.__Ownable_init();
+  function initialize(address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
+    super.__AccessControl_init();
     super.__Pausable_init();
 
     _rewardToken = rewardToken;
-    super.transferOwnership(contractOwner);
+
+    _setRoleAdmin(NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+
+    _setupRole(DEFAULT_ADMIN_ROLE, admin);
+    _setupRole(NS_GAUGE_AGENT, gaugeAgent);
+
+    for (uint256 i = 0; i < pausers.length; i++) {
+      _setupRole(NS_ROLES_PAUSER, pausers[i]);
+    }
+
+    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
   }
 
-  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyOwner {
+  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     bool adding = _validPools[key] == false;
 
     if (adding) {
@@ -74,7 +86,7 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyOwner {
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyRole(NS_GAUGE_AGENT) {
     if (epoch == 0) {
       revert InvalidGaugeEpochError();
     }
@@ -129,7 +141,7 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     emit GaugeControllerRegistryRewardsWithdrawn(key, amount);
   }
 
-  function deactivatePool(bytes32 key) external override onlyOwner {
+  function deactivatePool(bytes32 key) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_validPools[key] == false) {
       revert PoolNotFoundError(key);
     }
@@ -143,7 +155,7 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     emit GaugeControllerRegistryPoolDeactivated(_msgSender(), key);
   }
 
-  function activatePool(bytes32 key) external override onlyOwner {
+  function activatePool(bytes32 key) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_validPools[key] == false) {
       revert PoolNotFoundError(key);
     }
@@ -157,7 +169,7 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     emit GaugeControllerRegistryPoolActivated(_msgSender(), key);
   }
 
-  function deletePool(bytes32 key) external override onlyOwner {
+  function deletePool(bytes32 key) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     if (_validPools[key] == false) {
       revert PoolNotFoundError(key);
     }
@@ -172,7 +184,7 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
     emit GaugeControllerRegistryPoolDeleted(_msgSender(), key);
   }
 
-  function setOperator(address operator) external onlyOwner {
+  function setOperator(address operator) external onlyRole(DEFAULT_ADMIN_ROLE) {
     emit GaugeControllerRegistryOperatorSet(_operator, operator);
 
     _operator == operator;
@@ -227,18 +239,22 @@ contract GaugeControllerRegistry is OwnableUpgradeable, GaugeControllerRegistryS
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function recoverEther(address sendTo) external onlyOwner {
+  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
     super._recoverEther(sendTo);
   }
 
-  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyOwner {
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
     super._recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setPausers(address[] calldata accounts, bool[] calldata statuses) external onlyOwner {
-    super._setPausers(_pausers, accounts, statuses);
+  function pause() external onlyRole(NS_ROLES_PAUSER) {
+    super._pause();
+  }
+
+  function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    super._unpause();
   }
 }

@@ -19,6 +19,36 @@
       "address": "0x055dc09823912BEAd78A5E52c8b56A30CE710a2c",
       "txHash": "0xcaa0c3ddf6bdce34baf9e7e0f4aa2cc0b6e1c768abb640258380f445f487d493",
       "kind": "transparent"
+    },
+    {
+      "address": "0xfb37e57C8D427131EC12Fff133a56B9D72f797C4",
+      "txHash": "0x3ba3fbd04a6a00e0532617dc1d01a8294ed8d7abbdcada1fab084e9ed432ef1e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2D1315F447FAe7Ea7D64290E503caED1B1e78F47",
+      "txHash": "0xf2a9c8a5e2e3d5fb7572023a893003cb7aea3f4866b8fa30d5bd86e154d4d0b4",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCFC62F0a3D8afDCb4a82007640042c2A50426823",
+      "txHash": "0x59096c22a5c09416443fc86432adffac3181df57102e7e21cdf05665b0998566",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x68a3bD2A41B8EeDe550fE4166174F90C64Cd4DAA",
+      "txHash": "0xa7a86cf327cd053fff40912db5f435d48067ef2e5929a3a9454ff0f56e334351",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x435D20D21ea8ae4Ea92b2FB532317E9E1E9176bC",
+      "txHash": "0xa15922b602bdddf72923baaf08eeed2200a40a00457da0bf8d1e2322752dcbef",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x10382396a33d6fA69a8aED2eF3B0491Ea12a0dD4",
+      "txHash": "0xdccbfe9525d443b063d6e642e1a22530a6951af20862d4f65a7aae50df4c42e1",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -716,6 +746,290 @@
           "t_mapping(t_bytes32,t_uint256)": {
             "label": "mapping(bytes32 => uint256)",
             "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "c37aff9beecce02c39fb86b820f01b7bcc8a586fec5bed6b8239ce023e44a356": {
+      "address": "0xfA0979871935f579B2fdA9692736293c5f32D406",
+      "txHash": "0x9275e36a4df4688e42216f539570a2213a981d6ef8e380839777d920b440ff12",
+      "layout": {
+        "solcVersion": "0.8.18",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_operator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_address",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:18"
+          },
+          {
+            "label": "_rewardToken",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_address",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:19"
+          },
+          {
+            "label": "_epoch",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_uint256",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:21"
+          },
+          {
+            "label": "_sumNpmDeposits",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_uint256",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:22"
+          },
+          {
+            "label": "_sumNpmWithdrawals",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_uint256",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:23"
+          },
+          {
+            "label": "_validPools",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:25"
+          },
+          {
+            "label": "_activePools",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:26"
+          },
+          {
+            "label": "_emissionsPerBlock",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:27"
+          },
+          {
+            "label": "_guageAllocations",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:28"
+          },
+          {
+            "label": "_pools",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_bytes32,t_struct(PoolSetupArgs)14493_storage)",
+            "contract": "GaugeControllerRegistryState",
+            "src": "src/gauge-registry/GaugeControllerRegistryState.sol:30"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(PoolSetupArgs)14493_storage)": {
+            "label": "mapping(bytes32 => struct IGaugeControllerRegistry.PoolSetupArgs)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(PoolSetupArgs)14493_storage": {
+            "label": "struct IGaugeControllerRegistry.PoolSetupArgs",
+            "members": [
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "info",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "platformFee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "staking",
+                "type": "t_struct(StakingArgs)14483_storage",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(StakingArgs)14483_storage": {
+            "label": "struct IGaugeControllerRegistry.StakingArgs",
+            "members": [
+              {
+                "label": "token",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "lockupPeriodInBlocks",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "ratio",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
           },
           "t_uint256": {
             "label": "uint256",

@@ -30,8 +30,9 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
     _setRoleAdmin(NS_ROLES_ROYALTY_ADMIN, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(NS_ROLES_MINTER, minter);
     _setupRole(DEFAULT_ADMIN_ROLE, admin);
+    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _setupRole(NS_ROLES_MINTER, minter);
   }
 
   function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) internal override whenNotPaused {
