@@ -9,9 +9,8 @@ import "../gauge-registry/GaugeControllerRegistry.sol";
 import "./interfaces/ILiquidityGaugePool.sol";
 import "../escrow/interfaces/IVoteEscrowToken.sol";
 import "./LiquidityGaugePoolState.sol";
-import "../util/ProtocolMembership.sol";
 
-abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ProtocolMembership, LiquidityGaugePoolState, ReentrancyGuardUpgradeable, ContextUpgradeable {
+abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaugePoolState, ReentrancyGuardUpgradeable, ContextUpgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   function _denominator() private pure returns (uint256) {
@@ -58,7 +57,7 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ProtocolMembe
       return 0;
     }
 
-    // Combining points of LP tokens and veNPM
+    // Combining points of LP tokens and veToken
     uint256 myWeight = _poolStakedByMe[key][account] + ((_myVotingPower[account] * veBoostRatio) / _denominator());
     uint256 totalWeight = _poolStakedByEveryone[key] + ((_totalVotingPower * veBoostRatio) / _denominator());
 
@@ -102,11 +101,11 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ProtocolMembe
 
     // Avoid underflow
     if (rewards > platformFee) {
-      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_msgSender(), rewards - platformFee);
+      IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
     }
 
     if (platformFee > 0) {
-      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_treasury, platformFee);
+      IERC20Upgradeable(_rewardToken).safeTransfer(_treasury, platformFee);
     }
 
     emit LiquidityGaugeRewardsWithdrawn(key, _msgSender(), _treasury, rewards, platformFee);
@@ -119,7 +118,7 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, ProtocolMembe
     uint256 previous = _myVotingPower[_msgSender()];
     uint256 previousTotal = _totalVotingPower;
 
-    uint256 current = IVoteEscrowToken(_veNpm).getVotingPower(_msgSender());
+    uint256 current = IVoteEscrowToken(_veToken).getVotingPower(_msgSender());
 
     _totalVotingPower = _totalVotingPower + current - previous;
     _myVotingPower[_msgSender()] = current;

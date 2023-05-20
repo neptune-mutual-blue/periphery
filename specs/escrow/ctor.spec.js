@@ -13,7 +13,7 @@ describe('Vote Escrow Token: Constructor', () => {
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.store.address, owner.address, name, symbol)
+    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     contracts.veNpm = veNpm
   })
@@ -21,7 +21,7 @@ describe('Vote Escrow Token: Constructor', () => {
   it('must correctly set the state upon construction', async () => {
     const [owner] = await ethers.getSigners()
 
-    ; (await contracts.veNpm._s()).should.equal(contracts.store.address)
+    ; (await contracts.veNpm._underlyingToken()).should.equal(contracts.npm.address)
     ; (await contracts.veNpm.owner()).should.equal(owner.address)
     ; (await contracts.veNpm._feeTo()).should.equal(owner.address)
     ; (await contracts.veNpm.name()).should.equal(name)

@@ -14,7 +14,7 @@ const candidates = [{
     info: '',
     platformFee: 1000,
     staking: {
-      pod: helper.randomAddress(),
+      token: helper.randomAddress(),
       lockupPeriodInBlocks: 10_000,
       ratio: 2000
     }
@@ -27,7 +27,7 @@ const candidates = [{
     info: '',
     platformFee: 1500,
     staking: {
-      pod: helper.randomAddress(),
+      token: helper.randomAddress(),
       lockupPeriodInBlocks: 10_000,
       ratio: 2000
     }
@@ -42,7 +42,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
 
     contracts = await factory.deployProtocol(owner)
 
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, contracts.store.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
 
     for (const candidate of candidates) {
       await registry.addOrEditPool(candidate.key, candidate.pool)

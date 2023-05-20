@@ -3,11 +3,12 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 
-contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenRecovery {
+contract LiquidityGaugePool is LiquidityGaugePoolReward, OwnableUpgradeable, WithPausability, TokenRecovery {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -15,9 +16,9 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
     super._disableInitializers();
   }
 
-  function initialize(address contractOwner, address veNpm, address registry, IStore protocolStore, address treasury) external initializer {
-    if (veNpm == address(0)) {
-      revert ZeroAddressError("veNPM");
+  function initialize(address contractOwner, address veToken, address rewardToken, address registry, address treasury) external initializer {
+    if (veToken == address(0)) {
+      revert ZeroAddressError("veToken");
     }
 
     if (registry == address(0)) {
@@ -28,8 +29,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
       revert ZeroAddressError("treasury");
     }
 
-    _s = protocolStore;
-    _setAddresses(veNpm, registry, treasury);
+    _setAddresses(veToken, rewardToken, registry, treasury);
 
     super.__Ownable_init();
     super.__Pausable_init();
@@ -38,11 +38,11 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
     super.transferOwnership(contractOwner);
   }
 
-  function _setAddresses(address veNpm, address registry, address treasury) internal {
-    emit LiquidityGaugePoolInitialized(_veNpm, veNpm, _registry, registry, _treasury, treasury);
+  function _setAddresses(address veToken, address rewardToken, address registry, address treasury) internal {
+    emit LiquidityGaugePoolInitialized(_veToken, veToken, _registry, registry, _treasury, treasury);
 
-    if (veNpm != address(0)) {
-      _veNpm = veNpm;
+    if (veToken != address(0)) {
+      _veToken = veToken;
     }
 
     if (registry != address(0)) {
@@ -52,19 +52,20 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
     if (treasury != address(0)) {
       _treasury = treasury;
     }
+
+    if (rewardToken != address(0)) {
+      _rewardToken = rewardToken;
+    }
   }
 
-  function setAddresses(address veNpm, address registry, address treasury) external override onlyOwner {
-    _throwIfProtocolPaused(_s);
-    _setAddresses(veNpm, registry, treasury);
+  function setAddresses(address veToken, address rewardToken, address registry, address treasury) external override onlyOwner {
+    _setAddresses(veToken, rewardToken, registry, treasury);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function deposit(bytes32 key, uint256 amount) external override nonReentrant {
-    _throwIfProtocolPaused(_s);
-
+  function deposit(bytes32 key, uint256 amount) external override nonReentrant whenNotPaused {
     IGaugeControllerRegistry registry = IGaugeControllerRegistry(_registry);
 
     if (registry.isValid(key) == false) {
@@ -84,7 +85,7 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
 
     _canWithdrawFrom[key][_msgSender()] = block.number + pool.staking.lockupPeriodInBlocks;
 
-    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.pod);
+    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.token);
 
     stakingToken.safeTransferFrom(_msgSender(), address(this), amount);
     // slither-disable-previous-line arbitrary-send-erc20
@@ -92,12 +93,10 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
     _poolStakedByMe[key][_msgSender()] += amount;
     _poolStakedByEveryone[key] += amount;
 
-    emit LiquidityGaugeDeposited(key, _msgSender(), address(pool.staking.pod), amount);
+    emit LiquidityGaugeDeposited(key, _msgSender(), pool.staking.token, amount);
   }
 
-  function withdraw(bytes32 key, uint256 amount) external override nonReentrant {
-    _throwIfProtocolPaused(_s);
-
+  function withdraw(bytes32 key, uint256 amount) external override nonReentrant whenNotPaused {
     if (IGaugeControllerRegistry(_registry).isValid(key) == false) {
       revert PoolNotFoundError(key);
     }
@@ -117,17 +116,17 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
     // First withdraw your rewards
     IGaugeControllerRegistry.PoolSetupArgs memory pool = _withdrawRewards(key);
 
-    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.pod);
+    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.token);
 
     _poolStakedByMe[key][_msgSender()] -= amount;
     _poolStakedByEveryone[key] -= amount;
 
     stakingToken.safeTransfer(_msgSender(), amount);
 
-    emit LiquidityGaugeWithdrawn(key, _msgSender(), address(pool.staking.pod), amount);
+    emit LiquidityGaugeWithdrawn(key, _msgSender(), pool.staking.token, amount);
   }
 
-  function withdrawRewards(bytes32 key) external override nonReentrant returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
+  function withdrawRewards(bytes32 key) external override nonReentrant whenNotPaused returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
     return _withdrawRewards(key);
   }
 
@@ -141,13 +140,5 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, WithPausability, TokenR
 
   function getTotalBlocksSinceLastReward(bytes32 key, address account) external view override returns (uint256) {
     return _getTotalBlocksSinceLastReward(key, account);
-  }
-
-  function version() external pure override returns (bytes32) {
-    return "v0.1";
-  }
-
-  function getName() external pure override returns (bytes32) {
-    return "Liquidity Gauge Pool";
   }
 }

@@ -13,21 +13,21 @@ abstract contract VoteEscrowBooster {
   }
 
   function _calculateBoost(uint256 duration) internal pure returns (uint256) {
-    uint256 _BOOST_FLOOR = 10_000;
-    uint256 _BOOST_CEILING = 40_000;
+    uint256 boostFloor = 10_000;
+    uint256 boostCeiling = 40_000;
 
-    if (duration > 1460 days) {
-      return _BOOST_CEILING;
+    if (duration > 1456 days) {
+      return boostCeiling;
     }
 
-    uint256 result = duration.divu(1 days).div(uint256(1460).fromUInt()).mul(_BOOST_CEILING.divu(_denominator()).log_2()).exp_2().mulu(_denominator());
+    uint256 result = duration.divu(1 days).div(uint256(1456).fromUInt()).mul(boostCeiling.divu(_denominator()).log_2()).exp_2().mulu(_denominator());
 
-    if (result < _BOOST_FLOOR) {
-      return _BOOST_FLOOR;
+    if (result < boostFloor) {
+      return boostFloor;
     }
 
-    if (result > _BOOST_CEILING) {
-      return _BOOST_CEILING;
+    if (result > boostCeiling) {
+      return boostCeiling;
     }
 
     return result;

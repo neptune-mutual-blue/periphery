@@ -5,7 +5,7 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "../dependencies/interfaces/IStore.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../util/TokenRecovery.sol";
 import "../util/ProtocolMembership.sol";
 import "../util/WithPausability.sol";
@@ -14,7 +14,7 @@ import "./VoteEscrowBooster.sol";
 import "./VoteEscrowLocker.sol";
 import "./interfaces/IVoteEscrowToken.sol";
 
-contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, ReentrancyGuardUpgradeable, ERC20Upgradeable, VoteEscrowLocker {
+contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster, VoteEscrowLocker {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -22,9 +22,10 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     super._disableInitializers();
   }
 
-  function initialize(address contractOwner, IStore store, address feeToAccount, string memory tokenName, string memory tokenSymbol) external initializer {
-    _s = store;
+  function initialize(address contractOwner, address underlyingToken, address feeToAccount, string memory tokenName, string memory tokenSymbol) external initializer {
+    _underlyingToken = underlyingToken;
     _feeTo = feeToAccount;
+    _whitelist[address(this)] = true;
 
     super.__ERC20_init(tokenName, tokenSymbol);
     super.__Ownable_init();
@@ -37,24 +38,24 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
   function _unlockWithPenalty(uint256 penalty) internal {
     uint256 amount = super._unlock(_msgSender(), penalty);
 
-    // Pull and burn veNpm
+    // Pull and burn veToken
     // slither-disable-start arbitrary-send-erc20
     super._transfer(_msgSender(), address(this), amount);
     // slither-disable-end arbitrary-send-erc20
     super._burn(address(this), amount);
 
     // Transfer NPM
-    IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_msgSender(), amount - penalty);
+    IERC20Upgradeable(_underlyingToken).safeTransfer(_msgSender(), amount - penalty);
 
     if (penalty > 0) {
-      IERC20Upgradeable(super._getNpm(_s)).safeTransfer(_feeTo, penalty);
+      IERC20Upgradeable(_underlyingToken).safeTransfer(_feeTo, penalty);
     }
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function unlock() external override nonReentrant {
+  function unlock() external override nonReentrant whenNotPaused {
     if (block.timestamp < _unlockAt[_msgSender()]) {
       revert VoteEscrowUnlockError(_unlockAt[_msgSender()]);
     }
@@ -62,7 +63,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     _unlockWithPenalty(0);
   }
 
-  function unlockPrematurely() external override nonReentrant {
+  function unlockPrematurely() external override nonReentrant whenNotPaused {
     if (block.timestamp > _unlockAt[_msgSender()]) {
       revert VoteEscrowAlreadyUnlockedError();
     }
@@ -75,30 +76,32 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     _unlockWithPenalty(penalty);
   }
 
-  function lock(uint256 amount, uint256 durationInWeeks) external override nonReentrant {
+  function lock(uint256 amount, uint256 durationInWeeks) external override nonReentrant whenNotPaused {
     super._lock(_msgSender(), amount, durationInWeeks);
 
     // Zero value locks signify lock extension
     if (amount > 0) {
       // slither-disable-start arbitrary-send-erc20
-      IERC20Upgradeable(super._getNpm(_s)).safeTransferFrom(_msgSender(), address(this), amount);
+      IERC20Upgradeable(_underlyingToken).safeTransferFrom(_msgSender(), address(this), amount);
       // slither-disable-end arbitrary-send-erc20
       super._mint(_msgSender(), amount);
     }
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // ----------------------------------------ACL/RBAC---------------------------------------------
-  // ---------------------------------------------------------------------------------------------
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                            ACL/RBAC
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                      Transfer Restriction
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function updateWhitelist(address[] calldata accounts, bool[] memory statuses) external onlyOwner {
+
+  function updateWhitelist(address[] calldata accounts, bool[] memory statuses) external onlyOwner whenNotPaused {
     super._updateTransferWhitelist(_whitelist, accounts, statuses);
   }
 
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override whenNotPaused {
-    super._throwIfNonWhitelistedTransfer(_s, _whitelist, from, to, amount);
+    super._throwIfNonWhitelistedTransfer(_whitelist, from, to, amount);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -115,7 +118,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setPausers(address[] calldata accounts, bool[] calldata statuses) external onlyOwner {
+  function setPausers(address[] calldata accounts, bool[] calldata statuses) external onlyOwner whenNotPaused {
     super._setPausers(_pausers, accounts, statuses);
   }
 
@@ -131,11 +134,8 @@ contract VoteEscrowToken is IVoteEscrowToken, ProtocolMembership, WithPausabilit
     super._unpause();
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // ------------------------------------------Views----------------------------------------------
-  // ---------------------------------------------------------------------------------------------
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  //                                             Boost
+  //                                             Views
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function calculateBoost(uint256 duration) external pure override returns (uint256) {
     return super._calculateBoost(duration);

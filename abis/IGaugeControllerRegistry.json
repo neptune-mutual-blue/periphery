@@ -1,5 +1,103 @@
 [
   {
+    "inputs": [],
+    "name": "InvalidGaugeEpochError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "platformFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "PlatformFeeTooHighError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolAlreadyActiveError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolAlreadyDeactivatedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolAlreadyExistsError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolDeactivatedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolNotActiveError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolNotDeactivatedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolNotFoundError",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -24,17 +122,17 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "protocolStore",
+        "name": "previousOperator",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "operator",
         "type": "address"
       }
     ],
-    "name": "GaugeControllerRegistryConstructed",
+    "name": "GaugeControllerRegistryOperatorSet",
     "type": "event"
   },
   {
@@ -80,13 +178,8 @@
           },
           {
             "internalType": "string",
-            "name": "description",
+            "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
           },
           {
             "internalType": "uint256",
@@ -96,8 +189,8 @@
           {
             "components": [
               {
-                "internalType": "contract IVault",
-                "name": "pod",
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
               },
               {
@@ -111,7 +204,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
+            "internalType": "struct IGaugeControllerRegistry.StakingArgs",
             "name": "staking",
             "type": "tuple"
           }
@@ -230,13 +323,8 @@
           },
           {
             "internalType": "string",
-            "name": "description",
+            "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
           },
           {
             "internalType": "uint256",
@@ -246,8 +334,8 @@
           {
             "components": [
               {
-                "internalType": "contract IVault",
-                "name": "pod",
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
               },
               {
@@ -261,7 +349,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
+            "internalType": "struct IGaugeControllerRegistry.StakingArgs",
             "name": "staking",
             "type": "tuple"
           }
@@ -321,13 +409,8 @@
           },
           {
             "internalType": "string",
-            "name": "description",
+            "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
           },
           {
             "internalType": "uint256",
@@ -337,8 +420,8 @@
           {
             "components": [
               {
-                "internalType": "contract IVault",
-                "name": "pod",
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
               },
               {
@@ -352,7 +435,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
+            "internalType": "struct IGaugeControllerRegistry.StakingArgs",
             "name": "staking",
             "type": "tuple"
           }

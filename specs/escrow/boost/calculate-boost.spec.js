@@ -2,7 +2,7 @@ const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const chalk = require('chalk')
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
-const { calculateBoost} = require('../../util/calculate-boost')
+const { calculateBoost } = require('../../util/calculate-boost')
 const HOURS = 3600
 const DAYS = 24 * HOURS
 
@@ -24,10 +24,9 @@ describe('Vote Escrow Token: calculateBoost', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.store.address, owner.address, name, symbol)
+    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     contracts.veNpm = veNpm
-
 
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
@@ -49,18 +48,18 @@ describe('Vote Escrow Token: calculateBoost', () => {
     const signers = await ethers.getSigners()
     let go = true
 
-    while(go) {
+    while (go) {
       for (let i = 0; i < amounts.length; i++) {
         const lockDuration = unlocks[i].sub(await time.latest())
 
-        if(lockDuration < 1 * DAYS) {
+        if (lockDuration < 1 * DAYS) {
           go = false
           continue
         }
 
-        const actual = (await contracts.veNpm.calculateBoost(lockDuration)).toString()     
+        const actual = (await contracts.veNpm.calculateBoost(lockDuration)).toString()
         const expected = BigInt(Math.floor(calculateBoost(lockDuration))).toString()
-    
+
         actual.should.equal(expected)
         console.log('%s- %s Duration: %s / Solidity: %s / Javascript: %s.', ' '.repeat(4), chalk.green('[Boost]'), String(lockDuration).padStart(9, '0'), actual, expected)
       }

@@ -16,19 +16,19 @@ const calculateBoost = (lockDuration) => {
   const _BOOST_FLOOR = 10_000
   const _BOOST_CEILING = 40_000
 
-  if (lockDuration > 1460 * _ONE_DAY) {
+  if (lockDuration > 1456 * _ONE_DAY) {
     return _BOOST_CEILING
   }
 
   // Solidity
   // ---------
   // uint256 result = lockDuration.divu(1 days)
-  // .div(uint256(1460).fromUInt())
+  // .div(uint256(1456).fromUInt())
   // .mul(_BOOST_CEILING.divu(_denominator()).log_2())
   // .exp_2()
   // .mulu(_denominator());
 
-  const result = 2 ** ((lockDuration / (_ONE_DAY * 1460)) * Math.log2(_BOOST_CEILING / _DENOMINATOR)) * _DENOMINATOR
+  const result = 2 ** ((lockDuration / (_ONE_DAY * 1456)) * Math.log2(_BOOST_CEILING / _DENOMINATOR)) * _DENOMINATOR
 
   if (result < _BOOST_FLOOR) {
     return _BOOST_FLOOR

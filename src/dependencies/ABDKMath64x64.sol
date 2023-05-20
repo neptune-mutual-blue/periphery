@@ -5,7 +5,7 @@
  * Author: Mikhail Vladimirov <mikhail.vladimirov@gmail.com>
  * Link: https://github.com/abdk-consulting/abdk-libraries-solidity
  */
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.12;
 
 /**
  * Smart contract library of mathematical functions operating with signed

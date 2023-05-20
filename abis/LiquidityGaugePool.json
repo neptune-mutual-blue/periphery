@@ -1,34 +1,160 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "contract IVoteEscrowToken",
-        "name": "veNpm",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IERC20",
-        "name": "npm",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IGaugeControllerRegistry",
-        "name": "registry",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IStore",
-        "name": "protocolStore",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "treasury",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "requiredRole",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AccessDeniedError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyInitializedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "required",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "provided",
+        "type": "uint256"
+      }
+    ],
+    "name": "BalanceInsufficientError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "EmptyArgumentError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ExternalContractInvocationRevertError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoPauserSpecifiedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "platformFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "PlatformFeeTooHighError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolNotActiveError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      }
+    ],
+    "name": "PoolNotFoundError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProtocolPausedError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProtocolStoreNotFoundError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RelatedArrayItemCountMismatchError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "waitUntil",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalLockedError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ZeroAddressError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "ZeroAmountError",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -47,7 +173,7 @@
       },
       {
         "indexed": true,
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "stakingToken",
         "type": "address"
       },
@@ -65,75 +191,26 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "previousVeToken",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "treasury",
+        "name": "veToken",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "rewards",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "platformFee",
-        "type": "uint256"
-      }
-    ],
-    "name": "LiquidityGaugeEmissionWithdrawn",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "contract IVoteEscrowToken",
-        "name": "previousVeNpm",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract IVoteEscrowToken",
-        "name": "veNpm",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract IERC20",
-        "name": "previousNpm",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract IERC20",
-        "name": "npm",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract IGaugeControllerRegistry",
+        "internalType": "address",
         "name": "previousRegistry",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "contract IGaugeControllerRegistry",
+        "internalType": "address",
         "name": "registry",
         "type": "address"
       },
@@ -207,7 +284,7 @@
       },
       {
         "indexed": true,
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "stakingToken",
         "type": "address"
       },
@@ -329,13 +406,110 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "CNS_CORE",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "_canWithdrawFrom",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "_myVotingPower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "_poolLastRewardHeights",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_poolStakedByEveryone",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "_poolStakedByMe",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -343,12 +517,12 @@
   },
   {
     "inputs": [],
-    "name": "CNS_NPM",
+    "name": "_registry",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "",
-        "type": "bytes32"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -356,12 +530,51 @@
   },
   {
     "inputs": [],
-    "name": "NS_MEMBERS",
+    "name": "_rewardToken",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "address",
         "name": "",
-        "type": "bytes32"
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_totalVotingPower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_treasury",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_veToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -410,45 +623,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getName",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getNpm",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRegistry",
-    "outputs": [
-      {
-        "internalType": "contract IGaugeControllerRegistry",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -473,82 +647,24 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getTreasury",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getVeNpm",
-    "outputs": [
-      {
-        "internalType": "contract IVoteEscrowToken",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "globalStorage",
-    "outputs": [
-      {
-        "internalType": "contract IStore",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "contractOwner",
+        "type": "address"
       },
       {
         "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "hasAccess",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IVoteEscrowToken",
-        "name": "veNpm",
+        "name": "veToken",
         "type": "address"
       },
       {
-        "internalType": "contract IERC20",
-        "name": "npm",
+        "internalType": "address",
+        "name": "rewardToken",
         "type": "address"
       },
       {
-        "internalType": "contract IGaugeControllerRegistry",
+        "internalType": "address",
         "name": "registry",
         "type": "address"
       },
@@ -558,28 +674,9 @@
         "type": "address"
       }
     ],
-    "name": "intialize",
+    "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "isPauser",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -619,6 +716,34 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "veToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "rewardToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "registry",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "treasury",
+        "type": "address"
+      }
+    ],
+    "name": "setAddresses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "newOwner",
         "type": "address"
       }
@@ -626,19 +751,6 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "version",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -678,13 +790,8 @@
           },
           {
             "internalType": "string",
-            "name": "description",
+            "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
           },
           {
             "internalType": "uint256",
@@ -694,8 +801,8 @@
           {
             "components": [
               {
-                "internalType": "contract IVault",
-                "name": "pod",
+                "internalType": "address",
+                "name": "token",
                 "type": "address"
               },
               {
@@ -709,7 +816,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IGaugeControllerRegistry.PodArgs",
+            "internalType": "struct IGaugeControllerRegistry.StakingArgs",
             "name": "staking",
             "type": "tuple"
           }

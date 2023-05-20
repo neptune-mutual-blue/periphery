@@ -14,8 +14,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     const [owner] = await ethers.getSigners()
 
     contracts = await factory.deployProtocol(owner)
-
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, contracts.store.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
   })
 
   it('must correctly add a new pool', async () => {
@@ -26,7 +25,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
       info: '',
       platformFee: 1000,
       staking: {
-        pod: helper.randomAddress(),
+        token: helper.randomAddress(),
         lockupPeriodInBlocks: 10_000,
         ratio: 2000
       }
@@ -39,7 +38,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     result.name.should.equal(pool.name)
     result.info.should.equal(pool.info)
     result.platformFee.should.equal(pool.platformFee)
-    result.staking.pod.should.equal(pool.staking.pod)
+    result.staking.token.should.equal(pool.staking.token)
     result.staking.lockupPeriodInBlocks.should.equal(pool.staking.lockupPeriodInBlocks)
     result.staking.ratio.should.equal(pool.staking.ratio)
   })

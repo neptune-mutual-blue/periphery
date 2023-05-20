@@ -15,7 +15,7 @@ describe('Vote Escrow Token: Upgradeability', () => {
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.store.address, owner.address, name, symbol)
+    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     contracts.veNpm = veNpm
   })
@@ -23,7 +23,7 @@ describe('Vote Escrow Token: Upgradeability', () => {
   it('must correctly set the state upon construction', async () => {
     const [owner] = await ethers.getSigners()
 
-    ; (await contracts.veNpm._s()).should.equal(contracts.store.address)
+    ; (await contracts.veNpm._underlyingToken()).should.equal(contracts.npm.address)
     ; (await contracts.veNpm.owner()).should.equal(owner.address)
     ; (await contracts.veNpm._feeTo()).should.equal(owner.address)
     ; (await contracts.veNpm.name()).should.equal(name)
@@ -55,7 +55,7 @@ describe('Vote Escrow Token: Upgradeability', () => {
     // Proxy address is same
     v2.address.should.equal(contracts.veNpm.address)
 
-    ; (await v2._s()).should.equal(contracts.store.address)
+    ; (await v2._underlyingToken()).should.equal(contracts.npm.address)
     ; (await v2.owner()).should.equal(owner.address)
     ; (await v2._feeTo()).should.equal(owner.address)
     ; (await v2.name()).should.equal(name)

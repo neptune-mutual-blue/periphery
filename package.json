@@ -9,7 +9,7 @@
     "build": "forge build --sizes",
     "compile": "forge build --sizes",
     "clean": "forge clean && npx hardhat clean && rm -rf cache_foundry && rm -rf artifacts && rm -rf coverage",
-    "abi": "rm -rf ./abis && mkdir abis && node ./script/util/extract-abis.js",
+    "abi": "rm -rf ./abis && mkdir abis && node ./scripts/util/extract-abis.js",
     "test": "hardhat test",
     "coverage": "hardhat coverage"
   },

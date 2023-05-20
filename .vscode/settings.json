@@ -1,16 +1,10 @@
 {
-  "solidity.packageDefaultDependenciesContractsDirectory": "src",
-  "solidity.packageDefaultDependenciesDirectory": "lib",
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.copyWithSyntaxHighlighting": false,
   "solidity.formatter": "forge",
-  "solidity.compileUsingRemoteVersion": "v0.8.17",
   "standard.autoFixOnSave": true,
   "javascript.suggestionActions.enabled": false,
-  "tsImportSorter.configuration.development.enableDebug": false,
-  "tsImportSorter.configuration.hasSemicolon": false,
-  "tsImportSorter.configuration.trailingComma": "none",
   "terminal.integrated.scrollback": 50000,
   "[javascript]": {
     "editor.formatOnSave": false,
@@ -47,16 +41,52 @@
   "todohighlight.keywords": [
     {
       "text": "revert",
-      "color": "#000000",
-      "backgroundColor": "#f5bcb3",
+      "color": "#ffffff",
+      "backgroundColor": "#ff2600",
+      "isWholeLine": false,
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "throw",
+      "color": "#ffffff",
+      "backgroundColor": "#ff8873",
+      "isWholeLine": false,
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "public",
+      "color": "#ffffff",
+      "backgroundColor": "#0061ff",
+      "isWholeLine": false,
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "external",
+      "color": "#ffffff",
+      "backgroundColor": "#0061ff",
+      "isWholeLine": false,
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "when",
+      "color": "#ffffff",
+      "backgroundColor": "#0061ff",
+      "isWholeLine": false,
+      "overviewRulerColor": "#f5bcb3"
+    },
+    {
+      "text": "only",
+      "color": "#ffffff",
+      "backgroundColor": "#0061ff",
+      "isWholeLine": false,
       "overviewRulerColor": "#f5bcb3"
     },
     {
       "text": "function initialize",
       "color": "#000000",
       "isWholeLine": true,
-      "backgroundColor": "#f7e9d0",
+      "backgroundColor": "#eaf3ff",
       "overviewRulerColor": "#f7e9d0"
-    },
+    }
   ]
 }
