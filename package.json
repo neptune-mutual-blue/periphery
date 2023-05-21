@@ -39,6 +39,7 @@
     "hardhat": "^2.14.0",
     "hardhat-contract-sizer": "^2.8.0",
     "hardhat-gas-reporter": "^1.0.9",
+    "merkletreejs": "^0.3.10",
     "moment": "^2.29.4",
     "node-enumerable": "^6.0.0",
     "solidity-coverage": "^0.8.2",

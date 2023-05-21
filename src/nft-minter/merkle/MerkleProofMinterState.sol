@@ -14,7 +14,6 @@ abstract contract MerkleProofMinterState is IMerkleProofMinter {
   bytes32 public constant NS_ROLES_PROOF_AGENT = "proof:agent";
   bytes32 public constant NS_ROLES_RECOVERY_AGENT = "recovery:agent";
 
-  IStore public _s;
   INeptuneLegends public _nft;
 
   bytes32 public _merkleRoot;

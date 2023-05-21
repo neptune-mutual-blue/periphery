@@ -1,7 +1,7 @@
 const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
-const factory = require('../../specs/util/factory')
-const deployments = require('../util/deployments')
+const factory = require('../../../specs/util/factory')
+const deployments = require('../../util/deployments')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -22,7 +22,7 @@ const deploy = async () => {
   const { chainId } = network.config
   const { npm } = await getDependencies(chainId)
 
-  await factory.deployUpgradeable('GaugeControllerRegistry', deployer.address, deployer.address, [deployer.address], npm)
+  await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm, deployer.address, 'Vote Escrow NPM', 'veNPM')
 }
 
 deploy().catch(console.error)
