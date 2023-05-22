@@ -1,7 +1,7 @@
 const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
-const factory = require('../../specs/util/factory')
-const deployments = require('../util/deployments')
+const factory = require('../../../specs/util/factory')
+const deployments = require('../../util/deployments')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {

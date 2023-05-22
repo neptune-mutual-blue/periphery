@@ -340,19 +340,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "_s",
-    "outputs": [
-      {
-        "internalType": "contract IStore",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",

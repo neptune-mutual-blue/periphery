@@ -1,5 +1,10 @@
 const { ethers, upgrades, network } = require('hardhat')
 
+const attach = async (connectedTo, at, contractName, libraries) => {
+  const contract = libraries ? await ethers.getContractFactory(contractName, libraries) : await ethers.getContractFactory(contractName)
+  return contract.connect(connectedTo).attach(at)
+}
+
 const deploy = async (contractName, ...args) => {
   const ContractFactory = await ethers.getContractFactory(contractName)
   const instance = await ContractFactory.deploy(...args)
@@ -28,4 +33,4 @@ const deployUpgradeable = async (contractName, ...args) => {
   return instance
 }
 
-module.exports = { deploy, deployUpgradeable }
+module.exports = { attach, deploy, deployUpgradeable }

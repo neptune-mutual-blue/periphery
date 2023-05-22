@@ -14,15 +14,15 @@ import "./MerkleProofMinterState.sol";
 contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, MerkleProofMinterState {
   using MerkleProofUpgradeable for bytes32[];
 
+  /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     super._disableInitializers();
   }
 
-  function initialize(IStore store, INeptuneLegends nft, address admin, address prover) external initializer {
+  function initialize(INeptuneLegends nft, address admin, address prover) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
-    _s = store;
     _nft = nft;
 
     _setRoleAdmin(NS_ROLES_PROOF_AGENT, DEFAULT_ADMIN_ROLE);
@@ -36,7 +36,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function setMyPersona(uint8 level, uint8 persona) external nonReentrant whenNotPaused {
-    if (persona != 1 || persona != 3 || persona != 5) {
+    if (persona != 1 && persona != 3 && persona != 5) {
       revert InvalidPersonaError();
     }
 

@@ -17,7 +17,8 @@ const ACCESS_CONTROL = {
   UPGRADE_AGENT: toBytes32('role:upgrade:agent'),
   RECOVERY_AGENT: toBytes32('role:recovery:agent'),
   PAUSE_AGENT: toBytes32('role:pause:agent'),
-  UNPAUSE_AGENT: toBytes32('role:unpause:agent')
+  UNPAUSE_AGENT: toBytes32('role:unpause:agent'),
+  ROLE_MINTER: toBytes32('role:minter')
 }
 
 const BOND = {

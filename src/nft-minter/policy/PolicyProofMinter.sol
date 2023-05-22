@@ -12,6 +12,7 @@ import "./ProofOfPolicy.sol";
 import "./PolicyProofMinterState.sol";
 
 contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, ProofOfPolicy, PolicyProofMinterState {
+  /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     super._disableInitializers();
   }
