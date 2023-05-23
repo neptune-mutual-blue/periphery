@@ -7,6 +7,7 @@ const getCoverContractKey = (namespace, coverKey) => encodeKeys(['bytes32', 'byt
 const qualifyBytes32 = (k) => encodeKeys(['bytes32', 'bytes32'], [PROTOCOL.NS.CONTRACTS, k])
 const qualify = (k) => encodeKeys(['bytes32', 'address'], [PROTOCOL.NS.CONTRACTS, k])
 const qualifyMember = (k) => encodeKeys(['bytes32', 'address'], [PROTOCOL.NS.MEMBERS, k])
+const qualifyCxToken = (k) => encodeKeys(['bytes32', 'address'], [PROTOCOL.NS.COVER_CXTOKEN, k])
 
 const ACCESS_CONTROL = {
   ADMIN: toBytes32(''),
@@ -193,6 +194,7 @@ module.exports = {
   toBytes32,
   getCoverContractKey,
   qualify,
+  qualifyCxToken,
   qualifyMember,
   qualifyBytes32,
   ACCESS_CONTROL,
