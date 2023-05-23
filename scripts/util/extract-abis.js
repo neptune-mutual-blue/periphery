@@ -14,7 +14,7 @@ const getFiles = async () => {
   const files = await io.findFiles('json', root)
   const all = files.map(x => `${x.replace('.dbg', '')}`)
 
-  all.push('./artifacts/openzeppelin-solidity/contracts/token/ERC20/IERC20.sol/IERC20.json')
+  all.push('./artifacts/@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol/IERC20Upgradeable.json')
 
   return [...new Set(all)]
 }

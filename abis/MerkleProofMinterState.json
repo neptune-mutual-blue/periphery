@@ -6,6 +6,11 @@
   },
   {
     "inputs": [],
+    "name": "InvalidLevelError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidPersonaError",
     "type": "error"
   },
@@ -190,6 +195,31 @@
       }
     ],
     "name": "MintedWithProof",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "level",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "persona",
+        "type": "uint8"
+      }
+    ],
+    "name": "PersonaSet",
     "type": "event"
   },
   {

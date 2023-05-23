@@ -558,13 +558,18 @@
           },
           {
             "internalType": "uint256",
-            "name": "emissionPerBlock",
+            "name": "emissionPerEpoch",
             "type": "uint256"
           }
         ],
         "internalType": "struct IGaugeControllerRegistry.Gauge[]",
         "name": "distribution",
         "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "approximateBlocksPerEpoch",
+        "type": "uint256"
       }
     ],
     "name": "setGauge",
