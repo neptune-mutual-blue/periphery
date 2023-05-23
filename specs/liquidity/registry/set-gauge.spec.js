@@ -51,12 +51,13 @@ describe('Gauge Controller Registry: Set Gauge', () => {
 
   it('must correctly set distribution', async () => {
     const epoch = 1
+    const blocksPerEpoch = 5000
     const amountToDeposit = helper.ether(1_000_000)
 
     const distribution = candidates.map(x => {
       return {
         key: x.key,
-        emissionPerBlock: helper.getRandomNumber(500_000, 4_000_000)
+        emissionPerEpoch: helper.getRandomNumber(500_000, 4_000_000)
       }
     })
 
@@ -64,7 +65,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     await contracts.npm.mint(owner.address, amountToDeposit)
     await contracts.npm.approve(registry.address, amountToDeposit)
 
-    await registry.setGauge(epoch, amountToDeposit, distribution)
+    await registry.setGauge(epoch, amountToDeposit, distribution, blocksPerEpoch)
 
     ; (await contracts.npm.balanceOf(registry.address)).should.equal(amountToDeposit)
 
@@ -73,7 +74,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     ; (await registry.sumNpmDeposited()).should.equal(amountToDeposit)
 
     for (const item of distribution) {
-      (await registry.getEmissionPerBlock(item.key)).should.equal(item.emissionPerBlock)
+      (await registry.getEmissionPerBlock(item.key)).should.equal(Math.floor(item.emissionPerEpoch / blocksPerEpoch))
     }
   })
 })

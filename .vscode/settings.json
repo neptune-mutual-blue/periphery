@@ -94,5 +94,10 @@
       "backgroundColor": "#eaf3ff",
       "overviewRulerColor": "#f7e9d0"
     }
+  ],
+  "git.ignoredRepositories": [
+    "./lib/openzeppelin-contracts",
+    "./lib/openzeppelin-contracts-upgradeable",
+    "./lib/forge-std",
   ]
 }

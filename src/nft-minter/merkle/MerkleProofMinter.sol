@@ -36,7 +36,11 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function setMyPersona(uint8 level, uint8 persona) external nonReentrant whenNotPaused {
-    if (persona != 1 && persona != 3 && persona != 5) {
+    if (level != 1 && level != 3 && level != 5) {
+      revert InvalidLevelError();
+    }
+
+    if (persona != 1 && persona != 2) {
       revert InvalidPersonaError();
     }
 
@@ -46,6 +50,8 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
 
     _personas[_msgSender()][level] = persona;
     _personas[_msgSender()][level + 1] = persona;
+
+    emit PersonaSet(_msgSender(), level, persona);
   }
 
   function mint(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {
