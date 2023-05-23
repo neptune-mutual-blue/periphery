@@ -12,7 +12,7 @@ abstract contract ProofOfPolicy is IThrowable {
 
   function _validateProof(IStore s, ICxToken proof, address account) internal view returns (bool) {
     // Ensure that the submitted proof is authentic
-    bytes32 key = keccak256(abi.encodePacked("ns:cover:cxtoken", proof));
+    bytes32 key = keccak256(abi.encodePacked(bytes32("ns:cover:cxtoken"), proof));
 
     if (s.getBool(key) == false) {
       revert AccessDeniedError("cxToken");
