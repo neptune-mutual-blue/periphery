@@ -100,9 +100,11 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
     registry.withdrawRewards(key, rewards);
 
     // Avoid underflow
-    if (rewards > platformFee) {
-      IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
+    if (rewards <= platformFee) {
+      revert PlatformFeeTooHighError(key, pool.platformFee);
     }
+
+    IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
     if (platformFee > 0) {
       IERC20Upgradeable(_rewardToken).safeTransfer(_treasury, platformFee);

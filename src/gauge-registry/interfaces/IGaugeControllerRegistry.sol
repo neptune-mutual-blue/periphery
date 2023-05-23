@@ -18,11 +18,11 @@ interface IGaugeControllerRegistry {
 
   struct Gauge {
     bytes32 key;
-    uint256 emissionPerBlock;
+    uint256 emissionPerEpoch;
   }
 
   function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external;
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution, uint256 approximateBlocksPerEpoch) external;
   function withdrawRewards(bytes32 key, uint256 amount) external;
   function deactivatePool(bytes32 key) external;
   function activatePool(bytes32 key) external;

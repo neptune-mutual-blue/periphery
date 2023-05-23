@@ -8,7 +8,9 @@ import "./VoteEscrowTokenState.sol";
 
 abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowTokenState {
   function _lock(address account, uint256 amount, uint256 durationInWeeks) internal {
-    if (_balances[account] == 0 && amount == 0) {
+    uint256 previousBalance = _balances[account];
+
+    if (previousBalance == 0 && amount == 0) {
       // You need existing balance before you can extend the vote lock period
       revert ZeroAmountError("amount");
     }
@@ -24,8 +26,6 @@ abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowT
       // Can't decrease the lockup period
       revert InvalidVoteLockExtensionError(_unlockAt[account], newUnlockTimestamp);
     }
-
-    uint256 previousBalance = _balances[account];
 
     emit VoteEscrowLock(account, amount, durationInWeeks, _unlockAt[account], newUnlockTimestamp, previousBalance, _balances[account]);
 
@@ -44,8 +44,8 @@ abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowT
       revert ZeroAmountError("balance");
     }
 
-    _unlockAt[account] = 0;
-    _balances[account] = 0;
+    delete _unlockAt[account];
+    delete _balances[account];
     _totalLocked -= amount;
 
     emit VoteEscrowUnlock(account, amount, unlockAt, penalty);

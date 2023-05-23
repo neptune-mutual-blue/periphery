@@ -31,7 +31,7 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
     const { args, gaugePool } = contracts
     const candidates = [[a1, randomAmount()], [a2, randomAmount()]]
 
-    const { key, emissionPerBlock } = args.distribution[0]
+    const { key, emissionPerEpoch } = args.distribution[0]
 
     for (const candidate of candidates) {
       const [account, amount] = candidate
@@ -42,11 +42,11 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
 
     const reward = await gaugePool.calculateReward(key, a2.address)
     const total = Enumerable.from(candidates).select(x => parseInt(x[1])).sum()
-    const estimatedReward = Math.floor(emissionPerBlock * parseInt(candidates[1][1]) / total)
+    const estimatedReward = Math.floor((emissionPerEpoch / args.blocksPerEpoch) * parseInt(candidates[1][1]) / total)
 
     reward.should
       .be.greaterThan(0)
-      .but.also.be.lessThan(emissionPerBlock)
+      .but.also.be.lessThan(emissionPerEpoch)
       .which.also.equals(estimatedReward)
   })
 })

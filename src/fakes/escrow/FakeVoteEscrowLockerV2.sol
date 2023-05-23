@@ -44,8 +44,8 @@ abstract contract FakeVoteEscrowLockerV2 is IThrowable, IVoteEscrowLocker, FakeV
       revert ZeroAmountError("balance");
     }
 
-    _unlockAt[account] = 0;
-    _balances[account] = 0;
+    delete _unlockAt[account];
+    delete _balances[account];
     _totalLocked -= amount;
 
     emit VoteEscrowUnlock(account, amount, unlockAt, penalty);

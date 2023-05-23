@@ -51,10 +51,6 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
         revert EmptyArgumentError("args.name");
       }
 
-      if (_validPools[key]) {
-        revert PoolAlreadyExistsError(key);
-      }
-
       if (args.staking.token == address(0)) {
         revert ZeroAddressError("args.staking.token");
       }
@@ -64,16 +60,24 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
 
       _pools[key] = args;
     } else {
-      if (_validPools[key] == false) {
-        revert PoolNotFoundError(key);
-      }
-
       if (_activePools[key] == false) {
         revert PoolDeactivatedError(key);
       }
 
       if (bytes(args.name).length > 0) {
         _pools[key].name = args.name;
+      }
+
+      if (bytes(args.info).length > 0) {
+        _pools[key].info = args.info;
+      }
+
+      if (args.staking.lockupPeriodInBlocks > 0) {
+        _pools[key].staking.lockupPeriodInBlocks = args.staking.lockupPeriodInBlocks;
+      }
+
+      if (args.staking.ratio > 0) {
+        _pools[key].staking.ratio = args.staking.ratio;
       }
     }
 
@@ -86,7 +90,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyRole(NS_GAUGE_AGENT) {
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution, uint256 approximateBlocksPerEpoch) external override onlyRole(NS_GAUGE_AGENT) {
     if (epoch == 0) {
       revert InvalidGaugeEpochError();
     }
@@ -109,10 +113,11 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
         revert PoolNotActiveError(key);
       }
 
-      _emissionsPerBlock[key] = distribution[i].emissionPerBlock;
-      total += distribution[i].emissionPerBlock;
+      // @todo: check for precision loss
+      _emissionsPerBlock[key] = distribution[i].emissionPerEpoch / approximateBlocksPerEpoch;
+      total += distribution[i].emissionPerEpoch;
 
-      emit GaugeSet(epoch, distribution[i].emissionPerBlock);
+      emit GaugeSet(epoch, distribution[i].emissionPerEpoch);
     }
 
     if (amountToDeposit < total) {
@@ -150,7 +155,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
       revert PoolAlreadyDeactivatedError(key);
     }
 
-    _activePools[key] = false;
+    delete _activePools[key];
 
     emit GaugeControllerRegistryPoolDeactivated(_msgSender(), key);
   }
@@ -187,7 +192,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
   function setOperator(address operator) external onlyRole(DEFAULT_ADMIN_ROLE) {
     emit GaugeControllerRegistryOperatorSet(_operator, operator);
 
-    _operator == operator;
+    _operator = operator;
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
