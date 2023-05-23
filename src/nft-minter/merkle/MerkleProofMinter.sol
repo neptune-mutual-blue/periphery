@@ -40,6 +40,14 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
       revert InvalidLevelError();
     }
 
+    if (level == 3 &&  _personas[_msgSender()][1] == 0) {
+      revert InvalidLevelError();
+    }
+
+    if (level == 5 &&  _personas[_msgSender()][3] == 0) {
+      revert InvalidLevelError();
+    }
+
     if (persona != 1 && persona != 2) {
       revert InvalidPersonaError();
     }
