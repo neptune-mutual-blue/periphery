@@ -35,31 +35,26 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setMyPersona(uint8 level, uint8 persona) external nonReentrant whenNotPaused {
-    if (level != 1 && level != 3 && level != 5) {
-      revert InvalidLevelError();
-    }
-
-    if (level == 3 &&  _personas[_msgSender()][1] == 0) {
-      revert InvalidLevelError();
-    }
-
-    if (level == 5 &&  _personas[_msgSender()][3] == 0) {
-      revert InvalidLevelError();
-    }
-
-    if (persona != 1 && persona != 2) {
-      revert InvalidPersonaError();
-    }
-
-    if (_personas[_msgSender()][level] > 0) {
+  function setMyPersona(uint8[3] calldata personas) external nonReentrant whenNotPaused {
+    if (_personas[_msgSender()][1] > 0) {
       revert PersonaAlreadySetError();
     }
 
-    _personas[_msgSender()][level] = persona;
-    _personas[_msgSender()][level + 1] = persona;
+    uint8[3] memory levels = [1, 3, 5];
 
-    emit PersonaSet(_msgSender(), level, persona);
+    for (uint8 i = 0; i < personas.length; i++) {
+      uint8 persona = personas[i];
+
+      if (persona != 1 && persona != 2) {
+        revert InvalidPersonaError();
+      }
+
+      _personas[_msgSender()][levels[i]] = persona;
+      _personas[_msgSender()][levels[i] + 1] = persona;
+
+      emit PersonaSet(_msgSender(), levels[i], persona);
+      emit PersonaSet(_msgSender(), levels[i] + 1, persona);
+    }
   }
 
   function mint(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {

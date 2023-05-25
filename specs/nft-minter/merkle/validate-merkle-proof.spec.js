@@ -35,7 +35,7 @@ describe('Merkle Proof Validation', () => {
     const familyFormatted = ethers.utils.formatBytes32String(family)
     const tokenId = boundaries[2].find(x => x.family === familyFormatted && x.level === level).min
 
-    await minter.connect(account).setMyPersona(level, persona)
+    await minter.connect(account).setMyPersona([persona, persona, persona])
     await minter.connect(account).mint(proof, level, familyFormatted, persona, tokenId)
 
     await minter.connect(account).mint(proof, level, familyFormatted, persona, tokenId + 1)

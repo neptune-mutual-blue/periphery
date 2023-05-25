@@ -285,6 +285,12 @@
         "type": "uint256"
       },
       {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "distribution",

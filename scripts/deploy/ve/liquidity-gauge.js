@@ -24,9 +24,14 @@ const deploy = async () => {
   console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { npm, veNPM, gaugeControllerRegistry } = await getDependencies(chainId)
+  const { npm, veNPM, gaugeControllerRegistry, liquidityGaugePool } = await getDependencies(chainId)
 
-  await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, veNPM, npm, gaugeControllerRegistry, deployer.address)
+  if (!liquidityGaugePool) {
+    await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, veNPM, npm, gaugeControllerRegistry, deployer.address)
+    return
+  }
+
+  await factory.upgrade(liquidityGaugePool, 'LiquidityGaugePool', deployer.address, veNPM, npm, gaugeControllerRegistry, deployer.address)
 }
 
 deploy().catch(console.error)

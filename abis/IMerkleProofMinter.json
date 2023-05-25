@@ -6,11 +6,6 @@
   },
   {
     "inputs": [],
-    "name": "InvalidLevelError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "InvalidPersonaError",
     "type": "error"
   },
