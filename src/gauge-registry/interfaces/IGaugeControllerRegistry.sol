@@ -43,7 +43,7 @@ interface IGaugeControllerRegistry {
   event GaugeControllerRegistryPoolDeactivated(address indexed sender, bytes32 indexed key);
   event GaugeControllerRegistryPoolActivated(address indexed sender, bytes32 indexed key);
   event GaugeControllerRegistryPoolDeleted(address indexed sender, bytes32 key);
-  event GaugeSet(uint256 indexed epoch, uint256 distribution);
+  event GaugeSet(uint256 indexed epoch, bytes32 indexed key, uint256 distribution);
   event GaugeAllocationTransferred(uint256 indexed epoch, uint256 totalAllocation);
 
   error InvalidGaugeEpochError();

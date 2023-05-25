@@ -20,9 +20,15 @@ const deploy = async () => {
   console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { neptuneLegends } = await getDependencies(deployer, chainId)
 
-  await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, deployer.address, deployer.address)
+  const { neptuneLegends, merkleProofMinter } = await getDependencies(deployer, chainId)
+
+  if (!merkleProofMinter) {
+    await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, deployer.address, deployer.address)
+    return
+  }
+
+  await factory.upgrade(merkleProofMinter, 'MerkleProofMinter', neptuneLegends, deployer.address, deployer.address)
 }
 
 deploy().catch(console.error)

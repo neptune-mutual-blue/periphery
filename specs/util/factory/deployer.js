@@ -33,4 +33,18 @@ const deployUpgradeable = async (contractName, ...args) => {
   return instance
 }
 
-module.exports = { attach, deploy, deployUpgradeable }
+const upgrade = async (existingAddress, newContractName, ...args) => {
+  const ContractFactory = await ethers.getContractFactory(newContractName)
+  const instance = await upgrades.upgradeProxy(existingAddress, ContractFactory, args)
+  await instance.deployed()
+
+  const { explorer } = network.config
+
+  if (explorer) {
+    console.log('%s Upgrade Deployed: %s/address/%s', newContractName, network.config.explorer, instance.address)
+  }
+
+  return instance
+}
+
+module.exports = { attach, deploy, deployUpgradeable, upgrade }

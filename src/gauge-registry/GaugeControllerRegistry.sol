@@ -117,7 +117,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
       _emissionsPerBlock[key] = distribution[i].emissionPerEpoch / approximateBlocksPerEpoch;
       total += distribution[i].emissionPerEpoch;
 
-      emit GaugeSet(epoch, distribution[i].emissionPerEpoch);
+      emit GaugeSet(epoch, key, distribution[i].emissionPerEpoch);
     }
 
     if (amountToDeposit < total) {

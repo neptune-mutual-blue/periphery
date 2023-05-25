@@ -20,9 +20,14 @@ const deploy = async () => {
   console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { npm } = await getDependencies(chainId)
+  const { npm, gaugeControllerRegistry } = await getDependencies(chainId)
 
-  await factory.deployUpgradeable('GaugeControllerRegistry', deployer.address, deployer.address, [deployer.address], npm)
+  if (!gaugeControllerRegistry) {
+    await factory.deployUpgradeable('GaugeControllerRegistry', deployer.address, deployer.address, [deployer.address], npm)
+    return
+  }
+
+  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', deployer.address, deployer.address, [deployer.address], npm)
 }
 
 deploy().catch(console.error)

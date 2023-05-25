@@ -23,9 +23,14 @@ const deploy = async () => {
   console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { store, neptuneLegends } = await getDependencies(deployer, chainId)
+  const { store, neptuneLegends, policyProofMinter } = await getDependencies(deployer, chainId)
 
-  await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
+  if (!policyProofMinter) {
+    await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
+    return
+  }
+
+  await factory.upgrade(policyProofMinter, 'PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
 }
 
 deploy().catch(console.error)
