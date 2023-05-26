@@ -99,5 +99,8 @@
     "./lib/openzeppelin-contracts",
     "./lib/openzeppelin-contracts-upgradeable",
     "./lib/forge-std",
+  ],
+  "cSpell.enableFiletypes": [
+    "solidity"
   ]
 }
