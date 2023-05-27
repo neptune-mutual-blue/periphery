@@ -37,7 +37,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "accocunt",
+        "name": "account",
         "type": "address"
       },
       {
@@ -86,7 +86,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "accocunt",
+        "name": "account",
         "type": "address"
       },
       {

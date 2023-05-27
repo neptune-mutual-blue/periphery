@@ -225,7 +225,7 @@
         ],
         "indexed": false,
         "internalType": "struct IMerkleProofMinter.Boundary[]",
-        "name": "boundries",
+        "name": "boundaries",
         "type": "tuple[]"
       }
     ],
