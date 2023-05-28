@@ -26,8 +26,6 @@ describe('Merkle Proof Validation', () => {
 
     await minter.setMerkleRoot(root)
 
-    console.log('-'.repeat(50))
-
     const [, , leaf] = getDemoLeavesRaw(signers)
     const proof = tree.getHexProof(parseLeaf(leaf))
 

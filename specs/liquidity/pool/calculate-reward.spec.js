@@ -1,7 +1,9 @@
+const { network, ethers } = require('hardhat')
 const Enumerable = require('node-enumerable')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
+const config = require('../../../scripts/config')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -27,6 +29,9 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
 
   it('must return correct reward amount', async () => {
     const [owner, a1, a2] = await ethers.getSigners()
+    const { chainId } = network.config
+    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
+    const blocksToMine = 3141592
 
     const { args, gaugePool } = contracts
     const candidates = [[a1, randomAmount()], [a2, randomAmount()]]
@@ -38,15 +43,18 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
       await deposit(owner, account, contracts, key, amount)
     }
 
-    await mine(1)
+    await mine(blocksToMine)
 
     const reward = await gaugePool.calculateReward(key, a2.address)
-    const total = Enumerable.from(candidates).select(x => parseInt(x[1])).sum()
-    const estimatedReward = Math.floor((emissionPerEpoch / args.blocksPerEpoch) * parseInt(candidates[1][1]) / total)
+
+    const totalWeight = ethers.BigNumber.from(Enumerable.from(candidates).select(x => BigInt(x[1])).sum())
+    const myWeight = ethers.BigNumber.from(candidates[1][1])
+    const emissionPerBlock = ethers.BigNumber.from(emissionPerEpoch).div(blocksPerEpoch)
+    const estimated = emissionPerBlock.mul(blocksToMine).mul(myWeight).div(totalWeight)
 
     reward.should
       .be.greaterThan(0)
       .but.also.be.lessThan(emissionPerEpoch)
-      .which.also.equals(estimatedReward)
+      .which.also.equals(estimated)
   })
 })

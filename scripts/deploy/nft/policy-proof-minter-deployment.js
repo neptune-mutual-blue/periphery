@@ -20,7 +20,7 @@ const deploy = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
-  console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
+  console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
   const { store, neptuneLegends, policyProofMinter } = await getDependencies(deployer, chainId)

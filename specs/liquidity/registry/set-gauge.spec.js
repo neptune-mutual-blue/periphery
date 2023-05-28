@@ -1,7 +1,8 @@
-const { ethers } = require('hardhat')
+const { ethers, network } = require('hardhat')
 const factory = require('../../util/factory')
 const key = require('../../util/key')
 const helper = require('../../util/helper')
+const config = require('../../../scripts/config')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -39,10 +40,12 @@ describe('Gauge Controller Registry: Set Gauge', () => {
 
   before(async () => {
     const [owner] = await ethers.getSigners()
+    const { chainId } = network.config
+    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     contracts = await factory.deployProtocol(owner)
 
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], contracts.npm.address)
 
     for (const candidate of candidates) {
       await registry.addOrEditPool(candidate.key, candidate.pool)
@@ -51,8 +54,9 @@ describe('Gauge Controller Registry: Set Gauge', () => {
 
   it('must correctly set distribution', async () => {
     const epoch = 1
-    const blocksPerEpoch = 5000
     const amountToDeposit = helper.ether(1_000_000)
+    const { chainId } = network.config
+    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     const distribution = candidates.map(x => {
       return {
@@ -65,7 +69,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     await contracts.npm.mint(owner.address, amountToDeposit)
     await contracts.npm.approve(registry.address, amountToDeposit)
 
-    await registry.setGauge(epoch, amountToDeposit, distribution, blocksPerEpoch)
+    await registry.setGauge(epoch, amountToDeposit, distribution)
 
     ; (await contracts.npm.balanceOf(registry.address)).should.equal(amountToDeposit)
 

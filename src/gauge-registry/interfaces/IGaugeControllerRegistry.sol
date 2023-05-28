@@ -22,7 +22,8 @@ interface IGaugeControllerRegistry {
   }
 
   function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external;
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution, uint256 approximateBlocksPerEpoch) external;
+  function setApproximateBlocksPerEpoch(uint256 approximateBlocksPerEpoch) external;
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
   function withdrawRewards(bytes32 key, uint256 amount) external;
   function deactivatePool(bytes32 key) external;
   function activatePool(bytes32 key) external;
@@ -37,6 +38,7 @@ interface IGaugeControllerRegistry {
   function getEmissionPerBlock(bytes32 key) external view returns (uint256);
   function getAllocation(uint256 epoch) external view returns (uint256);
 
+  event ApproximateBlocksPerEpochSet(uint256 previous, uint256 current);
   event GaugeControllerRegistryOperatorSet(address previousOperator, address operator);
   event GaugeControllerRegistryRewardsWithdrawn(bytes32 key, uint256 amount);
   event GaugeControllerRegistryPoolAddedOrEdited(address indexed sender, bytes32 indexed key, PoolSetupArgs args);

@@ -105,6 +105,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
 
   function validateProof(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona) public view {
     bytes32 leaf = keccak256(abi.encodePacked(_msgSender(), level, family, persona));
+
     if (proof.verify(_merkleRoot, leaf) == false) {
       revert InvalidProofError();
     }
