@@ -19,7 +19,6 @@ describe('Soul bound nft mint validation', () => {
     const amounts = [helper.ether(20_000), helper.ether(50_000)]
     await contracts.cxToken.mint(owner.address, amounts[0])
 
-    const tx = await minter.mint(contracts.cxToken.address, 50)
-    await tx.wait()
+    await minter.mint(contracts.cxToken.address, 50)
   })
 })

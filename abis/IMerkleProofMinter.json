@@ -5,6 +5,22 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "boundTokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidBindingError",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "InvalidPersonaError",
     "type": "error"

@@ -16,6 +16,7 @@ interface IMerkleProofMinter {
   event MintedWithProof(bytes32[] proof, uint256 level, uint256 tokenId);
   event PersonaSet(address indexed account, uint8 level, uint8 persona);
 
+  error InvalidBindingError(address account, uint256 boundTokenId);
   error InvalidPersonaError();
   error PersonaAlreadySetError();
   error PersonaMismatchError(uint8 expected, uint8 actual);
