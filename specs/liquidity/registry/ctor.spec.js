@@ -1,5 +1,7 @@
+const { network } = require('hardhat')
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
+const config = require('../../../scripts/config')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -10,9 +12,11 @@ describe('Gauge Controller Registry: Constructor', () => {
 
   before(async () => {
     const [owner] = await ethers.getSigners()
+    const { chainId } = network.config
+    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], npm.address)
   })
 
   it('must correctly set the state upon construction', async () => {

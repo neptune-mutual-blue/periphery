@@ -28,8 +28,12 @@
     "mulu",
     "nomicfoundation",
     "nomiclabs",
+    "Pausability",
+    "Pausable",
+    "Reentrancy",
     "Sabersquatch",
     "Salacia",
+    "struct",
     "tokenholder",
     "zerox"
   ],
@@ -48,44 +52,44 @@
     {
       "text": "revert",
       "color": "#ffffff",
-      "backgroundColor": "#ff2600",
+      "backgroundColor": "#0061ff",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#0061ff"
     },
     {
       "text": "throw",
       "color": "#ffffff",
-      "backgroundColor": "#ff8873",
+      "backgroundColor": "#0061ff",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#0061ff"
     },
     {
       "text": "public",
       "color": "#ffffff",
-      "backgroundColor": "#0061ff",
+      "backgroundColor": "#ff2600",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#ff2600"
     },
     {
       "text": "external",
       "color": "#ffffff",
-      "backgroundColor": "#0061ff",
+      "backgroundColor": "#ff2600",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#ff2600"
     },
     {
       "text": "when",
       "color": "#ffffff",
-      "backgroundColor": "#0061ff",
+      "backgroundColor": "#ff2600",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#ff2600"
     },
     {
       "text": "only",
       "color": "#ffffff",
-      "backgroundColor": "#0061ff",
+      "backgroundColor": "#ff2600",
       "isWholeLine": false,
-      "overviewRulerColor": "#f5bcb3"
+      "overviewRulerColor": "#ff2600"
     },
     {
       "text": "function initialize",

@@ -6,7 +6,7 @@ const deploy = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
-  console.log('Deployer: %s. Balance: %d ETH', deployer.address, formatEther(previousBalance))
+  console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
 }

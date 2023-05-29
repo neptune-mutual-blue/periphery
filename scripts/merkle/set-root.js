@@ -1,9 +1,11 @@
 const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
-const factory = require('../../../specs/util/factory')
-const { boundaries } = require('../../../specs/util/boundaries')
-const key = require('../../../specs/util/key')
-const deployments = require('../../util/deployments')
+const factory = require('../../specs/util/factory')
+const deployments = require('../util/deployments')
+const { MerkleTree } = require('merkletreejs')
+const { utils } = require('ethers')
+
+const merkleLeaves = require('./merkle-leaves.json')
 
 const getDependencies = async (deployer, chainId) => {
   if (chainId !== 31337) {
@@ -16,6 +18,15 @@ const getDependencies = async (deployer, chainId) => {
   return { neptuneLegends: neptuneLegends.address, merkleProofMinter: merkleProofMinter.address }
 }
 
+const parseLeaf = (x) => utils.keccak256(utils.solidityPack(
+  ['address', 'uint8', 'bytes32', 'uint8'],
+  [x.account, x.level, utils.formatBytes32String(x.family), x.persona])
+)
+
+const generateTree = (leaves) => {
+  return new MerkleTree(leaves, utils.keccak256, { sortPairs: true })
+}
+
 const deploy = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
@@ -23,16 +34,18 @@ const deploy = async () => {
   console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { neptuneLegends, merkleProofMinter } = await getDependencies(deployer, chainId)
+  const { merkleProofMinter } = await getDependencies(deployer, chainId)
 
-  const nft = await factory.attach(deployer, neptuneLegends, 'NeptuneLegends')
   const minter = await factory.attach(deployer, merkleProofMinter, 'MerkleProofMinter')
 
-  // Set the Merkle Proof Minter Contract as a Minter
-  await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, minter.address)
+  const eligible = merkleLeaves.filter(x => !!x.family)
 
-  // Set boundaries
-  await minter.setBoundaries(...boundaries)
+  const leaves = eligible.map(parseLeaf)
+  const tree = generateTree(leaves)
+  const root = tree.getHexRoot()
+
+  const tx = await minter.setMerkleRoot(root)
+  console.log('Merkle Root Set', tx.hash)
 }
 
 deploy().catch(console.error)

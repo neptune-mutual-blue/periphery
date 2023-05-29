@@ -23,11 +23,12 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     return 10_000;
   }
 
-  function initialize(address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
+  function initialize(uint256 approximateBlocksPerEpoch, address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
     _rewardToken = rewardToken;
+    _approximateBlocksPerEpoch = approximateBlocksPerEpoch;
 
     _setRoleAdmin(NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
@@ -41,6 +42,14 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     }
 
     _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
+
+    emit ApproximateBlocksPerEpochSet(0, approximateBlocksPerEpoch);
+  }
+
+  function setApproximateBlocksPerEpoch(uint256 approximateBlocksPerEpoch) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    emit ApproximateBlocksPerEpochSet(_approximateBlocksPerEpoch, approximateBlocksPerEpoch);
+
+    _approximateBlocksPerEpoch = approximateBlocksPerEpoch;
   }
 
   function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -90,7 +99,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution, uint256 approximateBlocksPerEpoch) external override onlyRole(NS_GAUGE_AGENT) {
+  function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyRole(NS_GAUGE_AGENT) {
     if (epoch == 0) {
       revert InvalidGaugeEpochError();
     }
@@ -113,8 +122,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
         revert PoolNotActiveError(key);
       }
 
-      // @todo: check for precision loss
-      _emissionsPerBlock[key] = distribution[i].emissionPerEpoch / approximateBlocksPerEpoch;
+      _emissionsPerBlock[key] = distribution[i].emissionPerEpoch / _approximateBlocksPerEpoch;
       total += distribution[i].emissionPerEpoch;
 
       emit GaugeSet(epoch, key, distribution[i].emissionPerEpoch);
@@ -130,7 +138,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     npm.safeTransferFrom(_msgSender(), address(this), amountToDeposit);
     // slither-disable-end arbitrary-send-erc20
 
-    _guageAllocations[epoch] = amountToDeposit;
+    _gaugeAllocations[epoch] = amountToDeposit;
     _sumNpmDeposits += amountToDeposit;
 
     emit GaugeAllocationTransferred(epoch, amountToDeposit);
@@ -234,7 +242,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
   }
 
   function getAllocation(uint256 epoch) external view override returns (uint256) {
-    return _guageAllocations[epoch];
+    return _gaugeAllocations[epoch];
   }
 
   function getEmissionPerBlock(bytes32 key) external view override returns (uint256) {

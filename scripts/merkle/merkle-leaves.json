@@ -1,0 +1,178 @@
+[
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x3246f672b3cd58c81e7af53b186f810595b30df1",
+    "policy": "144790",
+    "liquidity": "1546",
+    "points": "962",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x798cc9bbb5f1b86db81775586045302e0613057a",
+    "policy": "100000",
+    "liquidity": "0",
+    "points": "625",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x82e5b6ad650fe2741bfca6a095d493cf97ead16b",
+    "policy": "5420",
+    "liquidity": "8600",
+    "points": "356",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x8d14af59596b7651851bc587343b2401f6e520e2",
+    "policy": "100000",
+    "liquidity": "0",
+    "points": "625",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x8ede0da4ba425ff2d08216979642287b6576d9c3",
+    "policy": "20000",
+    "liquidity": "0",
+    "points": "125",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 1,
+    "family": "Delphinus",
+    "persona": 1
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 2,
+    "family": "Epic Delphinus",
+    "persona": 1
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 3,
+    "family": "Gargantuworm",
+    "persona": 2
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 4,
+    "family": "Diabolic Gargantuworm",
+    "persona": 2
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 5,
+    "family": "Salacia",
+    "persona": 1
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 6,
+    "family": "Epic Salacia",
+    "persona": 1
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0x97cdf0433dadfa2cf548c831a09084990a76e9b0",
+    "policy": "90000",
+    "liquidity": "18275496",
+    "points": "685893",
+    "eligibleLevel": 7,
+    "level": 7,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0xc5a2d9d47d748333686aa59f4218a6789d2981ff",
+    "policy": "100000",
+    "liquidity": "0",
+    "points": "625",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0xd3dcea9ae8374aa15e67d6e98c02cb78ba30cfbf",
+    "policy": "100000",
+    "liquidity": "0",
+    "points": "625",
+    "eligibleLevel": 1,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0xd9afac6b4d8937c1e90a35d9595c716fd53b7a31",
+    "policy": "500000",
+    "liquidity": "0",
+    "points": "3125",
+    "eligibleLevel": 2,
+    "level": 1,
+    "family": null,
+    "persona": null
+  },
+  {
+    "id": "6361e3a2-f989-4b33-b00d-5e070c2d31cd",
+    "account": "0xd9afac6b4d8937c1e90a35d9595c716fd53b7a31",
+    "policy": "500000",
+    "liquidity": "0",
+    "points": "3125",
+    "eligibleLevel": 2,
+    "level": 2,
+    "family": null,
+    "persona": null
+  }
+]

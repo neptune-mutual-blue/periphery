@@ -1,7 +1,8 @@
-const { ethers } = require('hardhat')
+const { ethers, network } = require('hardhat')
 const factory = require('../../util/factory')
 const key = require('../../util/key')
 const helper = require('../../util/helper')
+const config = require('../../../scripts/config')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -12,9 +13,11 @@ describe('Gauge Controller Registry: Add Pool', () => {
 
   before(async () => {
     const [owner] = await ethers.getSigners()
+    const { chainId } = network.config
+    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     contracts = await factory.deployProtocol(owner)
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', owner.address, owner.address, [owner.address], contracts.npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], contracts.npm.address)
   })
 
   it('must correctly add a new pool', async () => {

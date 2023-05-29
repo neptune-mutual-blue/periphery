@@ -8,7 +8,7 @@ const randomPrivateKey = () => `0x${crypto.randomBytes(32).toString('hex')}`
 const randomAddress = () => new ethers.Wallet(randomPrivateKey()).address
 const ether = (x, decimals = 18) => BigInt(parseFloat(x)) * BigInt(Math.pow(10, decimals))
 const percentage = (x) => BigInt((parseInt(x) * MULTIPLIER)) / BigInt(100)
-const weiToEther = (x, decimals = 18) => parseInt(x.toString()) /  Math.pow(10, decimals)
+const weiToEther = (x, decimals = 18) => parseInt(x.toString()) / Math.pow(10, decimals)
 const toPercentageString = (x) => (100 * parseInt(x.toString()) / MULTIPLIER).toFixed(2)
 const zerox = '0x0000000000000000000000000000000000000000'
 const zero1 = '0x0000000000000000000000000000000000000001'
@@ -36,7 +36,6 @@ const formatPercent = (x) => {
 const formatPercentSolidity = (x) => {
   return formatPercent(x.toNumber() / MULTIPLIER) + ' (Solidity)'
 }
-
 
 module.exports = {
   randomAddress,

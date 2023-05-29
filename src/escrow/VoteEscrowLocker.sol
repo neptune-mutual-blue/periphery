@@ -18,8 +18,8 @@ abstract contract VoteEscrowLocker is IThrowable, IVoteEscrowLocker, VoteEscrowT
     uint256 _MIN_LOCK_HEIGHT = 10;
     uint256 newUnlockTimestamp = block.timestamp + (durationInWeeks * 7 days);
 
-    if (durationInWeeks < 4 || durationInWeeks > 208) {
-      revert InvalidVoteLockPeriodError(4, 208);
+    if (durationInWeeks < 1 || durationInWeeks > 208) {
+      revert InvalidVoteLockPeriodError(1, 208);
     }
 
     if (newUnlockTimestamp < _unlockAt[account]) {
