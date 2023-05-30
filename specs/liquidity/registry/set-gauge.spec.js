@@ -10,46 +10,40 @@ require('chai')
 
 const candidates = [{
   key: key.toBytes32('prime'),
-  pool: {
-    name: 'Prime dApps',
-    info: '',
-    platformFee: 1000,
-    staking: {
-      token: helper.randomAddress(),
-      lockupPeriodInBlocks: 10_000,
-      ratio: 2000
-    }
+  name: 'Prime dApps',
+  info: '',
+  platformFee: 1000,
+  staking: {
+    token: helper.randomAddress(),
+    lockupPeriodInBlocks: 10_000,
+    ratio: 2000
   }
 },
 {
   key: key.toBytes32('popular-defi-apps'),
-  pool: {
-    name: 'Popular DeFi Apps',
-    info: '',
-    platformFee: 1500,
-    staking: {
-      token: helper.randomAddress(),
-      lockupPeriodInBlocks: 10_000,
-      ratio: 2000
-    }
+  name: 'Popular DeFi Apps',
+  info: '',
+  platformFee: 1500,
+  staking: {
+    token: helper.randomAddress(),
+    lockupPeriodInBlocks: 10_000,
+    ratio: 2000
   }
 }]
 
 describe('Gauge Controller Registry: Set Gauge', () => {
-  let contracts, registry
+  let contracts, registry, blocksPerEpoch
 
   before(async () => {
     const [owner] = await ethers.getSigners()
     const { chainId } = network.config
-    const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
+    blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     contracts = await factory.deployProtocol(owner)
 
     registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    for (const candidate of candidates) {
-      await registry.addOrEditPool(candidate.key, candidate.pool)
-    }
+    await registry.addOrEditPools(candidates)
   })
 
   it('must correctly set distribution', async () => {
@@ -61,7 +55,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     const distribution = candidates.map(x => {
       return {
         key: x.key,
-        emissionPerEpoch: helper.getRandomNumber(500_000, 4_000_000)
+        emission: helper.getRandomNumber(500_000, 4_000_000)
       }
     })
 
@@ -69,16 +63,18 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     await contracts.npm.mint(owner.address, amountToDeposit)
     await contracts.npm.approve(registry.address, amountToDeposit)
 
-    await registry.setGauge(epoch, amountToDeposit, distribution)
+    const tx = await registry.setGauge(epoch, amountToDeposit, distribution)
 
     ; (await contracts.npm.balanceOf(registry.address)).should.equal(amountToDeposit)
 
     ; (await registry.getLastEpoch()).should.equal('1')
-    ; (await registry.getAllocation('1')).should.equal(amountToDeposit)
+    ; (await registry['getEpoch()']()).startBlock.should.equal(tx.blockNumber)
+    ; (await registry['getEpoch()']()).endBlock.should.equal(tx.blockNumber + blocksPerEpoch)
     ; (await registry.sumNpmDeposited()).should.equal(amountToDeposit)
+    ; (await registry.getAllocation('1')).should.equal(amountToDeposit)
 
     for (const item of distribution) {
-      (await registry.getEmissionPerBlock(item.key)).should.equal(Math.floor(item.emissionPerEpoch / blocksPerEpoch))
+      (await registry.getEmissionPerBlock(item.key)).should.equal(Math.floor(item.emission / blocksPerEpoch))
     }
   })
 })

@@ -19,6 +19,7 @@ abstract contract GaugeControllerRegistryState is IGaugeControllerRegistry {
   address public _rewardToken;
 
   uint256 public _epoch;
+  uint256 public _blocksPerEpoch;
   uint256 public _sumNpmDeposits;
   uint256 public _sumNpmWithdrawals;
 
@@ -28,8 +29,7 @@ abstract contract GaugeControllerRegistryState is IGaugeControllerRegistry {
   mapping(uint256 => uint256) public _gaugeAllocations;
 
   mapping(bytes32 => PoolSetupArgs) public _pools;
-
-  uint256 public _approximateBlocksPerEpoch;
+  mapping(uint256 => Epoch) public _epochs;
 }
 // slither-disable-end uninitialized-state
 // slither-disable-end unused-state

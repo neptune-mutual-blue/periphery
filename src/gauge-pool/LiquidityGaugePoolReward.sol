@@ -35,10 +35,21 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
   }
 
   function _getTotalBlocksSinceLastReward(bytes32 key, address account) internal view returns (uint256) {
+    IGaugeControllerRegistry.Epoch memory epoch = IGaugeControllerRegistry(_registry).getEpoch();
+
     uint256 from = _poolLastRewardHeights[key][account];
+    uint256 to = block.number;
+
+    if (to > epoch.endBlock) {
+      to = epoch.endBlock;
+    }
 
     if (from == 0) {
       return 0;
+    }
+
+    if (from < epoch.startBlock) {
+      from = epoch.startBlock;
     }
 
     // Avoid underflow
@@ -46,7 +57,7 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
       return 0;
     }
 
-    return block.number - from;
+    return to - from;
   }
 
   function _calculateReward(uint256 veBoostRatio, bytes32 key, address account) internal view returns (uint256) {

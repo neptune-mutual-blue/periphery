@@ -23,12 +23,28 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     return 10_000;
   }
 
-  function initialize(uint256 approximateBlocksPerEpoch, address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
+  function initialize(uint256 blocksPerEpoch, address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
+    if (blocksPerEpoch == 0) {
+      revert InvalidArgumentError("blocksPerEpoch");
+    }
+
+    if (admin == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
+    if (gaugeAgent == address(0)) {
+      revert InvalidArgumentError("gaugeAgent");
+    }
+
+    if (rewardToken == address(0)) {
+      revert InvalidArgumentError("rewardToken");
+    }
+
     _rewardToken = rewardToken;
-    _approximateBlocksPerEpoch = approximateBlocksPerEpoch;
+    _blocksPerEpoch = blocksPerEpoch;
 
     _setRoleAdmin(NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
@@ -43,70 +59,105 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
 
     _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
 
-    emit ApproximateBlocksPerEpochSet(0, approximateBlocksPerEpoch);
+    emit BlocksPerEpochSet(0, blocksPerEpoch);
   }
 
-  function setApproximateBlocksPerEpoch(uint256 approximateBlocksPerEpoch) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    emit ApproximateBlocksPerEpochSet(_approximateBlocksPerEpoch, approximateBlocksPerEpoch);
+  function setBlocksPerEpoch(uint256 blocksPerEpoch) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (blocksPerEpoch == 0) {
+      revert InvalidArgumentError("blocksPerEpoch");
+    }
 
-    _approximateBlocksPerEpoch = approximateBlocksPerEpoch;
+    emit BlocksPerEpochSet(_blocksPerEpoch, blocksPerEpoch);
+
+    _blocksPerEpoch = blocksPerEpoch;
   }
 
-  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    bool adding = _validPools[key] == false;
+  function addOrEditPools(PoolSetupArgs[] calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (args.length == 0) {
+      revert InvalidArgumentError("args");
+    }
+
+    for (uint256 i = 0; i < args.length; i++) {
+      _addOrEditPool(args[i]);
+    }
+  }
+
+  function _addOrEditPool(PoolSetupArgs calldata args) private {
+    bool adding = _validPools[args.key] == false;
 
     if (adding) {
       if (bytes(args.name).length == 0) {
-        revert EmptyArgumentError("args.name");
+        revert InvalidArgumentError("args.name");
       }
 
       if (args.staking.token == address(0)) {
         revert ZeroAddressError("args.staking.token");
       }
 
-      _validPools[key] = true;
-      _activePools[key] = true;
+      _validPools[args.key] = true;
+      _activePools[args.key] = true;
 
-      _pools[key] = args;
+      _pools[args.key] = args;
     } else {
-      if (_activePools[key] == false) {
-        revert PoolDeactivatedError(key);
+      if (_activePools[args.key] == false) {
+        revert PoolDeactivatedError(args.key);
       }
 
       if (bytes(args.name).length > 0) {
-        _pools[key].name = args.name;
+        _pools[args.key].name = args.name;
       }
 
       if (bytes(args.info).length > 0) {
-        _pools[key].info = args.info;
+        _pools[args.key].info = args.info;
       }
 
       if (args.staking.lockupPeriodInBlocks > 0) {
-        _pools[key].staking.lockupPeriodInBlocks = args.staking.lockupPeriodInBlocks;
+        _pools[args.key].staking.lockupPeriodInBlocks = args.staking.lockupPeriodInBlocks;
       }
 
       if (args.staking.ratio > 0) {
-        _pools[key].staking.ratio = args.staking.ratio;
+        _pools[args.key].staking.ratio = args.staking.ratio;
       }
     }
 
     if (args.platformFee > _denominator()) {
-      revert PlatformFeeTooHighError(key, args.platformFee);
+      revert PlatformFeeTooHighError(args.key, args.platformFee);
     }
 
-    _pools[key].platformFee = args.platformFee;
+    _pools[args.key].platformFee = args.platformFee;
 
-    emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), key, args);
+    emit GaugeControllerRegistryPoolAddedOrEdited(_msgSender(), args.key, args);
   }
 
   function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external override onlyRole(NS_GAUGE_AGENT) {
     if (epoch == 0) {
-      revert InvalidGaugeEpochError();
+      revert InvalidArgumentError("epoch");
+    }
+
+    if (amountToDeposit == 0) {
+      revert InvalidArgumentError("amountToDeposit");
+    }
+
+    if (distribution.length == 0) {
+      revert InvalidArgumentError("distribution");
     }
 
     if (epoch != _epoch + 1) {
       revert InvalidGaugeEpochError();
     }
+
+    if (_blocksPerEpoch == 0) {
+      revert ConfigurationError("_blocksPerEpoch");
+    }
+
+    if (_epochs[_epoch].endBlock > block.number) {
+      revert HeightOverflowError(_epochs[_epoch].endBlock);
+    }
+
+    Epoch memory epochInfo;
+
+    epochInfo.startBlock = block.number;
+    epochInfo.endBlock = epochInfo.startBlock + _blocksPerEpoch;
 
     _epoch = epoch;
     uint256 total = 0;
@@ -122,10 +173,10 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
         revert PoolNotActiveError(key);
       }
 
-      _emissionsPerBlock[key] = distribution[i].emissionPerEpoch / _approximateBlocksPerEpoch;
-      total += distribution[i].emissionPerEpoch;
+      _emissionsPerBlock[key] = distribution[i].emission / _blocksPerEpoch;
+      total += distribution[i].emission;
 
-      emit GaugeSet(epoch, key, distribution[i].emissionPerEpoch);
+      emit GaugeSet(epoch, key, distribution[i].emission);
     }
 
     if (amountToDeposit < total) {
@@ -138,7 +189,9 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     npm.safeTransferFrom(_msgSender(), address(this), amountToDeposit);
     // slither-disable-end arbitrary-send-erc20
 
+    _epochs[epoch] = epochInfo;
     _gaugeAllocations[epoch] = amountToDeposit;
+
     _sumNpmDeposits += amountToDeposit;
 
     emit GaugeAllocationTransferred(epoch, amountToDeposit);
@@ -243,6 +296,14 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
 
   function getAllocation(uint256 epoch) external view override returns (uint256) {
     return _gaugeAllocations[epoch];
+  }
+
+  function getEpoch() external view override returns (Epoch memory) {
+    return _epochs[_epoch];
+  }
+
+  function getEpoch(uint256 epoch) external view override returns (Epoch memory) {
+    return _epochs[epoch];
   }
 
   function getEmissionPerBlock(bytes32 key) external view override returns (uint256) {

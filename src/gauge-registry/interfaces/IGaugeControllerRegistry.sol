@@ -10,6 +10,7 @@ interface IGaugeControllerRegistry {
   }
 
   struct PoolSetupArgs {
+    bytes32 key;
     string name;
     string info;
     uint256 platformFee;
@@ -18,11 +19,16 @@ interface IGaugeControllerRegistry {
 
   struct Gauge {
     bytes32 key;
-    uint256 emissionPerEpoch;
+    uint256 emission;
   }
 
-  function addOrEditPool(bytes32 key, PoolSetupArgs calldata args) external;
-  function setApproximateBlocksPerEpoch(uint256 approximateBlocksPerEpoch) external;
+  struct Epoch {
+    uint256 startBlock;
+    uint256 endBlock;
+  }
+
+  function addOrEditPools(PoolSetupArgs[] calldata args) external;
+  function setBlocksPerEpoch(uint256 blocksPerEpoch) external;
   function setGauge(uint256 epoch, uint256 amountToDeposit, Gauge[] calldata distribution) external;
   function withdrawRewards(bytes32 key, uint256 amount) external;
   function deactivatePool(bytes32 key) external;
@@ -37,8 +43,10 @@ interface IGaugeControllerRegistry {
   function getLastEpoch() external view returns (uint256);
   function getEmissionPerBlock(bytes32 key) external view returns (uint256);
   function getAllocation(uint256 epoch) external view returns (uint256);
+  function getEpoch() external view returns (Epoch memory);
+  function getEpoch(uint256 epoch) external view returns (Epoch memory);
 
-  event ApproximateBlocksPerEpochSet(uint256 previous, uint256 current);
+  event BlocksPerEpochSet(uint256 previous, uint256 current);
   event GaugeControllerRegistryOperatorSet(address previousOperator, address operator);
   event GaugeControllerRegistryRewardsWithdrawn(bytes32 key, uint256 amount);
   event GaugeControllerRegistryPoolAddedOrEdited(address indexed sender, bytes32 indexed key, PoolSetupArgs args);
@@ -48,7 +56,9 @@ interface IGaugeControllerRegistry {
   event GaugeSet(uint256 indexed epoch, bytes32 indexed key, uint256 distribution);
   event GaugeAllocationTransferred(uint256 indexed epoch, uint256 totalAllocation);
 
+  error ConfigurationError(bytes32 arg);
   error InvalidGaugeEpochError();
+  error HeightOverflowError(uint256 endHeight);
   error PoolNotFoundError(bytes32 key);
   error PoolNotActiveError(bytes32 key);
   error PoolDeactivatedError(bytes32 key);

@@ -36,7 +36,7 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
     const { args, gaugePool } = contracts
     const candidates = [[a1, randomAmount()], [a2, randomAmount()]]
 
-    const { key, emissionPerEpoch } = args.distribution[0]
+    const { key, emission } = args.distribution[0]
 
     for (const candidate of candidates) {
       const [account, amount] = candidate
@@ -49,12 +49,12 @@ describe('Liquidity Gauge Pool: Calculate Reward without veNpm Boost', () => {
 
     const totalWeight = ethers.BigNumber.from(Enumerable.from(candidates).select(x => BigInt(x[1])).sum())
     const myWeight = ethers.BigNumber.from(candidates[1][1])
-    const emissionPerBlock = ethers.BigNumber.from(emissionPerEpoch).div(blocksPerEpoch)
+    const emissionPerBlock = ethers.BigNumber.from(emission).div(blocksPerEpoch)
     const estimated = emissionPerBlock.mul(blocksToMine).mul(myWeight).div(totalWeight)
 
     reward.should
       .be.greaterThan(0)
-      .but.also.be.lessThan(emissionPerEpoch)
+      .but.also.be.lessThan(emission)
       .which.also.equals(estimated)
   })
 })

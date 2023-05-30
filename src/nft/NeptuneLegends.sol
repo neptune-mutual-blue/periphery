@@ -53,8 +53,24 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
   function mint(MintInfo calldata info) external override {
     _throwIfSenderIsNot(NS_ROLES_MINTER);
 
+    _mint(info);
+  }
+
+  function mintMany(MintInfo[] calldata info) external override {
+    _throwIfSenderIsNot(NS_ROLES_MINTER);
+
+    for (uint256 i = 0; i < info.length; i++) {
+      _mint(info[i]);
+    }
+  }
+
+  function _mint(MintInfo calldata info) private {
     if (_minted[info.id]) {
       revert AlreadyMintedError(info.id);
+    }
+
+    if (_boundTokenId[info.sendTo] > 0) {
+      revert AlreadyBoundError(info.sendTo, _boundTokenId[info.sendTo], info.id);
     }
 
     _soulbound[info.id] = info.soulbound;
@@ -64,33 +80,15 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
       emit SoulBound(info.id);
     }
 
+    _boundTokenId[info.sendTo] = info.id;
     super._safeMint(info.sendTo, info.id, "");
-  }
-
-  function mintMany(MintInfo[] calldata info) external override {
-    _throwIfSenderIsNot(NS_ROLES_MINTER);
-
-    for (uint256 i = 0; i < info.length; i++) {
-      _soulbound[info[i].id] = info[i].soulbound;
-
-      if (info[i].soulbound) {
-        emit SoulBound(info[i].id);
-      }
-
-      if (_minted[info[i].id]) {
-        revert AlreadyMintedError(info[i].id);
-      }
-
-      _minted[info[i].id] = true;
-      super._safeMint(info[i].sendTo, info[i].id, "");
-    }
   }
 
   function setBaseUri(string calldata baseUri) external {
     _throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
     if (bytes(baseUri).length == 0) {
-      revert EmptyArgumentError("baseUri");
+      revert InvalidArgumentError("baseUri");
     }
 
     emit BaseUriSet(super._baseURI(), baseUri);
