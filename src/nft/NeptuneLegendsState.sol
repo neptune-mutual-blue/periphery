@@ -16,6 +16,7 @@ abstract contract NeptuneLegendsState is INeptuneLegends {
   bytes32 public constant NS_ROLES_PAUSER = "role:pauser";
   bytes32 public constant NS_ROLES_RECOVERY_AGENT = "role:recovery:agent";
 
+  string public _uri;
   mapping(address => bool) public _pausers;
   mapping(uint256 => bool) public _minted;
   mapping(uint256 => bool) public _soulbound;

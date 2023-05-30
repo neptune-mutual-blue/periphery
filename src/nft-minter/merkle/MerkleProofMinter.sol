@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.12;
 
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/cryptography/MerkleProofUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -57,8 +58,8 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
     }
   }
 
-  function mint(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {
-    validate(level, family, persona, tokenId);
+  function mint(bytes32[] calldata proof, uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {
+    validate(boundTokenId, level, family, persona, tokenId);
     validateProof(proof, level, family, persona);
 
     _mintStatus[_msgSender()][level] = true;
@@ -67,9 +68,13 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
     emit MintedWithProof(proof, level, tokenId);
   }
 
-  function validate(uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
-    if (tokenId == 0) {
+  function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
+    if (tokenId == 0 || boundTokenId == 0) {
       revert InvalidTokenIdError(tokenId);
+    }
+
+    if (IERC721Upgradeable(address(_nft)).ownerOf(boundTokenId) != _msgSender()) {
+      revert InvalidBindingError(_msgSender(), boundTokenId);
     }
 
     if (_nft._minted(tokenId)) {

@@ -3,17 +3,15 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/IERC1155MetadataURIUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "../util/WithPausability.sol";
 import "../util/TokenRecovery.sol";
 import "./NeptuneLegendsState.sol";
 
-contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, NeptuneLegendsState {
+contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, NeptuneLegendsState {
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     super._disableInitializers();
@@ -21,9 +19,11 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
 
   function initialize(string calldata tokenUri, address admin, address minter) external initializer {
     super.__AccessControl_init();
-    super.__ERC1155_init(tokenUri);
+    super.__ERC721_init("Neptune Legends", "NLG");
     super.__ERC2981_init();
     super.__Pausable_init();
+
+    _uri = tokenUri;
 
     _setRoleAdmin(NS_ROLES_MINTER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
@@ -35,19 +35,19 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
     _setupRole(NS_ROLES_MINTER, minter);
   }
 
-  function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) internal override whenNotPaused {
+  function _baseURI() internal view override returns (string memory) {
+    return _uri;
+  }
+
+  function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize) internal override whenNotPaused {
     // Only enter if this isn't a mint operation
     if (from != address(0)) {
-      for (uint256 i = 0; i < ids.length; i++) {
-        uint256 id = ids[i];
-
-        if (_soulbound[id]) {
-          revert SoulboundError(id);
-        }
+      if (_soulbound[tokenId]) {
+        revert SoulboundError(tokenId);
       }
     }
 
-    super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    super._beforeTokenTransfer(from, to, tokenId, batchSize);
   }
 
   function mint(MintInfo calldata info) external override {
@@ -64,7 +64,7 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
       emit SoulBound(info.id);
     }
 
-    super._mint(info.sendTo, info.id, 1, "");
+    super._safeMint(info.sendTo, info.id, "");
   }
 
   function mintMany(MintInfo[] calldata info) external override {
@@ -82,7 +82,7 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
       }
 
       _minted[info[i].id] = true;
-      super._mint(info[i].sendTo, info[i].id, 1, "");
+      super._safeMint(info[i].sendTo, info[i].id, "");
     }
   }
 
@@ -93,8 +93,8 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
       revert EmptyArgumentError("baseUri");
     }
 
-    emit BaseUriSet(super.uri(0), baseUri);
-    super._setURI(baseUri);
+    emit BaseUriSet(super._baseURI(), baseUri);
+    _uri = baseUri;
   }
 
   function setDefaultRoyalty(address receiver, uint96 feeNumerator) external {
@@ -164,21 +164,16 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                             Views
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function uri(uint256 id) public view override returns (string memory) {
-    string memory baseUri = super.uri(id);
-    return string(abi.encodePacked(baseUri, StringsUpgradeable.toString(id), ".json"));
-  }
-
   function feeDenominator() external pure returns (uint96) {
     return super._feeDenominator();
   }
 
-  function supportsInterface(bytes4 interfaceId) public pure virtual override(AccessControlUpgradeable, ERC1155Upgradeable, ERC2981Upgradeable) returns (bool) {
+  function supportsInterface(bytes4 interfaceId) public pure virtual override(AccessControlUpgradeable, ERC721Upgradeable, ERC2981Upgradeable) returns (bool) {
     if (type(IAccessControlUpgradeable).interfaceId == interfaceId) {
       return true;
     }
 
-    if (type(IERC1155Upgradeable).interfaceId == interfaceId) {
+    if (type(IERC721Upgradeable).interfaceId == interfaceId) {
       return true;
     }
 
@@ -186,7 +181,7 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC1155Upgradeable, ERC2981
       return true;
     }
 
-    if (type(IERC1155MetadataURIUpgradeable).interfaceId == interfaceId) {
+    if (type(IERC721MetadataUpgradeable).interfaceId == interfaceId) {
       return true;
     }
 

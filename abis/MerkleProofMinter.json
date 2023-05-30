@@ -58,6 +58,22 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "boundTokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidBindingError",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "InvalidPersonaError",
     "type": "error"
@@ -698,6 +714,11 @@
         "type": "bytes32[]"
       },
       {
+        "internalType": "uint256",
+        "name": "boundTokenId",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint8",
         "name": "level",
         "type": "uint8"
@@ -923,6 +944,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "boundTokenId",
+        "type": "uint256"
+      },
       {
         "internalType": "uint8",
         "name": "level",

@@ -34,9 +34,9 @@
     "gaugeControllerRegistry": "0x2D4062dc0319180F012470a4b570f4291c668364",
     "liquidityGaugePool": "0x2a2e0efe94ab54fb473644f5b530f7070cc51937",
     "stablecoin": "0xbdCDBD278467b84F67AEE5737Ddc83A9C054cC29",
-    "neptuneLegends": "0x6A9c1bb998669B16f4975c968b86c02fB95Ef0d1",
-    "merkleProofMinter": "0xd328822B75aEe344b240B7355Db5aF11e1541db6",
-    "policyProofMinter": "0x71F46Cb7401206a5a603a5bcE5b43372e1204bD8",
+    "neptuneLegends": "0x0C84eaE9d1b4Cc8397FC5209733FECaF9f3b0CD4",
+    "merkleProofMinter": "0xd8511fDC59e572bD42D7a53073914dd3aBba0d98",
+    "policyProofMinter": "0x4fa67829Bbc8314b0bc4047D62bf3C4e52EdCCF5",
     "stablecoinName": "Fake USD Coin",
     "stablecoinSymbol": "USDC",
     "stablecoinDecimals": 6

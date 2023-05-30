@@ -191,6 +191,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previous",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "current",
+        "type": "uint256"
+      }
+    ],
+    "name": "ApproximateBlocksPerEpochSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "uint256",
         "name": "epoch",
@@ -576,6 +595,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "_approximateBlocksPerEpoch",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -615,7 +647,7 @@
         "type": "uint256"
       }
     ],
-    "name": "_guageAllocations",
+    "name": "_gaugeAllocations",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1017,6 +1049,11 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "approximateBlocksPerEpoch",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
         "name": "admin",
         "type": "address"
@@ -1171,6 +1208,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "approximateBlocksPerEpoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "setApproximateBlocksPerEpoch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "epoch",
         "type": "uint256"
       },
@@ -1195,11 +1245,6 @@
         "internalType": "struct IGaugeControllerRegistry.Gauge[]",
         "name": "distribution",
         "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "approximateBlocksPerEpoch",
-        "type": "uint256"
       }
     ],
     "name": "setGauge",
