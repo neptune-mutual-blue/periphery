@@ -58,7 +58,7 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function grantRoles(AccountWithRoles[] calldata detail) external override whenNotPaused {
     if (detail.length == 0) {
-      revert EmptyArgumentError("detail");
+      revert InvalidArgumentError("detail");
     }
 
     for (uint256 i = 0; i < detail.length; i++) {

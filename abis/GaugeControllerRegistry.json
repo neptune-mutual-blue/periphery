@@ -40,16 +40,38 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "argument",
+        "name": "arg",
         "type": "bytes32"
       }
     ],
-    "name": "EmptyArgumentError",
+    "name": "ConfigurationError",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "ExternalContractInvocationRevertError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "endHeight",
+        "type": "uint256"
+      }
+    ],
+    "name": "HeightOverflowError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvalidArgumentError",
     "type": "error"
   },
   {
@@ -203,7 +225,7 @@
         "type": "uint256"
       }
     ],
-    "name": "ApproximateBlocksPerEpochSet",
+    "name": "BlocksPerEpochSet",
     "type": "event"
   },
   {
@@ -280,6 +302,11 @@
       },
       {
         "components": [
+          {
+            "internalType": "bytes32",
+            "name": "key",
+            "type": "bytes32"
+          },
           {
             "internalType": "string",
             "name": "name",
@@ -596,7 +623,7 @@
   },
   {
     "inputs": [],
-    "name": "_approximateBlocksPerEpoch",
+    "name": "_blocksPerEpoch",
     "outputs": [
       {
         "internalType": "uint256",
@@ -647,6 +674,30 @@
         "type": "uint256"
       }
     ],
+    "name": "_epochs",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "startBlock",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endBlock",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "_gaugeAllocations",
     "outputs": [
       {
@@ -681,6 +732,11 @@
     ],
     "name": "_pools",
     "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
       {
         "internalType": "string",
         "name": "name",
@@ -796,12 +852,12 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
         "components": [
+          {
+            "internalType": "bytes32",
+            "name": "key",
+            "type": "bytes32"
+          },
           {
             "internalType": "string",
             "name": "name",
@@ -840,12 +896,12 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
+        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs[]",
         "name": "args",
-        "type": "tuple"
+        "type": "tuple[]"
       }
     ],
-    "name": "addOrEditPool",
+    "name": "addOrEditPools",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -888,6 +944,11 @@
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "bytes32",
+            "name": "key",
+            "type": "bytes32"
+          },
           {
             "internalType": "string",
             "name": "name",
@@ -974,6 +1035,62 @@
   },
   {
     "inputs": [],
+    "name": "getEpoch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "startBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endBlock",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IGaugeControllerRegistry.Epoch",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      }
+    ],
+    "name": "getEpoch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "startBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endBlock",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IGaugeControllerRegistry.Epoch",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getLastEpoch",
     "outputs": [
       {
@@ -1050,7 +1167,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "approximateBlocksPerEpoch",
+        "name": "blocksPerEpoch",
         "type": "uint256"
       },
       {
@@ -1208,11 +1325,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "approximateBlocksPerEpoch",
+        "name": "blocksPerEpoch",
         "type": "uint256"
       }
     ],
-    "name": "setApproximateBlocksPerEpoch",
+    "name": "setBlocksPerEpoch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1238,7 +1355,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "emissionPerEpoch",
+            "name": "emission",
             "type": "uint256"
           }
         ],

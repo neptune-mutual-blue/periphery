@@ -23,6 +23,7 @@ interface INeptuneLegends {
   function _soulbound(uint256 id) external view returns (bool);
 
   error SoulboundError(uint256 tokenId);
+  error AlreadyBoundError(address account, uint256 boundTokenId, uint256 tokenId);
   error AlreadyMintedError(uint256 tokenId);
   error InvalidAmountError(uint256 valid, uint256 specified);
   error OperationNotSupportedError();

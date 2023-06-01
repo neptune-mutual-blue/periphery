@@ -16,6 +16,27 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "boundTokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AlreadyBoundError",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "AlreadyInitializedError",
     "type": "error"
@@ -48,17 +69,6 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "argument",
-        "type": "bytes32"
-      }
-    ],
-    "name": "EmptyArgumentError",
-    "type": "error"
-  },
-  {
     "inputs": [],
     "name": "ExternalContractInvocationRevertError",
     "type": "error"
@@ -77,6 +87,17 @@
       }
     ],
     "name": "InvalidAmountError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvalidArgumentError",
     "type": "error"
   },
   {

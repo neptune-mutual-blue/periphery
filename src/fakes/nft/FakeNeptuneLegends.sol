@@ -90,7 +90,7 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
     //_throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
     if (bytes(baseUri).length == 0) {
-      revert EmptyArgumentError("baseUri");
+      revert InvalidArgumentError("baseUri");
     }
 
     emit BaseUriSet(super._baseURI(), baseUri);

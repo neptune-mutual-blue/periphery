@@ -10,7 +10,7 @@ const setGauge = async (signer) => {
   const distribution = args.candidates.map(x => {
     return {
       key: x.key,
-      emissionPerEpoch: helper.ether(helper.getRandomNumber(20_000, 200_000))
+      emission: helper.ether(helper.getRandomNumber(20_000, 200_000))
     }
   })
 

@@ -145,7 +145,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function grantRoles(AccountWithRoles[] calldata detail) external override nonReentrant whenNotPaused {
     if (detail.length == 0) {
-      revert EmptyArgumentError("detail");
+      revert InvalidArgumentError("detail");
     }
 
     for (uint256 i = 0; i < detail.length; i++) {

@@ -7,10 +7,10 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 contract FakeCxToken is ERC20Upgradeable {
   uint256 _expiresOn;
 
-  function initialize(string memory tokenName, string memory tokenSymbol, uint256 expiresOn) public initializer {
+  function initialize(string memory tokenName, string memory tokenSymbol, uint256 expiry) public initializer {
     super.__ERC20_init(tokenName, tokenSymbol);
 
-    _expiresOn = expiresOn;
+    _expiresOn = expiry;
   }
 
   function mint(address account, uint256 amount) external {

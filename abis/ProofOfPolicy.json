@@ -34,17 +34,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "argument",
-        "type": "bytes32"
-      }
-    ],
-    "name": "EmptyArgumentError",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "expiredOn",
         "type": "uint256"
@@ -56,6 +45,17 @@
   {
     "inputs": [],
     "name": "ExternalContractInvocationRevertError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "argument",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvalidArgumentError",
     "type": "error"
   },
   {

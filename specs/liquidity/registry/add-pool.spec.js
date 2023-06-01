@@ -24,6 +24,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     const k = key.toBytes32('prime')
 
     const pool = {
+      key: k,
       name: 'Prime dApps',
       info: '',
       platformFee: 1000,
@@ -34,7 +35,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
       }
     }
 
-    await registry.addOrEditPool(k, pool)
+    await registry.addOrEditPools([pool])
 
     const result = await registry.get(k)
 

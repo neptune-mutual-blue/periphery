@@ -217,7 +217,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "expiresOn",
+        "name": "expiry",
         "type": "uint256"
       }
     ],

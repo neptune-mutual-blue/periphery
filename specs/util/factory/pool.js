@@ -18,34 +18,28 @@ const deployPool = async (signer) => {
 
   const candidates = [{
     key: key.toBytes32('prime'),
-    pool: {
-      name: 'Prime dApps',
-      info: '',
-      platformFee: 1000,
-      staking: {
-        token: primeDappsPod.address,
-        lockupPeriodInBlocks: 10_000,
-        ratio: 2000
-      }
+    name: 'Prime dApps',
+    info: '',
+    platformFee: 1000,
+    staking: {
+      token: primeDappsPod.address,
+      lockupPeriodInBlocks: 10_000,
+      ratio: 2000
     }
   },
   {
     key: key.toBytes32('popular-defi-apps'),
-    pool: {
-      name: 'Popular DeFi Apps',
-      info: '',
-      platformFee: 1500,
-      staking: {
-        token: popularDefiAppsPod.address,
-        lockupPeriodInBlocks: 10_000,
-        ratio: 2000
-      }
+    name: 'Popular DeFi Apps',
+    info: '',
+    platformFee: 1500,
+    staking: {
+      token: popularDefiAppsPod.address,
+      lockupPeriodInBlocks: 10_000,
+      ratio: 2000
     }
   }]
 
-  for (const candidate of candidates) {
-    await registry.addOrEditPool(candidate.key, candidate.pool)
-  }
+  await registry.addOrEditPools(candidates)
 
   return { args: { candidates }, pods: { primeDappsPod, popularDefiAppsPod }, npm, veNpm, store, protocol, registry }
 }
