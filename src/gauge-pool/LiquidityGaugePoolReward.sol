@@ -40,6 +40,10 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
     uint256 from = _poolLastRewardHeights[key][account];
     uint256 to = block.number;
 
+    if (block.number < epoch.startBlock || block.number > epoch.endBlock) {
+      revert EpochNotStartedError();
+    }
+
     if (to > epoch.endBlock) {
       to = epoch.endBlock;
     }
