@@ -14,15 +14,19 @@ describe('Liquidity Gauge Pool: Deposit', () => {
   })
 
   it('must correctly deposit', async () => {
-    const [owner] = await ethers.getSigners()
+    const [owner, bob] = await ethers.getSigners()
     const { args, gaugePool } = contracts
 
     const key = args.distribution[0].key
     const amount = helper.ether(25_000)
 
     await contracts.pods.primeDappsPod.mint(owner.address, amount)
-    await contracts.pods.primeDappsPod.approve(gaugePool.address, amount)
+    await contracts.pods.primeDappsPod.transfer(bob.address, amount)
 
-    await gaugePool.deposit(key, amount)
+    await contracts.pods.primeDappsPod.connect(bob).approve(gaugePool.address, amount)
+    await gaugePool.connect(bob).deposit(key, amount)
+
+    const balanceAfter = await contracts.pods.primeDappsPod.connect(bob).balanceOf(bob.address)
+    balanceAfter.should.equal('0')
   })
 })
