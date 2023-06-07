@@ -103,9 +103,9 @@ abstract contract LiquidityGaugePoolReward is ILiquidityGaugePool, LiquidityGaug
       revert PlatformFeeTooHighError(key, pool.platformFee);
     }
 
-    _poolLastRewardHeights[key][_msgSender()] = block.number;
-
     uint256 rewards = _calculateReward(pool.staking.ratio, key, _msgSender());
+
+    _poolLastRewardHeights[key][_msgSender()] = block.number;
 
     if (rewards == 0) {
       return pool;
