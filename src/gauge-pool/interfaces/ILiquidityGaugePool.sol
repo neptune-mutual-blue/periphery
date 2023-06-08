@@ -23,4 +23,5 @@ interface ILiquidityGaugePool {
   error PoolNotActiveError(bytes32 key);
   error WithdrawalLockedError(uint256 waitUntil);
   error PlatformFeeTooHighError(bytes32 key, uint256 platformFee);
+  error EpochNotStartedError();
 }

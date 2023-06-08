@@ -41,7 +41,7 @@ const deployPool = async (signer) => {
 
   await registry.addOrEditPools(candidates)
 
-  return { args: { candidates }, pods: { primeDappsPod, popularDefiAppsPod }, npm, veNpm, store, protocol, registry }
+  return { args: { candidates, blocksPerEpoch }, pods: { primeDappsPod, popularDefiAppsPod }, npm, veNpm, store, protocol, registry }
 }
 
 module.exports = { deployPool }
