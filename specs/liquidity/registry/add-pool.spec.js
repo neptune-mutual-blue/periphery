@@ -17,7 +17,7 @@ describe('Gauge Controller Registry: Add Pool', () => {
     const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     contracts = await factory.deployProtocol(owner)
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], contracts.npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, owner.address, owner.address, [owner.address], contracts.npm.address)
   })
 
   it('must correctly add a new pool', async () => {

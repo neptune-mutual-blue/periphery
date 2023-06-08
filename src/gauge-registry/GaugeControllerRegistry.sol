@@ -23,7 +23,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     return 10_000;
   }
 
-  function initialize(uint256 blocksPerEpoch, address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
+  function initialize(uint256 lastEpoch, uint256 blocksPerEpoch, address admin, address gaugeAgent, address[] calldata pausers, address rewardToken) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
@@ -43,6 +43,7 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
       revert InvalidArgumentError("rewardToken");
     }
 
+    _epoch = lastEpoch;
     _rewardToken = rewardToken;
     _blocksPerEpoch = blocksPerEpoch;
 

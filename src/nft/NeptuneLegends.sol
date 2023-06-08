@@ -69,18 +69,18 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
       revert AlreadyMintedError(info.id);
     }
 
-    if (_boundTokenId[info.sendTo] > 0) {
-      revert AlreadyBoundError(info.sendTo, _boundTokenId[info.sendTo], info.id);
-    }
-
     _soulbound[info.id] = info.soulbound;
     _minted[info.id] = true;
 
     if (info.soulbound) {
+      if (_boundTokenId[info.sendTo] > 0) {
+        revert AlreadyBoundError(info.sendTo, _boundTokenId[info.sendTo], info.id);
+      }
+
+      _boundTokenId[info.sendTo] = info.id;
       emit SoulBound(info.id);
     }
 
-    _boundTokenId[info.sendTo] = info.id;
     super._safeMint(info.sendTo, info.id, "");
   }
 

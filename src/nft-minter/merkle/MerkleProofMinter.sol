@@ -185,7 +185,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
 
     info.sendTo = account;
     info.id = tokenId;
-    info.soulbound = true;
+    info.soulbound = false;
 
     return info;
   }

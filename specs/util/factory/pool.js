@@ -14,7 +14,7 @@ const deployPool = async (signer) => {
   const popularDefiAppsPod = await deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-POP')
 
   const veNpm = await deployUpgradeable('VoteEscrowToken', signer.address, npm.address, signer.address, 'Vote Escrow NPM', 'veNPM')
-  const registry = await deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, signer.address, signer.address, [signer.address], npm.address)
+  const registry = await deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, signer.address, signer.address, [signer.address], npm.address)
 
   const candidates = [{
     key: key.toBytes32('prime'),

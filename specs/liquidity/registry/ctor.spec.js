@@ -16,7 +16,7 @@ describe('Gauge Controller Registry: Constructor', () => {
     const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
     npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    registry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, owner.address, owner.address, [owner.address], npm.address)
+    registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, owner.address, owner.address, [owner.address], npm.address)
   })
 
   it('must correctly set the state upon construction', async () => {

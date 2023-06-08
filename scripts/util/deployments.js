@@ -5,7 +5,10 @@ const get = async (chainId) => {
     return null
   }
 
-  return deployments[chainId]
+  console.log(chainId)
+  console.log(deployments, deployments[chainId.toString()])
+
+  return deployments[chainId.toString()]
 }
 
 module.exports = { get }
