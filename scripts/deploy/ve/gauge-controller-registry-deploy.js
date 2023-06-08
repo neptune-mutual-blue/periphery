@@ -26,11 +26,11 @@ const deploy = async () => {
   const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
   if (!gaugeControllerRegistry) {
-    await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
+    await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
     return
   }
 
-  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
+  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
 }
 
 deploy().catch(console.error)

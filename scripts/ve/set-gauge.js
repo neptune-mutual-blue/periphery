@@ -15,7 +15,7 @@ const getDependencies = async (deployer, chainId) => {
 
   const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
   const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
-  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm.address)
+  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm.address)
 
   return { npm: npm.address, gaugeControllerRegistry: gaugeControllerRegistry.address }
 }

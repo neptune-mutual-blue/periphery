@@ -69,7 +69,7 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
       revert AlreadyMintedError(info.id);
     }
 
-    if (_boundTokenId[info.sendTo] > 0) {
+    if (_boundTokenId[info.sendTo] > 0 && info.soulbound == true) {
       revert AlreadyBoundError(info.sendTo, _boundTokenId[info.sendTo], info.id);
     }
 
@@ -77,10 +77,11 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
     _minted[info.id] = true;
 
     if (info.soulbound) {
+      _boundTokenId[info.sendTo] = info.id;
+
       emit SoulBound(info.id);
     }
 
-    _boundTokenId[info.sendTo] = info.id;
     super._safeMint(info.sendTo, info.id, "");
   }
 

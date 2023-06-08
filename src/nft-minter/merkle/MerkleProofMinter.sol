@@ -65,7 +65,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
     _mintStatus[_msgSender()][level] = true;
     _nft.mint(_getMintInfo(tokenId, _msgSender()));
 
-    emit MintedWithProof(proof, level, tokenId);
+    emit MintedWithProof(_msgSender(), proof, level, tokenId);
   }
 
   function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
@@ -185,7 +185,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
 
     info.sendTo = account;
     info.id = tokenId;
-    info.soulbound = true;
+    info.soulbound = false;
 
     return info;
   }

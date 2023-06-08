@@ -14,7 +14,7 @@ const getDependencies = async (chainId) => {
 
   const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
   const veNPM = await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm.address, deployer.address, 'Vote Escrow NPM', 'veNPM')
-  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm.address)
+  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm.address)
 
   return { npm: npm.address, veNPM: veNPM.address, gaugeControllerRegistry: gaugeControllerRegistry.address }
 }
