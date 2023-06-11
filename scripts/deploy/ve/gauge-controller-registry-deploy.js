@@ -2,7 +2,6 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
-const config = require('../../config')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -23,14 +22,12 @@ const deploy = async () => {
   const { chainId } = network.config
   const { npm, gaugeControllerRegistry } = await getDependencies(chainId)
 
-  const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
-
   if (!gaugeControllerRegistry) {
-    await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
+    await factory.deployUpgradeable('GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm)
     return
   }
 
-  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm)
+  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm)
 }
 
 deploy().catch(console.error)

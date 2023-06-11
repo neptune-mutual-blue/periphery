@@ -54,9 +54,7 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ERC20Upgradeable, OwnableUpg
     uint256 amount = super._unlock(_msgSender(), penalty);
 
     // Pull and burn veToken
-    // slither-disable-start arbitrary-send-erc20
     super._transfer(_msgSender(), address(this), amount);
-    // slither-disable-end arbitrary-send-erc20
     super._burn(address(this), amount);
 
     // Transfer NPM
@@ -96,9 +94,7 @@ contract FakeVoteEscrowTokenV2 is IVoteEscrowToken, ERC20Upgradeable, OwnableUpg
 
     // Zero value locks signify lock extension
     if (amount > 0) {
-      // slither-disable-start arbitrary-send-erc20
       IERC20Upgradeable(_underlyingToken).safeTransferFrom(_msgSender(), address(this), amount);
-      // slither-disable-end arbitrary-send-erc20
       super._mint(_msgSender(), amount);
     }
   }

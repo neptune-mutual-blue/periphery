@@ -1,0 +1,58 @@
+[
+  {
+    "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
+    "name": "Prime dApps",
+    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "lockupPeriodInBlocks": 100,
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x905af6612b71a27311e4f3a8ee478f8913ca82c8",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x706f700000000000000000000000000000000000000000000000000000000000",
+    "name": "Popular DeFi Apps",
+    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "lockupPeriodInBlocks": 100,
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x21db27f58bfefda0a61fcca0791ed259fbe26310",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x676d782d76310000000000000000000000000000000000000000000000000000",
+    "name": "GMX V1",
+    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "lockupPeriodInBlocks": 100,
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0xc6709d81f5abea48d0d593b015f7dbb191c00e39",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  },
+  {
+    "key": "0x72646e742d763100000000000000000000000000000000000000000000000000",
+    "name": "Radiant v2",
+    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "lockupPeriodInBlocks": 100,
+    "epochDuration": 2419200,
+    "veBoostRatio": 1000,
+    "platformFee": 500,
+    "stakingToken": "0x09c9d6b1a9e499a423120c03e584edc020aeda6d",
+    "veToken": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
+    "rewardToken": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
+    "registry": "0x16A6854fF59793731C33B5527A83d05b76f078E4",
+    "treasury": "0x5e4B7212Beb8926fc925328e890dBe6c6fC971f0"
+  }
+]

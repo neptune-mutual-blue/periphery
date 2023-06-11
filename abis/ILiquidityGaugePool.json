@@ -2,10 +2,21 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
+        "internalType": "uint256",
+        "name": "endsAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochStillActiveError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EpochUnavailableError",
+    "type": "error"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
         "name": "platformFee",
@@ -18,30 +29,8 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "PoolNotActiveError",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "PoolNotFoundError",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
-        "name": "waitUntil",
+        "name": "waitUntilHeight",
         "type": "uint256"
       }
     ],
@@ -52,21 +41,41 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previous",
+        "type": "uint256"
       },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "current",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochDurationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reward",
+        "type": "uint256"
+      }
+    ],
+    "name": "EpochRewardSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
         "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "stakingToken",
         "type": "address"
       },
       {
@@ -76,50 +85,7 @@
         "type": "uint256"
       }
     ],
-    "name": "LiquidityGaugeDeposited",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousVeToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "veToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousRegistry",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "registry",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousTreasury",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "treasury",
-        "type": "address"
-      }
-    ],
-    "name": "LiquidityGaugePoolInitialized",
+    "name": "LiquidityGaugePoolDeposited",
     "type": "event"
   },
   {
@@ -127,26 +93,14 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
         "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "treasury",
+        "name": "user",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rewards",
+        "name": "reward",
         "type": "uint256"
       },
       {
@@ -156,7 +110,7 @@
         "type": "uint256"
       }
     ],
-    "name": "LiquidityGaugeRewardsWithdrawn",
+    "name": "LiquidityGaugePoolRewardsWithdrawn",
     "type": "event"
   },
   {
@@ -164,20 +118,89 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "triggeredBy",
         "type": "address"
       },
       {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "key",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "info",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lockupPeriodInBlocks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "epochDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "veBoostRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "contract IERC20Upgradeable",
+            "name": "stakingToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IVoteEscrowToken",
+            "name": "veToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IERC20Upgradeable",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "registry",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "treasury",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct ILiquidityGaugePool.PoolInfo",
+        "name": "args",
+        "type": "tuple"
+      }
+    ],
+    "name": "LiquidityGaugePoolSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
-        "name": "stakingToken",
+        "name": "user",
         "type": "address"
       },
       {
@@ -187,7 +210,7 @@
         "type": "uint256"
       }
     ],
-    "name": "LiquidityGaugeWithdrawn",
+    "name": "LiquidityGaugePoolWithdrawn",
     "type": "event"
   },
   {
@@ -230,35 +253,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "calculateReward",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -270,24 +264,20 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "getTotalBlocksSinceLastReward",
+    "inputs": [],
+    "name": "exit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getKey",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint256"
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -296,59 +286,28 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "veToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "registry",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "treasury",
-        "type": "address"
-      }
-    ],
-    "name": "setAddresses",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "epochDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reward",
         "type": "uint256"
       }
     ],
-    "name": "withdraw",
+    "name": "setEpoch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "key",
-        "type": "bytes32"
-      }
-    ],
-    "name": "withdrawRewards",
-    "outputs": [
       {
         "components": [
           {
@@ -362,9 +321,24 @@
             "type": "string"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "info",
-            "type": "string"
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lockupPeriodInBlocks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "epochDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "veBoostRatio",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -372,33 +346,58 @@
             "type": "uint256"
           },
           {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-              },
-              {
-                "internalType": "uint256",
-                "name": "lockupPeriodInBlocks",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "ratio",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IGaugeControllerRegistry.StakingArgs",
-            "name": "staking",
-            "type": "tuple"
+            "internalType": "contract IERC20Upgradeable",
+            "name": "stakingToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IVoteEscrowToken",
+            "name": "veToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IERC20Upgradeable",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "registry",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "treasury",
+            "type": "address"
           }
         ],
-        "internalType": "struct IGaugeControllerRegistry.PoolSetupArgs",
-        "name": "",
+        "internalType": "struct ILiquidityGaugePool.PoolInfo",
+        "name": "args",
         "type": "tuple"
       }
     ],
+    "name": "setPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawRewards",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }

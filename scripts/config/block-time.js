@@ -9,18 +9,4 @@ const EPOCH = 4 * WEEKS
 
 const time = { SECONDS, MINUTES, HOURS, DAYS, WEEKS, EPOCH }
 
-const averageBlockTime = {
-  [networks.HardHat]: 0.25,
-  [networks.BaseGoerli]: 0.25,
-  [networks.Ethereum]: 12,
-  [networks.Arbitrum]: 0.25
-}
-
-const blocksPerEpoch = {
-  [networks.HardHat]: Math.floor(EPOCH / averageBlockTime[networks.HardHat]),
-  [networks.BaseGoerli]: Math.floor(EPOCH / averageBlockTime[networks.BaseGoerli]),
-  [networks.Ethereum]: Math.floor(EPOCH / averageBlockTime[networks.Ethereum]),
-  [networks.Arbitrum]: Math.floor(EPOCH / averageBlockTime[networks.Arbitrum])
-}
-
-module.exports = { averageBlockTime, blocksPerEpoch, networks, time }
+module.exports = { networks, time }

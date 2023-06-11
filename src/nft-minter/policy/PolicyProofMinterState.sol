@@ -12,11 +12,11 @@ abstract contract PolicyProofMinterState {
   bytes32 public constant NS_ROLES_PAUSER = "pauser";
   bytes32 public constant NS_ROLES_RECOVERY_AGENT = "recovery:agent";
 
+  mapping(uint256 => address) public _souls;
+
   IStore public _s;
   INeptuneLegends public _nft;
 
   uint256 public _min;
   uint256 public _max;
-
-  mapping(uint256 => address) public _souls;
 }

@@ -45,7 +45,6 @@ describe('Vote Escrow Token: calculateBoost', () => {
   })
 
   it('must correctly return voting power', async () => {
-    const signers = await ethers.getSigners()
     let go = true
 
     while (go) {
