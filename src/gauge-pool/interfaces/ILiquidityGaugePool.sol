@@ -21,13 +21,13 @@ interface ILiquidityGaugePool {
     address treasury;
   }
 
-  event EpochRewardSet(address indexed triggeredBy, uint256 reward);
-  event LiquidityGaugePoolDeposited(address indexed account, uint256 amount);
-  event LiquidityGaugePoolWithdrawn(address indexed user, uint256 amount);
-  event LiquidityGaugePoolRewardsWithdrawn(address indexed user, uint256 reward, uint256 platformFee);
-  event EpochDurationUpdated(uint256 previous, uint256 current);
-  event VotingPowersUpdated(address indexed triggeredBy, uint256 previous, uint256 current, uint256 previousTotal, uint256 currentTotal);
-  event LiquidityGaugePoolSet(address indexed triggeredBy, PoolInfo args);
+  event EpochRewardSet(bytes32 indexed key, address indexed triggeredBy, uint256 rewards);
+  event EpochDurationUpdated(bytes32 indexed key, uint256 previous, uint256 current);
+  event VotingPowersUpdated(bytes32 indexed key, address indexed triggeredBy, uint256 previous, uint256 current, uint256 previousTotal, uint256 currentTotal);
+  event LiquidityGaugePoolSet(bytes32 indexed key, address indexed triggeredBy, PoolInfo args);
+  event LiquidityGaugeDeposited(bytes32 indexed key, address indexed account, IERC20Upgradeable indexed stakingToken, uint256 amount);
+  event LiquidityGaugeWithdrawn(bytes32 indexed key, address indexed account, IERC20Upgradeable indexed stakingToken, uint256 amount);
+  event LiquidityGaugeRewardsWithdrawn(bytes32 indexed key, address indexed account, address indexed treasury, uint256 rewards, uint256 platformFee);
 
   function deposit(uint256 amount) external;
   function withdraw(uint256 amount) external;
@@ -35,7 +35,7 @@ interface ILiquidityGaugePool {
   function exit() external;
 
   function setPool(PoolInfo calldata args) external;
-  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 reward) external;
+  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external;
   function getKey() external view returns (bytes32);
 
   error WithdrawalLockedError(uint256 waitUntilHeight);

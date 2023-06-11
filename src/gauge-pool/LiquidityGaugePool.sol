@@ -49,7 +49,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
 
     _poolInfo.stakingToken.safeTransferFrom(_msgSender(), address(this), amount);
 
-    emit LiquidityGaugePoolDeposited(_msgSender(), amount);
+    emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
 
   function _withdraw(uint256 amount) private {
@@ -67,7 +67,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     _lockedByMe[_msgSender()] -= amount;
     _poolInfo.stakingToken.safeTransfer(_msgSender(), amount);
 
-    emit LiquidityGaugePoolWithdrawn(_msgSender(), amount);
+    emit LiquidityGaugeWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
 
   function withdraw(uint256 amount) external override nonReentrant whenNotPaused {
@@ -77,23 +77,23 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
   function _withdrawRewards() private {
     _updateReward(_msgSender());
 
-    uint256 reward = _pendingRewardToDistribute[_msgSender()];
+    uint256 rewards = _pendingRewardToDistribute[_msgSender()];
 
-    if (reward > 0) {
-      uint256 platformFee = (reward * _poolInfo.platformFee) / _denominator();
+    if (rewards > 0) {
+      uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
 
-      if (reward <= platformFee) {
+      if (rewards <= platformFee) {
         revert PlatformFeeTooHighError(_poolInfo.platformFee);
       }
 
       _pendingRewardToDistribute[_msgSender()] = 0;
-      _poolInfo.rewardToken.safeTransfer(_msgSender(), reward - platformFee);
+      _poolInfo.rewardToken.safeTransfer(_msgSender(), rewards - platformFee);
 
       if (platformFee > 0) {
         _poolInfo.rewardToken.safeTransfer(_poolInfo.treasury, platformFee);
       }
 
-      emit LiquidityGaugePoolRewardsWithdrawn(_msgSender(), reward, platformFee);
+      emit LiquidityGaugeRewardsWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.treasury, rewards, platformFee);
     }
   }
 
@@ -113,7 +113,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     super._setPool(args);
   }
 
-  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 reward) external override onlyRegistry {
+  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
     _updateReward(address(0));
 
     if (epochDuration > 0) {
@@ -121,11 +121,11 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     }
 
     if (block.timestamp >= _epochEndTimestamp) {
-      _rewardPerSecond = reward / _poolInfo.epochDuration;
+      _rewardPerSecond = rewards / _poolInfo.epochDuration;
     } else {
       uint256 remaining = _epochEndTimestamp - block.timestamp;
       uint256 leftover = remaining * _rewardPerSecond;
-      _rewardPerSecond = (reward + leftover) / _poolInfo.epochDuration;
+      _rewardPerSecond = (rewards + leftover) / _poolInfo.epochDuration;
     }
 
     if (epoch <= _epoch) {
@@ -141,7 +141,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     _lastRewardTimestamp = block.timestamp;
     _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
 
-    emit EpochRewardSet(_msgSender(), reward);
+    emit EpochRewardSet(_poolInfo.key, _msgSender(), rewards);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

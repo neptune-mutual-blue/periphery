@@ -60,7 +60,7 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.lockupPeriodInBlocks = args.lockupPeriodInBlocks;
     }
 
-    emit LiquidityGaugePoolSet(_msgSender(), args);
+    emit LiquidityGaugePoolSet(_poolInfo.key, _msgSender(), args);
   }
 
   function _setEpochDuration(uint256 epochDuration) internal {
@@ -68,7 +68,7 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       revert EpochStillActiveError(_epochEndTimestamp);
     }
 
-    emit EpochDurationUpdated(_poolInfo.epochDuration, epochDuration);
+    emit EpochDurationUpdated(_poolInfo.key, _poolInfo.epochDuration, epochDuration);
 
     _poolInfo.epochDuration = epochDuration;
   }

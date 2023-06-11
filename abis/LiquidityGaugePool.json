@@ -136,6 +136,12 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "previous",
@@ -156,6 +162,12 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "triggeredBy",
         "type": "address"
@@ -163,7 +175,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "reward",
+        "name": "rewards",
         "type": "uint256"
       }
     ],
@@ -188,8 +200,20 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20Upgradeable",
+        "name": "stakingToken",
         "type": "address"
       },
       {
@@ -199,7 +223,7 @@
         "type": "uint256"
       }
     ],
-    "name": "LiquidityGaugePoolDeposited",
+    "name": "LiquidityGaugeDeposited",
     "type": "event"
   },
   {
@@ -207,29 +231,10 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
       },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "reward",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "platformFee",
-        "type": "uint256"
-      }
-    ],
-    "name": "LiquidityGaugePoolRewardsWithdrawn",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
@@ -313,8 +318,57 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
-        "name": "user",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "treasury",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "rewards",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "platformFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityGaugeRewardsWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20Upgradeable",
+        "name": "stakingToken",
         "type": "address"
       },
       {
@@ -324,7 +378,7 @@
         "type": "uint256"
       }
     ],
-    "name": "LiquidityGaugePoolWithdrawn",
+    "name": "LiquidityGaugeWithdrawn",
     "type": "event"
   },
   {
@@ -456,6 +510,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "key",
+        "type": "bytes32"
+      },
       {
         "indexed": true,
         "internalType": "address",
@@ -1077,7 +1137,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "reward",
+        "name": "rewards",
         "type": "uint256"
       }
     ],

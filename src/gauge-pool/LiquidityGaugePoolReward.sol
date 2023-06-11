@@ -52,6 +52,6 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
     _totalVotingPower = _totalVotingPower + current - previous;
     _myVotingPower[_msgSender()] = current;
 
-    emit VotingPowersUpdated(_msgSender(), previous, current, previousTotal, _totalVotingPower);
+    emit VotingPowersUpdated(_poolInfo.key, _msgSender(), previous, current, previousTotal, _totalVotingPower);
   }
 }
