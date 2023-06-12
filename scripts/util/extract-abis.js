@@ -1,4 +1,4 @@
-const io = require('../../.script/util/io')
+const io = require('./io')
 const path = require('path')
 const root = path.join('artifacts', 'src')
 

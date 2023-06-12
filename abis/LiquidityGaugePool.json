@@ -212,7 +212,7 @@
       },
       {
         "indexed": true,
-        "internalType": "contract IERC20Upgradeable",
+        "internalType": "address",
         "name": "stakingToken",
         "type": "address"
       },
@@ -242,6 +242,12 @@
         "type": "address"
       },
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "liquidityGaugePool",
+        "type": "address"
+      },
+      {
         "components": [
           {
             "internalType": "bytes32",
@@ -254,9 +260,9 @@
             "type": "string"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "info",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "uint256",
@@ -279,17 +285,17 @@
             "type": "uint256"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "stakingToken",
             "type": "address"
           },
           {
-            "internalType": "contract IVoteEscrowToken",
+            "internalType": "address",
             "name": "veToken",
             "type": "address"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "rewardToken",
             "type": "address"
           },
@@ -367,7 +373,7 @@
       },
       {
         "indexed": true,
-        "internalType": "contract IERC20Upgradeable",
+        "internalType": "address",
         "name": "stakingToken",
         "type": "address"
       },
@@ -751,9 +757,9 @@
         "type": "string"
       },
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "info",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "internalType": "uint256",
@@ -776,17 +782,17 @@
         "type": "uint256"
       },
       {
-        "internalType": "contract IERC20Upgradeable",
+        "internalType": "address",
         "name": "stakingToken",
         "type": "address"
       },
       {
-        "internalType": "contract IVoteEscrowToken",
+        "internalType": "address",
         "name": "veToken",
         "type": "address"
       },
       {
-        "internalType": "contract IERC20Upgradeable",
+        "internalType": "address",
         "name": "rewardToken",
         "type": "address"
       },
@@ -976,9 +982,9 @@
             "type": "string"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "info",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "uint256",
@@ -1001,17 +1007,17 @@
             "type": "uint256"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "stakingToken",
             "type": "address"
           },
           {
-            "internalType": "contract IVoteEscrowToken",
+            "internalType": "address",
             "name": "veToken",
             "type": "address"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "rewardToken",
             "type": "address"
           },
@@ -1161,9 +1167,9 @@
             "type": "string"
           },
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "info",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "uint256",
@@ -1186,17 +1192,17 @@
             "type": "uint256"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "stakingToken",
             "type": "address"
           },
           {
-            "internalType": "contract IVoteEscrowToken",
+            "internalType": "address",
             "name": "veToken",
             "type": "address"
           },
           {
-            "internalType": "contract IERC20Upgradeable",
+            "internalType": "address",
             "name": "rewardToken",
             "type": "address"
           },
