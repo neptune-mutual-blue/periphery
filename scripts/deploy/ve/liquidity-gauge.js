@@ -2,7 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
-const config = require('../../config')
+const pools = require('../../ve/pools.baseGoerli.json')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -10,11 +10,10 @@ const getDependencies = async (chainId) => {
   }
 
   const [deployer] = await ethers.getSigners()
-  const blocksPerEpoch = config.blockTime.blocksPerEpoch[chainId]
 
   const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
   const veNPM = await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm.address, deployer.address, 'Vote Escrow NPM', 'veNPM')
-  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, blocksPerEpoch, deployer.address, deployer.address, [deployer.address], npm.address)
+  const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm.address)
 
   return { npm: npm.address, veNPM: veNPM.address, gaugeControllerRegistry: gaugeControllerRegistry.address }
 }
@@ -26,14 +25,33 @@ const deploy = async () => {
   console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
-  const { npm, veNPM, gaugeControllerRegistry, liquidityGaugePool } = await getDependencies(chainId)
+  const { npm, veNPM, gaugeControllerRegistry, liquidityGaugePools } = await getDependencies(chainId)
 
-  if (!liquidityGaugePool) {
-    await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, veNPM, npm, gaugeControllerRegistry, deployer.address)
+  if (!liquidityGaugePools || liquidityGaugePools.length === 0) {
+    for (const pool of pools) {
+      pool.veToken = veNPM
+      pool.rewardToken = npm
+      pool.registry = gaugeControllerRegistry
+
+      const instance = await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, pool)
+      console.log('%s --> %s', pool.key, instance.address)
+    }
+
     return
   }
 
-  await factory.upgrade(liquidityGaugePool, 'LiquidityGaugePool', deployer.address, veNPM, npm, gaugeControllerRegistry, deployer.address)
+  console.log('Upgrading Liquidity Gauge Pools')
+
+  for (const pool of pools) {
+    pool.veToken = veNPM
+    pool.rewardToken = npm
+    pool.registry = gaugeControllerRegistry
+
+    const current = liquidityGaugePools.find(x => x.key === pool.key)
+
+    const instance = await factory.upgrade(current.address, 'LiquidityGaugePool', deployer.address, pool)
+    console.log('%s --> %s', pool.key, instance.address)
+  }
 }
 
 deploy().catch(console.error)

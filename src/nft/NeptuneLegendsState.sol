@@ -1,8 +1,5 @@
 // Neptune Mutual Protocol (https://neptunemutual.com)
 // SPDX-License-Identifier: Apache-2.0
-// slither-disable-start constable-states
-// slither-disable-start unused-state
-// slither-disable-start uninitialized-state
 pragma solidity ^0.8.12;
 
 import "./interfaces/INeptuneLegends.sol";
@@ -23,7 +20,3 @@ abstract contract NeptuneLegendsState is INeptuneLegends {
   mapping(uint256 => bool) public _soulbound;
   mapping(address => uint256) public _boundTokenId;
 }
-
-// slither-disable-end uninitialized-state
-// slither-disable-end unused-state
-// slither-disable-end constable-states

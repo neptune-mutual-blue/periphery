@@ -5,9 +5,6 @@ const get = async (chainId) => {
     return null
   }
 
-  console.log(chainId)
-  console.log(deployments, deployments[chainId.toString()])
-
   return deployments[chainId.toString()]
 }
 

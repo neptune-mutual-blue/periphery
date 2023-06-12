@@ -3,12 +3,12 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 
-contract LiquidityGaugePool is LiquidityGaugePoolReward, OwnableUpgradeable, WithPausability, TokenRecovery {
+contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradeable, WithPausability, TokenRecovery, LiquidityGaugePoolReward {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -16,129 +16,164 @@ contract LiquidityGaugePool is LiquidityGaugePoolReward, OwnableUpgradeable, Wit
     super._disableInitializers();
   }
 
-  function initialize(address contractOwner, address veToken, address rewardToken, address registry, address treasury) external initializer {
-    if (veToken == address(0)) {
-      revert ZeroAddressError("veToken");
-    }
-
-    if (registry == address(0)) {
-      revert ZeroAddressError("registry");
-    }
-
-    if (treasury == address(0)) {
-      revert ZeroAddressError("treasury");
-    }
-
-    _setAddresses(veToken, rewardToken, registry, treasury);
-
-    super.__Ownable_init();
+  function initialize(address admin, PoolInfo calldata args) external initializer {
+    super.__AccessControl_init();
     super.__Pausable_init();
     super.__ReentrancyGuard_init();
 
-    super.transferOwnership(contractOwner);
-  }
+    // RBAC
+    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+    _setupRole(DEFAULT_ADMIN_ROLE, admin);
 
-  function _setAddresses(address veToken, address rewardToken, address registry, address treasury) internal {
-    emit LiquidityGaugePoolInitialized(_veToken, veToken, _registry, registry, _treasury, treasury);
-
-    if (veToken != address(0)) {
-      _veToken = veToken;
-    }
-
-    if (registry != address(0)) {
-      _registry = registry;
-    }
-
-    if (treasury != address(0)) {
-      _treasury = treasury;
-    }
-
-    if (rewardToken != address(0)) {
-      _rewardToken = rewardToken;
-    }
-  }
-
-  function setAddresses(address veToken, address rewardToken, address registry, address treasury) external override onlyOwner {
-    _setAddresses(veToken, rewardToken, registry, treasury);
+    _setPool(args);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                             Danger!!! External & Public Functions
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function deposit(bytes32 key, uint256 amount) external override nonReentrant whenNotPaused {
-    IGaugeControllerRegistry registry = IGaugeControllerRegistry(_registry);
-
-    if (registry.isValid(key) == false) {
-      revert PoolNotFoundError(key);
-    }
-
-    if (registry.isActive(key) == false) {
-      revert PoolNotActiveError(key);
-    }
-
+  function deposit(uint256 amount) external override nonReentrant whenNotPaused {
     if (amount == 0) {
       revert ZeroAmountError("amount");
     }
 
-    // First withdraw your rewards
-    IGaugeControllerRegistry.PoolSetupArgs memory pool = _withdrawRewards(key);
-
-    _canWithdrawFrom[key][_msgSender()] = block.number + pool.staking.lockupPeriodInBlocks;
-
-    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.token);
-
-    stakingToken.safeTransferFrom(_msgSender(), address(this), amount);
-    // slither-disable-previous-line arbitrary-send-erc20
-
-    _poolStakedByMe[key][_msgSender()] += amount;
-    _poolStakedByEveryone[key] += amount;
-
-    emit LiquidityGaugeDeposited(key, _msgSender(), pool.staking.token, amount);
-  }
-
-  function withdraw(bytes32 key, uint256 amount) external override nonReentrant whenNotPaused {
-    if (IGaugeControllerRegistry(_registry).isValid(key) == false) {
-      revert PoolNotFoundError(key);
+    if (_epoch == 0) {
+      revert EpochUnavailableError();
     }
 
+    _updateReward(_msgSender());
+
+    _lockedByEveryone += amount;
+    _lockedByMe[_msgSender()] += amount;
+    _lastDepositHeights[_msgSender()] = block.number;
+
+    _poolInfo.stakingToken.safeTransferFrom(_msgSender(), address(this), amount);
+
+    emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
+  }
+
+  function _withdraw(uint256 amount) private {
     if (amount == 0) {
       revert ZeroAmountError("amount");
     }
 
-    if (_poolStakedByMe[key][_msgSender()] < amount) {
-      revert BalanceInsufficientError(_poolStakedByMe[key][_msgSender()], amount);
+    if (block.number < _lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks) {
+      revert WithdrawalLockedError(_lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks);
     }
 
-    if (block.number < _canWithdrawFrom[key][_msgSender()]) {
-      revert WithdrawalLockedError(_canWithdrawFrom[key][_msgSender()]);
-    }
+    _updateReward(_msgSender());
 
-    // First withdraw your rewards
-    IGaugeControllerRegistry.PoolSetupArgs memory pool = _withdrawRewards(key);
+    _lockedByEveryone -= amount;
+    _lockedByMe[_msgSender()] -= amount;
+    _poolInfo.stakingToken.safeTransfer(_msgSender(), amount);
 
-    IERC20Upgradeable stakingToken = IERC20Upgradeable(pool.staking.token);
-
-    _poolStakedByMe[key][_msgSender()] -= amount;
-    _poolStakedByEveryone[key] -= amount;
-
-    stakingToken.safeTransfer(_msgSender(), amount);
-
-    emit LiquidityGaugeWithdrawn(key, _msgSender(), pool.staking.token, amount);
+    emit LiquidityGaugeWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
 
-  function withdrawRewards(bytes32 key) external override nonReentrant whenNotPaused returns (IGaugeControllerRegistry.PoolSetupArgs memory) {
-    return _withdrawRewards(key);
+  function withdraw(uint256 amount) external override nonReentrant whenNotPaused {
+    _withdraw(amount);
+  }
+
+  function _withdrawRewards() private {
+    _updateReward(_msgSender());
+
+    uint256 rewards = _pendingRewardToDistribute[_msgSender()];
+
+    if (rewards > 0) {
+      uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
+
+      if (rewards <= platformFee) {
+        revert PlatformFeeTooHighError(_poolInfo.platformFee);
+      }
+
+      _pendingRewardToDistribute[_msgSender()] = 0;
+      _poolInfo.rewardToken.safeTransfer(_msgSender(), rewards - platformFee);
+
+      if (platformFee > 0) {
+        _poolInfo.rewardToken.safeTransfer(_poolInfo.treasury, platformFee);
+      }
+
+      emit LiquidityGaugeRewardsWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.treasury, rewards, platformFee);
+    }
+  }
+
+  function withdrawRewards() external override nonReentrant whenNotPaused {
+    _withdrawRewards();
+  }
+
+  function exit() external override nonReentrant whenNotPaused {
+    _withdraw(_lockedByMe[_msgSender()]);
+    _withdrawRewards();
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                 Gauge Controller Registry Only
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function setPool(PoolInfo calldata args) external override onlyRegistry {
+    super._setPool(args);
+  }
+
+  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
+    _updateReward(address(0));
+
+    if (epochDuration > 0) {
+      _setEpochDuration(epochDuration);
+    }
+
+    if (block.timestamp >= _epochEndTimestamp) {
+      _rewardPerSecond = rewards / _poolInfo.epochDuration;
+    } else {
+      uint256 remaining = _epochEndTimestamp - block.timestamp;
+      uint256 leftover = remaining * _rewardPerSecond;
+      _rewardPerSecond = (rewards + leftover) / _poolInfo.epochDuration;
+    }
+
+    if (epoch <= _epoch) {
+      revert InvalidArgumentError("epoch");
+    }
+
+    _epoch = epoch;
+
+    if (_poolInfo.epochDuration * _rewardPerSecond > _poolInfo.rewardToken.balanceOf(address(this))) {
+      revert BalanceInsufficientError(_poolInfo.epochDuration * _rewardPerSecond, _poolInfo.rewardToken.balanceOf(address(this)));
+    }
+
+    _lastRewardTimestamp = block.timestamp;
+    _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
+
+    emit EpochRewardSet(_poolInfo.key, _msgSender(), rewards);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                          Recoverable
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+    super._recoverEther(sendTo);
+  }
+
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+    super._recoverToken(malicious, sendTo);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                            Pausable
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function pause() external onlyRole(NS_ROLES_PAUSER) {
+    super._pause();
+  }
+
+  function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    super._unpause();
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Getters
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function calculateReward(bytes32 key, address account) external view returns (uint256) {
-    IGaugeControllerRegistry.PoolSetupArgs memory pool = IGaugeControllerRegistry(_registry).get(key);
-    return _calculateReward(pool.staking.ratio, key, account);
+  function calculateReward(address account) external view returns (uint256) {
+    return _getPendingRewards(account);
   }
 
-  function getTotalBlocksSinceLastReward(bytes32 key, address account) external view override returns (uint256) {
-    return _getTotalBlocksSinceLastReward(key, account);
+  function getKey() external view override returns (bytes32) {
+    return _poolInfo.key;
   }
 }

@@ -26,6 +26,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeab
     _underlyingToken = underlyingToken;
     _feeTo = feeToAccount;
     _whitelist[address(this)] = true;
+    _totalLocked = 0;
 
     super.__ERC20_init(tokenName, tokenSymbol);
     super.__Ownable_init();
@@ -39,9 +40,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeab
     uint256 amount = super._unlock(_msgSender(), penalty);
 
     // Pull and burn veToken
-    // slither-disable-start arbitrary-send-erc20
     super._transfer(_msgSender(), address(this), amount);
-    // slither-disable-end arbitrary-send-erc20
     super._burn(address(this), amount);
 
     // Transfer NPM
@@ -81,9 +80,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeab
 
     // Zero value locks signify lock extension
     if (amount > 0) {
-      // slither-disable-start arbitrary-send-erc20
       IERC20Upgradeable(_underlyingToken).safeTransferFrom(_msgSender(), address(this), amount);
-      // slither-disable-end arbitrary-send-erc20
       super._mint(_msgSender(), amount);
     }
   }
