@@ -3,6 +3,7 @@
 pragma solidity ^0.8.12;
 
 import "./LiquidityGaugePoolController.sol";
+import "../escrow/interfaces/IVoteEscrowToken.sol";
 
 abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
   function _denominator() internal pure returns (uint256) {
@@ -47,7 +48,7 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
     uint256 previous = _myVotingPower[_msgSender()];
     uint256 previousTotal = _totalVotingPower;
 
-    uint256 current = _poolInfo.veToken.getVotingPower(_msgSender());
+    uint256 current = IVoteEscrowToken(_poolInfo.veToken).getVotingPower(_msgSender());
 
     _totalVotingPower = _totalVotingPower + current - previous;
     _myVotingPower[_msgSender()] = current;

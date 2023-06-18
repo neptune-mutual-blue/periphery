@@ -47,7 +47,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     _lockedByMe[_msgSender()] += amount;
     _lastDepositHeights[_msgSender()] = block.number;
 
-    _poolInfo.stakingToken.safeTransferFrom(_msgSender(), address(this), amount);
+    IERC20Upgradeable(_poolInfo.stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
 
     emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
@@ -65,7 +65,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
 
     _lockedByEveryone -= amount;
     _lockedByMe[_msgSender()] -= amount;
-    _poolInfo.stakingToken.safeTransfer(_msgSender(), amount);
+    IERC20Upgradeable(_poolInfo.stakingToken).safeTransfer(_msgSender(), amount);
 
     emit LiquidityGaugeWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
@@ -87,10 +87,10 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
       }
 
       _pendingRewardToDistribute[_msgSender()] = 0;
-      _poolInfo.rewardToken.safeTransfer(_msgSender(), rewards - platformFee);
+      IERC20Upgradeable(_poolInfo.rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
       if (platformFee > 0) {
-        _poolInfo.rewardToken.safeTransfer(_poolInfo.treasury, platformFee);
+        IERC20Upgradeable(_poolInfo.rewardToken).safeTransfer(_poolInfo.treasury, platformFee);
       }
 
       emit LiquidityGaugeRewardsWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.treasury, rewards, platformFee);
@@ -110,7 +110,7 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
   //                                 Gauge Controller Registry Only
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function setPool(PoolInfo calldata args) external override onlyRegistry {
-    super._setPool(args);
+    _setPool(args);
   }
 
   function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
@@ -134,8 +134,8 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
 
     _epoch = epoch;
 
-    if (_poolInfo.epochDuration * _rewardPerSecond > _poolInfo.rewardToken.balanceOf(address(this))) {
-      revert BalanceInsufficientError(_poolInfo.epochDuration * _rewardPerSecond, _poolInfo.rewardToken.balanceOf(address(this)));
+    if (_poolInfo.epochDuration * _rewardPerSecond > IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this))) {
+      revert BalanceInsufficientError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this)));
     }
 
     _lastRewardTimestamp = block.timestamp;

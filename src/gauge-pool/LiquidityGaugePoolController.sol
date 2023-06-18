@@ -24,15 +24,15 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.veBoostRatio = args.veBoostRatio;
     }
 
-    if (address(args.stakingToken) != address(0)) {
+    if (args.stakingToken != address(0)) {
       _poolInfo.stakingToken = args.stakingToken;
     }
 
-    if (address(args.veToken) != address(0)) {
+    if (args.veToken != address(0)) {
       _poolInfo.veToken = args.veToken;
     }
 
-    if (address(args.rewardToken) != address(0)) {
+    if (args.rewardToken != address(0)) {
       _poolInfo.rewardToken = args.rewardToken;
     }
 
@@ -52,7 +52,7 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.name = args.name;
     }
 
-    if (args.info > 0) {
+    if (bytes(args.info).length > 0) {
       _poolInfo.info = args.info;
     }
 
@@ -60,7 +60,11 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.lockupPeriodInBlocks = args.lockupPeriodInBlocks;
     }
 
-    emit LiquidityGaugePoolSet(_poolInfo.key, _msgSender(), args);
+    if (args.platformFee > 0) {
+      _poolInfo.platformFee = args.platformFee;
+    }
+
+    emit LiquidityGaugePoolSet(_poolInfo.key, _msgSender(), address(this), args);
   }
 
   function _setEpochDuration(uint256 epochDuration) internal {

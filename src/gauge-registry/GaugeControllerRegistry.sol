@@ -109,8 +109,10 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
         revert PoolNotActiveError(key);
       }
 
-      _rewardToken.safeTransfer(address(pool), distribution[i].emission);
       total += distribution[i].emission;
+
+      _rewardToken.safeTransfer(address(pool), distribution[i].emission);
+      pool.setEpoch(epoch, epochDuration, distribution[i].emission);
 
       emit GaugeSet(epoch, key, pool, distribution[i].emission);
     }

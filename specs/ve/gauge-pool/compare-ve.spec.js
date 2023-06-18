@@ -57,7 +57,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
       lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
-      platformFee: helper.percentage(6.5),
+      platformFee: helper.percentage(0),
       stakingToken: contracts.fakePod.address,
       veToken: contracts.veNpm.address,
       rewardToken: contracts.npm.address,
