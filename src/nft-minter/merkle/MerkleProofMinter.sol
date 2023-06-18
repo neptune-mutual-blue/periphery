@@ -89,7 +89,11 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
       revert TokenAlreadyClaimedError(level);
     }
 
-    if (_personas[_msgSender()][level] != persona) {
+    if (level == 7 && persona != 1) {
+      revert PersonaMismatchError(persona, _personas[_msgSender()][level]);
+    }
+
+    if (level != 7 && _personas[_msgSender()][level] != persona) {
       revert PersonaMismatchError(persona, _personas[_msgSender()][level]);
     }
 

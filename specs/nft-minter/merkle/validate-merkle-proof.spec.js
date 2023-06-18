@@ -1,9 +1,16 @@
+const chalk = require('chalk')
 const { ethers } = require('hardhat')
 const { boundaries } = require('../../util/boundaries')
 const { generateTree, parseLeaf } = require('../../util/tree')
 const { deployUpgradeable, deployProtocol } = require('../../util/factory')
 const { getDemoLeaves, getDemoLeavesRaw } = require('../../util/demo-leaves')
 const helper = require('../../util/helper')
+
+const PERSONAS = {
+  0: 'N/A',
+  1: 'Guardian',
+  2: 'Beast'
+}
 
 describe('Merkle Proof Validation', () => {
   let minter, nft, contracts
@@ -21,39 +28,63 @@ describe('Merkle Proof Validation', () => {
 
   it('must correctly accept proofs for minting', async () => {
     const signers = await ethers.getSigners()
-    const [, , account2] = signers
-
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    //                         First Mint Soulbound NFT to Unlock Your Level
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    const boundTokenId = 1001
-
+    let lastBoundTokenId = 1000
     const ppm = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000)
-
-    const amounts = [helper.ether(20_000), helper.ether(50_000)]
-    await contracts.cxToken.mint(account2.address, amounts[0])
-    await ppm.connect(account2).mint(contracts.cxToken.address, boundTokenId)
-
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    //                      Mint Higher Level NFTs with Your Soulbound Token Id
-    // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     const leaves = getDemoLeaves(signers)
     const tree = generateTree(leaves)
     const root = tree.getHexRoot()
-
     await minter.setMerkleRoot(root)
 
-    const [, , leaf] = getDemoLeavesRaw(signers)
-    const proof = tree.getHexProof(parseLeaf(leaf))
+    const rawLeaves = getDemoLeavesRaw(signers)
+    const candidates = {}
+    const boundTokens = {}
+    const mintedTokens = {}
 
-    const [account, level, family, persona] = leaf
-    const familyFormatted = ethers.utils.formatBytes32String(family)
-    const tokenId = boundaries[2].find(x => x.family === familyFormatted && x.level === level).min
+    for (const [account, level, , persona] of rawLeaves) {
+      candidates[account.address] = candidates[account.address] || {
+        account: account,
+        personas: {}
+      }
 
-    await minter.connect(account).setMyPersona([persona, persona, persona])
-    await minter.connect(account).mint(proof, boundTokenId, level, familyFormatted, persona, tokenId)
+      candidates[account.address].personas[level] = persona
+    }
 
-    await minter.connect(account).mint(proof, boundTokenId, level, familyFormatted, persona, tokenId + 1)
-      .should.be.rejectedWith('TokenAlreadyClaimedError')
+    for (const key in candidates) {
+      const candidate = candidates[key]
+      const personas = Object.values(candidate.personas)
+        .concat([...Array(7)].fill(1))
+        .filter((_, index) => index % 2 === 0)
+        .slice(0, 3)
+
+      await minter.connect(candidate.account).setMyPersona(personas)
+      lastBoundTokenId++
+
+      if (!boundTokens[key]) {
+        await contracts.cxToken.mint(candidate.account.address, helper.ether(1))
+        await ppm.connect(candidate.account).mint(contracts.cxToken.address, lastBoundTokenId)
+        boundTokens[key] = lastBoundTokenId
+      }
+    }
+
+    for (const leaf of rawLeaves) {
+      const proof = tree.getHexProof(parseLeaf(leaf))
+      const [account, level, family, persona] = leaf
+      const familyFormatted = ethers.utils.formatBytes32String(family)
+      const boundary = boundaries[2].find(item => item.family === familyFormatted && item.level === level)
+
+      if (!mintedTokens[level + family]) {
+        mintedTokens[level + family] = boundary.min
+      }
+
+      mintedTokens[level + family] += 1
+      const tokenId = mintedTokens[level + family]
+
+      await minter.connect(account).mint(proof, boundTokens[account.address], level, familyFormatted, persona, tokenId)
+
+      await minter.connect(account).mint(proof, boundTokens[account.address], level, familyFormatted, persona, tokenId + 1)
+        .should.be.rejectedWith('TokenAlreadyClaimedError')
+
+      console.log('%s- %s Level %s Token Id: %s %s (%s)', ' '.repeat(4), chalk.green('[OK]'), level, tokenId, family, PERSONAS[persona])
+    }
   })
 })

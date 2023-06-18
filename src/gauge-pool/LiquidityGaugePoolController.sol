@@ -60,6 +60,10 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.lockupPeriodInBlocks = args.lockupPeriodInBlocks;
     }
 
+    if (args.platformFee > 0) {
+      _poolInfo.platformFee = args.platformFee;
+    }
+
     emit LiquidityGaugePoolSet(_poolInfo.key, _msgSender(), address(this), args);
   }
 

@@ -10,7 +10,13 @@ const getDemoLeavesRaw = (accounts) => {
     [accounts[4], 1, 'Delphinus', 1],
     [accounts[5], 1, 'Sabersquatch', 2],
     [accounts[6], 1, 'Delphinus', 1],
-    [accounts[7], 1, 'Sabersquatch', 2]
+    [accounts[7], 1, 'Delphinus', 1],
+    [accounts[7], 2, 'Epic Delphinus', 1],
+    [accounts[7], 3, 'Gargantuworm', 2],
+    [accounts[7], 4, 'Diabolic Gargantuworm', 2],
+    [accounts[7], 5, 'Merman Serpent', 2],
+    [accounts[7], 6, 'Diabolic Merman Serpent', 2],
+    [accounts[7], 7, 'Legendary Neptune', 1]
   ]
 }
 
