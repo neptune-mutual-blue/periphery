@@ -30,6 +30,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
       pool.rewardToken = contracts.npm.address
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()
+      pool.info = ''
 
       const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
 

@@ -3,6 +3,7 @@ const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
 const pools = require('../../ve/pools.baseGoerli.json')
+const ipfs = require('../../../specs/util/ipfs')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -32,6 +33,8 @@ const deploy = async () => {
       pool.veToken = veNPM
       pool.rewardToken = npm
       pool.registry = gaugeControllerRegistry
+      const info = await ipfs.write(pool.infoDetails)
+      pool.info = info
 
       const instance = await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, pool)
       console.log('%s --> %s', pool.key, instance.address)
