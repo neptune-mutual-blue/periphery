@@ -47,8 +47,13 @@ describe('Liquidity Gauge Pool: Constructor', () => {
 
     const _info = await contracts.gaugePool._poolInfo()
 
+    _info.key.should.equal(info.key)
+    _info.name.should.equal(info.name)
+    _info.info.should.equal(info.info)
+    _info.lockupPeriodInBlocks.should.equal(info.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(28 * DAYS)
     _info.veBoostRatio.should.equal(1000)
+    _info.platformFee.should.equal(info.platformFee)
     _info.stakingToken.should.equal(contracts.fakePod.address)
     _info.veToken.should.equal(contracts.veNpm.address)
     _info.rewardToken.should.equal(contracts.npm.address)
