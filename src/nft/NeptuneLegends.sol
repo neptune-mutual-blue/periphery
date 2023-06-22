@@ -65,7 +65,7 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
     }
   }
 
-  function _mint(MintInfo calldata info) private {
+  function _mint(MintInfo calldata info) internal virtual {
     if (_minted[info.id]) {
       revert AlreadyMintedError(info.id);
     }
