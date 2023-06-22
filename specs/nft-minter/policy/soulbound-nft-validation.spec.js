@@ -16,6 +16,7 @@ describe('Soul bound nft mint validation', () => {
   it('must correctly accept proofs for minting', async () => {
     const [owner] = await ethers.getSigners()
 
+    await contracts.npm.mint(owner.address, helper.ether(1000))
     const amounts = [helper.ether(20_000), helper.ether(50_000)]
     await contracts.cxToken.mint(owner.address, amounts[0])
 

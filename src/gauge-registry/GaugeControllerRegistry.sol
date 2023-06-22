@@ -6,8 +6,9 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "./GaugeControllerRegistryPool.sol";
 import "../util/TokenRecovery.sol";
+import "../util/interfaces/IAccessControlUtil.sol";
 
-contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeable, TokenRecovery, GaugeControllerRegistryPool {
+contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, TokenRecovery, GaugeControllerRegistryPool {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -125,6 +126,21 @@ contract GaugeControllerRegistry is AccessControlUpgradeable, PausableUpgradeabl
     _gaugeAllocations[epoch] = amountToDeposit;
 
     _sumAllocation += amountToDeposit;
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                         Access Control
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function grantRoles(AccountWithRoles[] calldata detail) external override whenNotPaused {
+    if (detail.length == 0) {
+      revert InvalidArgumentError("detail");
+    }
+
+    for (uint256 i = 0; i < detail.length; i++) {
+      for (uint256 j = 0; j < detail[i].roles.length; j++) {
+        super.grantRole(detail[i].roles[j], detail[i].account);
+      }
+    }
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -12,8 +12,9 @@ const getDependencies = async (deployer, chainId) => {
     return deployments.get(chainId)
   }
 
+  const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
   const neptuneLegends = await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
-  const merkleProofMinter = await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends.address, deployer.address, deployer.address)
+  const merkleProofMinter = await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends.address, npm.address, deployer.address, deployer.address)
 
   return { neptuneLegends: neptuneLegends.address, merkleProofMinter: merkleProofMinter.address }
 }
