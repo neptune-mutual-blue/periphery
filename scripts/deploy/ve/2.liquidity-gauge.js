@@ -30,10 +30,11 @@ const deploy = async () => {
 
   if (!liquidityGaugePools || liquidityGaugePools.length === 0) {
     for (const pool of pools) {
+      const info = await ipfs.write(pool.infoDetails)
+
       pool.veToken = veNPM
       pool.rewardToken = npm
       pool.registry = gaugeControllerRegistry
-      const info = await ipfs.write(pool.infoDetails)
       pool.info = info
 
       const instance = await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, pool)

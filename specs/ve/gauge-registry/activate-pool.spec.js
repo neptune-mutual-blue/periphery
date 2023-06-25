@@ -1,6 +1,7 @@
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
 const pools = require('../../../scripts/ve/pools.baseGoerli.json')
+const ipfs = require('../../../specs/util/ipfs')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -15,19 +16,20 @@ describe('Gauge Controller Registry: Activate Pool', () => {
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
     contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
-
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
     contracts.pools = []
     contracts.poolInfo = []
 
     for (const pool of pools) {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
+      const info = await ipfs.write(pool.infoDetails)
 
       pool.stakingToken = fakePod.address
       pool.veToken = contracts.veNpm.address
       pool.rewardToken = contracts.npm.address
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()
+      pool.info = info
 
       const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
 
