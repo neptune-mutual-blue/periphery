@@ -49,7 +49,7 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     _rewardToken = rewardToken;
   }
 
-  function addOrEditPools(ILiquidityGaugePool[] calldata pools) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function addOrEditPools(ILiquidityGaugePool[] calldata pools) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
     if (pools.length == 0) {
       revert InvalidArgumentError("pools");
     }
@@ -59,19 +59,19 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     }
   }
 
-  function deactivatePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function deactivatePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
     _deactivatePool(key);
   }
 
-  function activatePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function activatePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
     _activatePool(key);
   }
 
-  function deletePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function deletePool(bytes32 key) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
     _deletePool(key);
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, uint256 epochDuration, Gauge[] calldata distribution) external onlyRole(NS_GAUGE_AGENT) {
+  function setGauge(uint256 epoch, uint256 amountToDeposit, uint256 epochDuration, Gauge[] calldata distribution) external onlyRole(NS_GAUGE_AGENT) whenNotPaused {
     if (epoch == 0) {
       revert InvalidArgumentError("epoch");
     }

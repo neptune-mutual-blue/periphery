@@ -24,9 +24,7 @@ describe('Vote Escrow Token: getVotingPower', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
-
-    contracts.veNpm = veNpm
+    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])

@@ -16,9 +16,9 @@ describe('Vote Escrow Token: unlock', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
-    await contracts.store.setBool(key.qualifyMember(veNpm.address), true)
+    await contracts.store.setBool(key.qualifyMember(contracts.veNpm.address), true)
 
     amounts = [helper.ether(20_000), helper.ether(50_000)]
     durations = [10, 20]
@@ -26,13 +26,11 @@ describe('Vote Escrow Token: unlock', () => {
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.approve(veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(veNpm.address, amounts[1])
+    await contracts.npm.approve(contracts.veNpm.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
 
-    await veNpm.lock(amounts[0], durations[0]).should.not.be.rejected
-    await veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
-
-    contracts.veNpm = veNpm
+    await contracts.veNpm.lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
   })
 
   it('must allow unlocking as soon as the lock period is over', async () => {
