@@ -26,4 +26,11 @@ describe('Gauge Controller Registry: Constructor', () => {
     ;(await contracts.registry.hasRole(key.toBytes32('role:pauser'), owner.address)).should.equal(true)
     ;(await contracts.registry._rewardToken()).should.equal(contracts.npm.address)
   })
+
+  it('must not allow to be initialized twice', async () => {
+    const [owner] = await ethers.getSigners()
+
+    await contracts.registry.initialize(0, owner.address, owner.address, [owner.address], contracts.npm.address)
+      .should.be.rejectedWith('Initializable: contract is already initialized')
+  })
 })

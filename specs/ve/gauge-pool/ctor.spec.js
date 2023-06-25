@@ -60,4 +60,11 @@ describe('Liquidity Gauge Pool: Constructor', () => {
     _info.registry.should.equal(contracts.fakeRegistry.address)
     _info.treasury.should.equal(info.treasury)
   })
+
+  it('must not allow to be initialized twice', async () => {
+    const [owner] = await ethers.getSigners()
+
+    await contracts.gaugePool.initialize(owner.address, info)
+      .should.be.rejectedWith('Initializable: contract is already initialized')
+  })
 })

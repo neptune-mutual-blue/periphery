@@ -76,5 +76,36 @@ describe('Liquidity Gauge Pool: Withdraw', () => {
 
     await contracts.gaugePool.withdraw(amountToDeposit)
       .should.be.rejectedWith('WithdrawalLockedError')
+
+    await mine(info.lockupPeriodInBlocks / 2)
+    await contracts.gaugePool.withdraw(amountToDeposit)
+  })
+
+  it('must not allow withdrawing 0 staking tokens', async () => {
+    await contracts.gaugePool.withdraw(0)
+      .should.be.rejectedWith('ZeroAmountError')
+  })
+
+  it('must not allow withdrawing when paused', async () => {
+    const [, bob] = await ethers.getSigners()
+
+    const pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
+    await contracts.gaugePool.grantRole(pauserRole, bob.address)
+
+    await contracts.gaugePool.connect(bob).pause()
+    await contracts.gaugePool.withdraw(0)
+      .should.be.rejectedWith('Pausable: paused')
+
+    await contracts.gaugePool.unpause()
+  })
+
+  it('must not allow withdrawing staking tokens when amount locked is 0', async () => {
+    const [owner] = await ethers.getSigners()
+
+    const locked = await contracts.gaugePool._lockedByMe(owner.address)
+    locked.should.equal(0)
+    const amountToDeposit = helper.ether(10)
+    await contracts.gaugePool.withdraw(amountToDeposit)
+      .should.be.rejected
   })
 })

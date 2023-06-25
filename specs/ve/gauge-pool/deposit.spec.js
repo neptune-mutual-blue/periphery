@@ -37,17 +37,24 @@ describe('Liquidity Gauge Pool: Deposit', () => {
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
+  })
+
+  it('must not allow depositing before setting the gauge', async () => {
+    const amountToDeposit = helper.ether(10)
+
+    await contracts.gaugePool.deposit(amountToDeposit)
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'EpochUnavailableError')
+  })
+
+  it('must allow depositing staking tokens', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
 
     const emission = helper.ether(100_00)
     const distribution = [{ key: info.key, emission }]
     await contracts.npm.mint(owner.address, emission)
     await contracts.npm.approve(contracts.registry.address, emission)
     await contracts.registry.setGauge(1, emission, 28 * DAYS, distribution)
-  })
-
-  it('must allow depositing staking tokens', async () => {
-    const [owner] = await ethers.getSigners()
-    const amountToDeposit = helper.ether(10)
 
     await contracts.fakePod.mint(owner.address, amountToDeposit)
     await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
