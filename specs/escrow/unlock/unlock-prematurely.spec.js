@@ -18,9 +18,9 @@ describe('Vote Escrow Token: unlock', () => {
 
     const [owner, account1, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
-    await contracts.store.setBool(key.qualifyMember(veNpm.address), true)
+    await contracts.store.setBool(key.qualifyMember(contracts.veNpm.address), true)
 
     amounts = [helper.ether(20_000), helper.ether(50_000)]
     durations = [10, 20]
@@ -28,13 +28,12 @@ describe('Vote Escrow Token: unlock', () => {
     await contracts.npm.mint(account1.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.connect(account1).approve(veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(veNpm.address, amounts[1])
+    await contracts.npm.connect(account1).approve(contracts.veNpm.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
 
-    await veNpm.connect(account1).lock(amounts[0], durations[0]).should.not.be.rejected
-    await veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
+    await contracts.veNpm.connect(account1).lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
 
-    contracts.veNpm = veNpm
     await mine(MIN_LOCK_HEIGHT)
   })
 
@@ -53,7 +52,7 @@ describe('Vote Escrow Token: unlock', () => {
 
       const balance = await contracts.npm.balanceOf(account.address)
       balance.should.equal((amounts[i] * (100n - PENALTY_RATE)) / 100n)
-      fees +=  (amounts[i] * PENALTY_RATE) / 100n
+      fees += (amounts[i] * PENALTY_RATE) / 100n
     }
 
     const [owner] = signers

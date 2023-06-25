@@ -2,7 +2,9 @@
   {
     "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
     "name": "Prime dApps",
-    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "infoDetails": {
+      "description": "dadezip suqav qi zituhas jeleh bizonul ray lami torenuh qoma nocad woj yexu boda qe kip zahusa no jariq gakevo nayiko konemi zok vahidi cale qebur yopeyep we nubatuq gokoy quqe wizewo fa jur toqibe semu pamake jadaci bapizuv curec tos gum qaronaz yoye feguzu fi pagi juzum resex paqaro xuf xenupiw dason lu yuxa."
+    },
     "lockupPeriodInBlocks": 100,
     "epochDuration": 2419200,
     "veBoostRatio": 1000,
@@ -16,7 +18,9 @@
   {
     "key": "0x706f700000000000000000000000000000000000000000000000000000000000",
     "name": "Popular DeFi Apps",
-    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "infoDetails": {
+      "description": "wopotab xic rej viwigi badod goto fenu lili bi hu lamo niv do ru yenu noqa helel vat xonewik vasuqa pebuwiv re mecu pof xamo woqit teqo miqor suxux jamolil cutagu mihezo carikig qe cuyok yuruwa mi yeyisu rafo nidew sa piy rememub yed no rumug qocuso sotuniw wetin peco sij xe devisi deyaha yebiwew kapihe hah da file yefo xogixi mutes fafizor fufic tojeqef."
+    },
     "lockupPeriodInBlocks": 100,
     "epochDuration": 2419200,
     "veBoostRatio": 1000,
@@ -30,7 +34,9 @@
   {
     "key": "0x676d782d76310000000000000000000000000000000000000000000000000000",
     "name": "GMX V1",
-    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "infoDetails": {
+      "description": "vahadeb yuk xifoto ba zi jisa vuwoqa nax hujiw gu gulole vudaq heraz musore ga kiturob tudibit five qevigod mevef laquruj qogo gapizi reqikar viqe joniz xedide geric suk fehiy kadefu fay ciruwab col tusof jicik cidemiv yor fow veyij yaj moloj pe luj kutuxo hacugu wo gagu qina vidi tocu me bacetew vukeba pidevag nev mom xaram rusaq demopin."
+    },
     "lockupPeriodInBlocks": 100,
     "epochDuration": 2419200,
     "veBoostRatio": 1000,
@@ -44,7 +50,9 @@
   {
     "key": "0x72646e742d763100000000000000000000000000000000000000000000000000",
     "name": "Radiant v2",
-    "info": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "infoDetails": {
+      "description": "su yirom po den fufey bav losepow mu pen xocokin kuzeye qi zecocek fe hi boweb vupad par got guzaz lasudu xo dog ta dupi bupak zira jixacu zer mo geye baquz tak yah yesi goq yiku depuq ki fig qorehuq huyixar pika kajoyi reba hasap famoxej su jaxedox jaz gekiso vifariq qepasa fo lesa pozinaf voyo kejitu wumezu yijeke."
+    },
     "lockupPeriodInBlocks": 100,
     "epochDuration": 2419200,
     "veBoostRatio": 1000,

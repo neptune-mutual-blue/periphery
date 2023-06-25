@@ -9,8 +9,9 @@ const getDependencies = async (deployer, chainId) => {
   }
 
   const neptuneLegends = await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
+  const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
 
-  return { neptuneLegends: neptuneLegends.address }
+  return { neptuneLegends: neptuneLegends.address, npm: npm.address }
 }
 
 const deploy = async () => {
@@ -21,14 +22,14 @@ const deploy = async () => {
 
   const { chainId } = network.config
 
-  const { neptuneLegends, merkleProofMinter } = await getDependencies(deployer, chainId)
+  const { neptuneLegends, merkleProofMinter, npm } = await getDependencies(deployer, chainId)
 
   if (!merkleProofMinter) {
-    await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, deployer.address, deployer.address)
+    await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, npm, deployer.address, deployer.address)
     return
   }
 
-  await factory.upgrade(merkleProofMinter, 'MerkleProofMinter', neptuneLegends, deployer.address, deployer.address)
+  await factory.upgrade(merkleProofMinter, 'MerkleProofMinter', neptuneLegends, npm, deployer.address, deployer.address)
 }
 
 deploy().catch(console.error)

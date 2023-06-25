@@ -20,11 +20,12 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
     super._disableInitializers();
   }
 
-  function initialize(INeptuneLegends nft, address admin, address prover) external initializer {
+  function initialize(INeptuneLegends nft, IERC20Upgradeable npm, address admin, address prover) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
     _nft = nft;
+    _npm = npm;
 
     _setRoleAdmin(NS_ROLES_PROOF_AGENT, DEFAULT_ADMIN_ROLE);
 
@@ -71,6 +72,10 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
     if (tokenId == 0 || boundTokenId == 0) {
       revert InvalidTokenIdError(tokenId);
+    }
+
+    if (_npm.balanceOf(_msgSender()) < uint256(level) * 10 ether) {
+      revert InsufficientNpmBalanceError(uint256(level) * 10 ether);
     }
 
     if (IERC721Upgradeable(address(_nft)).ownerOf(boundTokenId) != _msgSender()) {

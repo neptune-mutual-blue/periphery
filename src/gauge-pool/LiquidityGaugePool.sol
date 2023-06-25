@@ -7,8 +7,9 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
+import "../util/interfaces/IAccessControlUtil.sol";
 
-contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradeable, WithPausability, TokenRecovery, LiquidityGaugePoolReward {
+contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, AccessControlUpgradeable, WithPausability, TokenRecovery, LiquidityGaugePoolReward {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -27,6 +28,21 @@ contract LiquidityGaugePool is ReentrancyGuardUpgradeable, AccessControlUpgradea
     _setupRole(DEFAULT_ADMIN_ROLE, admin);
 
     _setPool(args);
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                         Access Control
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function grantRoles(AccountWithRoles[] calldata detail) external override whenNotPaused {
+    if (detail.length == 0) {
+      revert InvalidArgumentError("detail");
+    }
+
+    for (uint256 i = 0; i < detail.length; i++) {
+      for (uint256 j = 0; j < detail[i].roles.length; j++) {
+        super.grantRole(detail[i].roles[j], detail[i].account);
+      }
+    }
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

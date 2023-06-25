@@ -32,8 +32,8 @@
     "npm": "0x4BbDc138dd105C7ddE874df7FCd087b064F7973d",
     "stablecoin": "0xbdCDBD278467b84F67AEE5737Ddc83A9C054cC29",
     "neptuneLegends": "0xd673f97cA6DC3f807E0EAA9d0271b165C2A6d657",
-    "policyProofMinter": "0xbF7176F75B73DF752F52f429AF853A5f7edBb1FA",
-    "merkleProofMinter": "0x0866f9927d94a5D7072E91DcF77E407099170Bf5",
+    "policyProofMinter": "0x75C7109b889050659cDd8085D17f3eF2A2A9029B",
+    "merkleProofMinter": "0x11026faB94Fae24d483338840726A0db1bBf8390",
     "veNPM": "0x9Cfef27aC2Bed8689B89De0Ad7B30B02f5F45f9A",
     "gaugeControllerRegistry": "0x3bA2F20FF5481451E37Cfc97f50250aB10CAd8eF",
     "liquidityGaugePools": [

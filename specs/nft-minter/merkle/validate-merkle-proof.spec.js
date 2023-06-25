@@ -20,7 +20,7 @@ describe('Merkle Proof Validation', () => {
     contracts = await deployProtocol(owner)
 
     nft = await deployUpgradeable('FakeNeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
-    minter = await deployUpgradeable('MerkleProofMinter', nft.address, owner.address, owner.address)
+    minter = await deployUpgradeable('MerkleProofMinter', nft.address, contracts.npm.address, owner.address, owner.address)
 
     await minter.grantRole(ethers.utils.formatBytes32String('proof:agent'), owner.address)
     await minter.setBoundaries(...boundaries)
@@ -60,6 +60,8 @@ describe('Merkle Proof Validation', () => {
       lastBoundTokenId++
 
       if (!boundTokens[key]) {
+        await contracts.npm.mint(key, helper.ether(1000))
+
         await contracts.cxToken.mint(candidate.account.address, helper.ether(1))
         await ppm.connect(candidate.account).mint(contracts.cxToken.address, lastBoundTokenId)
         boundTokens[key] = lastBoundTokenId

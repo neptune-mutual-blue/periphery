@@ -6,6 +6,9 @@ const { calculateBoost } = require('../../util/calculate-boost')
 const HOURS = 3600
 const DAYS = 24 * HOURS
 
+const BOOST_FLOOR = 10_000
+const BOOST_CEILING = 40_000
+
 require('chai')
   .use(require('chai-as-promised'))
   .should()
@@ -24,9 +27,7 @@ describe('Vote Escrow Token: calculateBoost', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    const veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
-
-    contracts.veNpm = veNpm
+    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
@@ -65,5 +66,15 @@ describe('Vote Escrow Token: calculateBoost', () => {
 
       await time.increase(helper.getRandomNumber(3, 15) * DAYS)
     }
+  })
+
+  it('must correctly return boost when duration is too low', async () => {
+    const actual = (await contracts.veNpm.calculateBoost(0)).toString()
+    actual.should.equal(BOOST_FLOOR.toString())
+  })
+
+  it('must correctly return boost when duration is too high', async () => {
+    const actual = (await contracts.veNpm.calculateBoost(50_000 * DAYS)).toString()
+    actual.should.equal(BOOST_CEILING.toString())
   })
 })

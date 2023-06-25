@@ -34,12 +34,12 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
       revert TokenIdOutOfBoundsError(_min, _max);
     }
 
-    if (_nft._minted(tokenId)) {
-      revert TokenAlreadyMintedError(tokenId);
-    }
-
     if (_nft._soulbound(tokenId)) {
       revert TokenAlreadySoulbound(tokenId);
+    }
+
+    if (_nft._minted(tokenId)) {
+      revert TokenAlreadyMintedError(tokenId);
     }
 
     if (_souls[tokenId] != address(0)) {

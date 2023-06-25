@@ -10,8 +10,9 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "../util/WithPausability.sol";
 import "../util/TokenRecovery.sol";
 import "./NeptuneLegendsState.sol";
+import "../util/interfaces/IAccessControlUtil.sol";
 
-contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, NeptuneLegendsState {
+contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721BurnableUpgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, NeptuneLegendsState {
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
     super._disableInitializers();
@@ -64,7 +65,7 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
     }
   }
 
-  function _mint(MintInfo calldata info) private {
+  function _mint(MintInfo calldata info) internal virtual {
     if (_minted[info.id]) {
       revert AlreadyMintedError(info.id);
     }
@@ -157,6 +158,21 @@ contract NeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, 
     _throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
     super._unpause();
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                                         Access Control
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function grantRoles(AccountWithRoles[] calldata detail) external override whenNotPaused {
+    if (detail.length == 0) {
+      revert InvalidArgumentError("detail");
+    }
+
+    for (uint256 i = 0; i < detail.length; i++) {
+      for (uint256 j = 0; j < detail[i].roles.length; j++) {
+        super.grantRole(detail[i].roles[j], detail[i].account);
+      }
+    }
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
