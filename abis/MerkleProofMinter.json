@@ -49,6 +49,17 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "minRequired",
+        "type": "uint256"
+      }
+    ],
+    "name": "InsufficientNpmBalanceError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "argument",
         "type": "bytes32"
@@ -694,6 +705,11 @@
       {
         "internalType": "contract INeptuneLegends",
         "name": "nft",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20Upgradeable",
+        "name": "npm",
         "type": "address"
       },
       {
