@@ -119,7 +119,7 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     }
 
     if (amountToDeposit < total) {
-      revert BalanceInsufficientError(total, amountToDeposit);
+      revert InsufficientDepositError(total, amountToDeposit);
     }
 
     _epochDurations[epoch] = epochDuration;

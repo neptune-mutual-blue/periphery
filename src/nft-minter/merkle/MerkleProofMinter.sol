@@ -102,8 +102,6 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
       revert PersonaMismatchError(persona, _personas[_msgSender()][level]);
     }
 
-    // @todo: not during withdrawal period
-
     Boundary storage boundary = _boundaries[level][family];
 
     if (tokenId < boundary.min || tokenId > boundary.max) {
