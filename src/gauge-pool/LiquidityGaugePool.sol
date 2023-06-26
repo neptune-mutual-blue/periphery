@@ -73,6 +73,10 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
       revert ZeroAmountError("amount");
     }
 
+    if (amount > _lockedByMe[_msgSender()]) {
+      revert WithdrawalTooHighError(_lockedByMe[_msgSender()], amount);
+    }
+
     if (block.number < _lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks) {
       revert WithdrawalLockedError(_lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks);
     }
@@ -151,7 +155,7 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
     _epoch = epoch;
 
     if (_poolInfo.epochDuration * _rewardPerSecond > IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this))) {
-      revert BalanceInsufficientError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this)));
+      revert InsufficientDepositError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this)));
     }
 
     _lastRewardTimestamp = block.timestamp;

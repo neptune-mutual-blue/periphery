@@ -12,5 +12,6 @@ interface IThrowable {
   error InvalidArgumentError(bytes32 argument);
   error ZeroAmountError(bytes32 argument);
   error ZeroAddressError(bytes32 argument);
-  error BalanceInsufficientError(uint256 required, uint256 provided);
+  error InsufficientDepositError(uint256 required, uint256 provided);
+  error WithdrawalTooHighError(uint256 balance, uint256 requested);
 }
