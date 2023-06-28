@@ -75,6 +75,22 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "min",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "provided",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidBoundaryError",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "InvalidProofError",
     "type": "error"
@@ -169,6 +185,43 @@
     ],
     "name": "ZeroAmountError",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "triggeredBy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousMin",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "min",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousMax",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "max",
+        "type": "uint256"
+      }
+    ],
+    "name": "BoundarySet",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -520,6 +573,11 @@
         "internalType": "uint256",
         "name": "max",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "admin",
+        "type": "address"
       }
     ],
     "name": "initialize",
@@ -628,6 +686,19 @@
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "boundary",
+        "type": "uint256"
+      }
+    ],
+    "name": "setBoundary",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -23,6 +23,26 @@ contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeab
   }
 
   function initialize(address contractOwner, address underlyingToken, address feeToAccount, string memory tokenName, string memory tokenSymbol) external initializer {
+    if (contractOwner == address(0)) {
+      revert InvalidArgumentError("contractOwner");
+    }
+
+    if (underlyingToken == address(0)) {
+      revert InvalidArgumentError("underlyingToken");
+    }
+
+    if (feeToAccount == address(0)) {
+      revert InvalidArgumentError("feeToAccount");
+    }
+
+    if (bytes(tokenName).length == 0) {
+      revert InvalidArgumentError("tokenName");
+    }
+
+    if (bytes(tokenSymbol).length == 0) {
+      revert InvalidArgumentError("tokenSymbol");
+    }
+
     _underlyingToken = underlyingToken;
     _feeTo = feeToAccount;
     _whitelist[address(this)] = true;

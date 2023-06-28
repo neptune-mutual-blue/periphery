@@ -17,7 +17,7 @@ abstract contract ProofOfPolicy is IThrowable {
     return IERC20Upgradeable(s.getAddress(CNS_NPM));
   }
 
-  function _validateProof(IStore s, ICxToken proof, address account) internal view returns (bool) {
+  function _throwIfInvalidProof(IStore s, ICxToken proof, address account) internal view {
     // Ensure that the submitted proof is authentic
     bytes32 key = keccak256(abi.encodePacked(bytes32("ns:cover:cxtoken"), proof));
 
@@ -37,15 +37,6 @@ abstract contract ProofOfPolicy is IThrowable {
 
     if (_getNpm(s).balanceOf(account) < 10 ether) {
       revert InsufficientNpmBalanceError(10 ether);
-    }
-
-    // Should be valid
-    return true;
-  }
-
-  function _throwIfInvalidProof(IStore s, ICxToken proof, address account) internal view {
-    if (_validateProof(s, proof, account) == false) {
-      revert InvalidProofError();
     }
   }
 }
