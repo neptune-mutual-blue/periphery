@@ -17,9 +17,6 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
   }
 
   function initialize(uint256 lastEpoch, address admin, address gaugeAgent, address[] calldata pausers, IERC20Upgradeable rewardToken) external initializer {
-    super.__AccessControl_init();
-    super.__Pausable_init();
-
     if (admin == address(0)) {
       revert InvalidArgumentError("admin");
     }
@@ -28,9 +25,22 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
       revert InvalidArgumentError("gaugeAgent");
     }
 
+    if (pausers.length == 0) {
+      revert InvalidArgumentError("pausers");
+    }
+
+    for (uint256 i = 0; i < pausers.length; i++) {
+      if (pausers[i] == address(0)) {
+        revert InvalidArgumentError("pausers");
+      }
+    }
+
     if (address(rewardToken) == address(0)) {
       revert InvalidArgumentError("rewardToken");
     }
+
+    super.__AccessControl_init();
+    super.__Pausable_init();
 
     _epoch = lastEpoch;
 

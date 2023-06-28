@@ -26,11 +26,11 @@ const deploy = async () => {
   const { store, neptuneLegends, policyProofMinter } = await getDependencies(deployer, chainId)
 
   if (!policyProofMinter) {
-    await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
+    await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, deployer.address)
     return
   }
 
-  await factory.upgrade(policyProofMinter, 'PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
+  await factory.upgrade(policyProofMinter, 'PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, deployer.address)
 }
 
 deploy().catch(console.error)

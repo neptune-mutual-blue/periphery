@@ -19,6 +19,18 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   }
 
   function initialize(string calldata tokenUri, address admin, address minter) external initializer {
+    if (bytes(tokenUri).length == 0) {
+      revert InvalidArgumentError("tokenUri");
+    }
+
+    if (admin == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
+    if (minter == address(0)) {
+      revert InvalidArgumentError("minter");
+    }
+
     super.__AccessControl_init();
     super.__ERC721_init("Neptune Legends", "NLG");
     super.__ERC2981_init();
@@ -51,20 +63,6 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
     super._beforeTokenTransfer(from, to, tokenId, batchSize);
   }
 
-  function mint(MintInfo calldata info) external override {
-    _throwIfSenderIsNot(NS_ROLES_MINTER);
-
-    _mint(info);
-  }
-
-  function mintMany(MintInfo[] calldata info) external override {
-    _throwIfSenderIsNot(NS_ROLES_MINTER);
-
-    for (uint256 i = 0; i < info.length; i++) {
-      _mint(info[i]);
-    }
-  }
-
   function _mint(MintInfo calldata info) internal virtual {
     if (_minted[info.id]) {
       revert AlreadyMintedError(info.id);
@@ -83,6 +81,20 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
     }
 
     super._safeMint(info.sendTo, info.id, "");
+  }
+
+  function mint(MintInfo calldata info) external override {
+    _throwIfSenderIsNot(NS_ROLES_MINTER);
+
+    _mint(info);
+  }
+
+  function mintMany(MintInfo[] calldata info) external override {
+    _throwIfSenderIsNot(NS_ROLES_MINTER);
+
+    for (uint256 i = 0; i < info.length; i++) {
+      _mint(info[i]);
+    }
   }
 
   function setBaseUri(string calldata baseUri) external {

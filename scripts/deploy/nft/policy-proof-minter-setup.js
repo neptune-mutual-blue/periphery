@@ -14,7 +14,7 @@ const getDependencies = async (deployer, chainId) => {
 
   const store = await factory.deployUpgradeable('Store', [deployer.address], deployer.address)
   const neptuneLegends = await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
-  const policyProofMinter = await factory.deployUpgradeable('PolicyProofMinter', store.address, neptuneLegends.address, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS)
+  const policyProofMinter = await factory.deployUpgradeable('PolicyProofMinter', store.address, neptuneLegends.address, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, deployer.address)
 
   return { store: store.address, neptuneLegends: neptuneLegends.address, policyProofMinter: policyProofMinter.address }
 }
@@ -29,7 +29,7 @@ const deploy = async () => {
   const { neptuneLegends, policyProofMinter } = await getDependencies(deployer, chainId)
 
   const nft = await factory.attach(deployer, neptuneLegends, 'NeptuneLegends')
-  const minter = await factory.attach(deployer, policyProofMinter, 'PolicyProofMinter')
+  const minter = await factory.attach(deployer, policyProofMinter, 'PolicyProofMinter', deployer.address)
 
   // Set the Policy Proof Minter Contract as a Minter
   await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, minter.address)

@@ -17,32 +17,62 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
     super._disableInitializers();
   }
 
-  function initialize(IStore store, INeptuneLegends nft, uint256 min, uint256 max) external initializer {
+  function initialize(IStore store, INeptuneLegends nft, uint256 min, uint256 max, address admin) external initializer {
+    if (address(store) == address(0)) {
+      revert InvalidArgumentError("store");
+    }
+
+    if (address(nft) == address(0)) {
+      revert InvalidArgumentError("nft");
+    }
+
+    if (min > max) {
+      revert InvalidArgumentError("min");
+    }
+
+    if (address(admin) == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
     super.__AccessControl_init();
     super.__Pausable_init();
+    super.__ReentrancyGuard_init();
+
+    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+
+    _setupRole(DEFAULT_ADMIN_ROLE, admin);
+    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
 
     _s = store;
     _nft = nft;
     _min = min;
     _max = max;
+
+    emit BoundarySet(_msgSender(), 0, min, 0, max);
   }
 
-  function mint(ICxToken proofOfPolicy, uint256 tokenId) external whenNotPaused {
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                             Danger: Publicly Accessible. No RBAC.
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function mint(ICxToken proofOfPolicy, uint256 tokenId) external whenNotPaused nonReentrant {
     _throwIfInvalidProof(_s, proofOfPolicy, _msgSender());
 
     if (tokenId < _min || tokenId > _max) {
       revert TokenIdOutOfBoundsError(_min, _max);
     }
 
-    if (_nft._soulbound(tokenId)) {
+    // Check if the given token id was already minted here
+    if (_souls[tokenId] != address(0)) {
       revert TokenAlreadySoulbound(tokenId);
     }
 
+    // Check if the given token id was already minted elsewhere
     if (_nft._minted(tokenId)) {
       revert TokenAlreadyMintedError(tokenId);
     }
 
-    if (_souls[tokenId] != address(0)) {
+    if (_nft._soulbound(tokenId)) {
       revert TokenAlreadySoulbound(tokenId);
     }
 
@@ -51,6 +81,16 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
     _nft.mint(_getMintInfo(tokenId, _msgSender()));
 
     emit SoulboundMinted(_msgSender(), tokenId);
+  }
+
+  function setBoundary(uint256 boundary) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (boundary < _max) {
+      revert InvalidBoundaryError(_max, boundary);
+    }
+
+    emit BoundarySet(_msgSender(), _min, _min, _max, boundary);
+
+    _max = boundary;
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -94,7 +134,9 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
   //                                             Views
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function validateProof(ICxToken proofOfPolicy) external view returns (bool) {
-    return _validateProof(_s, proofOfPolicy, _msgSender());
+    _throwIfInvalidProof(_s, proofOfPolicy, _msgSender());
+
+    return true;
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

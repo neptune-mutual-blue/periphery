@@ -10,7 +10,7 @@ describe('Soul bound nft mint validation', () => {
 
     nft = await deployUpgradeable('FakeNeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
     contracts = await deployProtocol(owner)
-    minter = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000)
+    minter = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000, owner.address)
   })
 
   it('must correctly accept proofs for minting', async () => {

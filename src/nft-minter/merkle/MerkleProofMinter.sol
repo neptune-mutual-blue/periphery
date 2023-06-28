@@ -21,8 +21,25 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   }
 
   function initialize(INeptuneLegends nft, IERC20Upgradeable npm, address admin, address prover) external initializer {
+    if (address(nft) == address(0)) {
+      revert InvalidArgumentError("nft");
+    }
+
+    if (address(npm) == address(0)) {
+      revert InvalidArgumentError("npm");
+    }
+
+    if (admin == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
+    if (prover == address(0)) {
+      revert InvalidArgumentError("prover");
+    }
+
     super.__AccessControl_init();
     super.__Pausable_init();
+    super.__ReentrancyGuard_init();
 
     _nft = nft;
     _npm = npm;
@@ -35,40 +52,8 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  //                             Danger!!! External & Public Functions
+  //                                          Validations
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setMyPersona(uint8[3] calldata personas) external nonReentrant whenNotPaused {
-    if (_personas[_msgSender()][1] > 0) {
-      revert PersonaAlreadySetError();
-    }
-
-    uint8[3] memory levels = [1, 3, 5];
-
-    for (uint8 i = 0; i < personas.length; i++) {
-      uint8 persona = personas[i];
-
-      if (persona != 1 && persona != 2) {
-        revert InvalidPersonaError();
-      }
-
-      _personas[_msgSender()][levels[i]] = persona;
-      _personas[_msgSender()][levels[i] + 1] = persona;
-
-      emit PersonaSet(_msgSender(), levels[i], persona);
-      emit PersonaSet(_msgSender(), levels[i] + 1, persona);
-    }
-  }
-
-  function mint(bytes32[] calldata proof, uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {
-    validate(boundTokenId, level, family, persona, tokenId);
-    validateProof(proof, level, family, persona);
-
-    _mintStatus[_msgSender()][level] = true;
-    _nft.mint(_getMintInfo(tokenId, _msgSender()));
-
-    emit MintedWithProof(_msgSender(), proof, level, tokenId);
-  }
-
   function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
     if (tokenId == 0 || boundTokenId == 0) {
       revert InvalidTokenIdError(tokenId);
@@ -121,6 +106,41 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
     if (proof.verify(_merkleRoot, leaf) == false) {
       revert InvalidProofError();
     }
+  }
+
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //                             Danger: Publicly Accessible. No RBAC.
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  function setMyPersona(uint8[3] calldata personas) external nonReentrant whenNotPaused {
+    if (_personas[_msgSender()][1] > 0) {
+      revert PersonaAlreadySetError();
+    }
+
+    uint8[3] memory levels = [1, 3, 5];
+
+    for (uint8 i = 0; i < personas.length; i++) {
+      uint8 persona = personas[i];
+
+      if (persona != 1 && persona != 2) {
+        revert InvalidPersonaError();
+      }
+
+      _personas[_msgSender()][levels[i]] = persona;
+      _personas[_msgSender()][levels[i] + 1] = persona;
+
+      emit PersonaSet(_msgSender(), levels[i], persona);
+      emit PersonaSet(_msgSender(), levels[i] + 1, persona);
+    }
+  }
+
+  function mint(bytes32[] calldata proof, uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) external nonReentrant whenNotPaused {
+    validate(boundTokenId, level, family, persona, tokenId);
+    validateProof(proof, level, family, persona);
+
+    _mintStatus[_msgSender()][level] = true;
+    _nft.mint(_getMintInfo(tokenId, _msgSender()));
+
+    emit MintedWithProof(_msgSender(), proof, level, tokenId);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

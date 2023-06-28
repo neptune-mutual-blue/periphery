@@ -18,13 +18,17 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
   }
 
   function initialize(address admin, PoolInfo calldata args) external initializer {
+    if (admin == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
     super.__AccessControl_init();
     super.__Pausable_init();
     super.__ReentrancyGuard_init();
 
-    // RBAC
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+
     _setupRole(DEFAULT_ADMIN_ROLE, admin);
 
     _setPool(args);

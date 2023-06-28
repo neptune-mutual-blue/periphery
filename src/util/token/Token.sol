@@ -17,6 +17,22 @@ contract Token is ERC20Upgradeable, AccessControlUpgradeable, PausableUpgradeabl
   }
 
   function initialize(address admin, address minter, string memory tokenName, string memory tokenSymbol) external initializer {
+    if (admin == address(0)) {
+      revert InvalidArgumentError("admin");
+    }
+
+    if (minter == address(0)) {
+      revert InvalidArgumentError("minter");
+    }
+
+    if (bytes(tokenName).length == 0) {
+      revert InvalidArgumentError("tokenName");
+    }
+
+    if (bytes(tokenSymbol).length == 0) {
+      revert InvalidArgumentError("tokenSymbol");
+    }
+
     super.__ERC20_init(tokenName, tokenSymbol);
     super.__AccessControl_init();
     super.__Pausable_init();
