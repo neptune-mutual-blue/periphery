@@ -4,6 +4,7 @@ const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
 const pools = require('../../ve/pools.baseGoerli.json')
 const ipfs = require('../../../specs/util/ipfs')
+const config = require('../../config/accounts.json')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -25,7 +26,7 @@ const getDependencies = async (chainId) => {
     const info = await ipfs.write(pool.infoDetails)
     pool.info = info
 
-    const instance = await factory.deployUpgradeable('LiquidityGaugePool', deployer.address, pool)
+    const instance = await factory.deployUpgradeable('LiquidityGaugePool', config.admin, pool)
     liquidityGaugePools.push({ key: pool.key, address: instance.address })
   }
 

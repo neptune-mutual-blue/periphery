@@ -34,6 +34,10 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
     _setPool(args);
   }
 
+  function setPool(PoolInfo calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    _setPool(args);
+  }
+
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                         Access Control
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -133,10 +137,6 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                 Gauge Controller Registry Only
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setPool(PoolInfo calldata args) external override onlyRegistry {
-    _setPool(args);
-  }
-
   function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
     _updateReward(address(0));
 

@@ -2,6 +2,8 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
+const config = require('../../config/accounts.json')
+
 const GRIM_WYVERN = 180000
 const TOTAL_NFTS = 10_000
 
@@ -26,11 +28,11 @@ const deploy = async () => {
   const { store, neptuneLegends, policyProofMinter } = await getDependencies(deployer, chainId)
 
   if (!policyProofMinter) {
-    await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, deployer.address)
+    await factory.deployUpgradeable('PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, config.admin)
     return
   }
 
-  await factory.upgrade(policyProofMinter, 'PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, deployer.address)
+  await factory.upgrade(policyProofMinter, 'PolicyProofMinter', store, neptuneLegends, GRIM_WYVERN + 1, GRIM_WYVERN + TOTAL_NFTS, config.admin)
 }
 
 deploy().catch(console.error)
