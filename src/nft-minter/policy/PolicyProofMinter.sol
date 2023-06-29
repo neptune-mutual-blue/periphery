@@ -10,6 +10,7 @@ import "../../util/TokenRecovery.sol";
 import "./interfaces/IPolicyProofMinter.sol";
 import "./ProofOfPolicy.sol";
 import "./PolicyProofMinterState.sol";
+import "hardhat/console.sol";
 
 contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, ProofOfPolicy, PolicyProofMinterState {
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -17,7 +18,7 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
     super._disableInitializers();
   }
 
-  function initialize(IStore store, INeptuneLegends nft, uint256 min, uint256 max) external initializer {
+  function initialize(IStore store, INeptuneLegends nft, uint256 min, uint256 max, address admin) external initializer {
     super.__AccessControl_init();
     super.__Pausable_init();
 
@@ -25,6 +26,8 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
     _nft = nft;
     _min = min;
     _max = max;
+
+    _setupRole(DEFAULT_ADMIN_ROLE, admin);
   }
 
   function mint(ICxToken proofOfPolicy, uint256 tokenId) external whenNotPaused {
