@@ -3,7 +3,7 @@ const helper = require('../../util/helper')
 const { deployUpgradeable, deployProtocol } = require('../../util/factory')
 const key = require('../../util/key')
 
-describe('Soul bound nft mint validation', () => {
+describe('Soulbound NFT Minter: TokenAlreadyMinted', () => {
   let minter, nft, contracts
 
   before(async () => {

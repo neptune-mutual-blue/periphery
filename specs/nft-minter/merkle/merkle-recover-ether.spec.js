@@ -2,7 +2,7 @@ const { ethers } = require('hardhat')
 const helper = require('../../util/helper')
 const { deployUpgradeable, deployProtocol, deploy } = require('../../util/factory')
 
-describe('Soulbound NFT Minter: Recover Ether', () => {
+describe('Merkle Proof Minter: Recover Ether', () => {
   let minter, nft, contracts, forceEther
 
   before(async () => {
@@ -10,7 +10,7 @@ describe('Soulbound NFT Minter: Recover Ether', () => {
 
     nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
     contracts = await deployProtocol(owner)
-    minter = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000, owner.address)
+    minter = await deployUpgradeable('MerkleProofMinter', nft.address, contracts.npm.address, owner.address, owner.address)
     forceEther = await deploy('ForceEther')
 
     await minter.grantRole(ethers.utils.formatBytes32String('recovery:agent'), owner.address)

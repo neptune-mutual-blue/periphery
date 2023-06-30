@@ -2,7 +2,7 @@ const { ethers } = require('hardhat')
 const { deployUpgradeable, deployProtocol } = require('../../util/factory')
 const key = require('../../util/key')
 
-describe('Soulbound NFT Minter: Grant Roles', () => {
+describe('Merkle Proof Minter: Grant Roles', () => {
   let minter, nft, contracts
 
   before(async () => {
@@ -10,7 +10,7 @@ describe('Soulbound NFT Minter: Grant Roles', () => {
 
     nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
     contracts = await deployProtocol(owner)
-    minter = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000, owner.address)
+    minter = await deployUpgradeable('MerkleProofMinter', nft.address, contracts.npm.address, owner.address, owner.address)
 
     await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, minter.address)
 

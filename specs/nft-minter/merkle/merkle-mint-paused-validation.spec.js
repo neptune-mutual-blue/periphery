@@ -1,35 +1,36 @@
-const chalk = require('chalk')
 const { ethers } = require('hardhat')
-const { boundaries } = require('../../util/boundaries')
-const { generateTree, parseLeaf } = require('../../util/tree')
-const { deployUpgradeable, deployProtocol } = require('../../util/factory')
-const { getDemoLeaves, getDemoLeavesRaw } = require('../../util/demo-leaves')
 const helper = require('../../util/helper')
+const { deployUpgradeable, deployProtocol } = require('../../util/factory')
+const key = require('../../util/key')
+const { getDemoLeaves, getDemoLeavesRaw } = require('../../util/demo-leaves')
+const { generateTree, parseLeaf } = require('../../util/tree')
+const { boundaries } = require('../../util/boundaries')
 
-const PERSONAS = {
-  0: 'N/A',
-  1: 'Guardian',
-  2: 'Beast'
-}
-
-describe('Merkle Proof Validation', () => {
+describe('Merkle Proof Minter: Mint (Paused)', () => {
   let minter, nft, contracts
 
   before(async () => {
     const [owner] = await ethers.getSigners()
-    contracts = await deployProtocol(owner)
 
-    nft = await deployUpgradeable('FakeNeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
+    nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
+    contracts = await deployProtocol(owner)
     minter = await deployUpgradeable('MerkleProofMinter', nft.address, contracts.npm.address, owner.address, owner.address)
 
     await minter.grantRole(ethers.utils.formatBytes32String('proof:agent'), owner.address)
     await minter.setBoundaries(...boundaries)
+
+    await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, minter.address)
+
+    await minter.grantRole(ethers.utils.formatBytes32String('pauser'), owner.address)
   })
 
-  it('must correctly accept proofs for minting', async () => {
+  it('must not be able to mint when contract is paused.', async () => {
     const signers = await ethers.getSigners()
     let lastBoundTokenId = 1000
+
     const ppm = await deployUpgradeable('PolicyProofMinter', contracts.store.address, nft.address, 1, 10000, signers[0].address)
+    await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, ppm.address)
+
     const leaves = getDemoLeaves(signers)
     const tree = generateTree(leaves)
     const root = tree.getHexRoot()
@@ -68,6 +69,10 @@ describe('Merkle Proof Validation', () => {
       }
     }
 
+    await minter.connect(signers[1]).pause().should.be.rejectedWith('AccessControl')
+
+    await minter.pause()
+
     for (const leaf of rawLeaves) {
       const proof = tree.getHexProof(parseLeaf(leaf))
       const [account, level, family, persona] = leaf
@@ -82,11 +87,14 @@ describe('Merkle Proof Validation', () => {
       const tokenId = mintedTokens[level + family]
 
       await minter.connect(account).mint(proof, boundTokens[account.address], level, familyFormatted, persona, tokenId)
-
-      await minter.connect(account).mint(proof, boundTokens[account.address], level, familyFormatted, persona, tokenId + 1)
-        .should.be.rejectedWith('TokenAlreadyClaimedError')
-
-      console.log('%s- %s Level %s Token Id: %s %s (%s)', ' '.repeat(4), chalk.green('[OK]'), level, tokenId, family, PERSONAS[persona])
+        .should.be.rejectedWith('Pausable: paused')
     }
+  })
+
+  it('can only be unpaused by admin', async () => {
+    const [, account] = await ethers.getSigners()
+    await minter.connect(account).unpause().should.be.rejectedWith('AccessControl')
+
+    await minter.unpause()
   })
 })

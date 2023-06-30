@@ -1,9 +1,9 @@
 const { ethers } = require('hardhat')
 const helper = require('../../util/helper')
 const { deployUpgradeable, deployProtocol } = require('../../util/factory')
-const key = require('../../../specs/util/key')
+const key = require('../../util/key')
 
-describe('Soul bound nft mint validation', () => {
+describe('Soulbound NFT Minter: Mint Validation', () => {
   let minter, nft, contracts
 
   before(async () => {
@@ -27,6 +27,6 @@ describe('Soul bound nft mint validation', () => {
 
     await minter.mint(contracts.cxToken.address, 50)
     await minter.mint(contracts.cxToken.address, 55).should.be.rejectedWith('AlreadyBoundError')
-    await minter.mint(contracts.cxToken.address, 50).should.be.rejectedWith('TokenAlreadyMintedError')
+    await minter.mint(contracts.cxToken.address, 50).should.be.rejectedWith('TokenAlreadySoulbound')
   })
 })
