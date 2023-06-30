@@ -2,6 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
+const config = require('../../config/accounts.json')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -18,11 +19,15 @@ const deploy = async () => {
   const previousBalance = await deployer.getBalance()
 
   console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
-
   const { chainId } = network.config
-  const { npm } = await getDependencies(chainId)
+  const { npm, veNpm } = await getDependencies(chainId)
 
-  await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm, deployer.address, 'Vote Escrow NPM', 'veNPM')
+  if (!veNpm) {
+    await factory.deployUpgradeable('VoteEscrowToken', config.admin, npm, config.treasury, 'Vote Escrow NPM', 'veNPM')
+    return
+  }
+
+  await factory.upgrade(veNpm, 'VoteEscrowToken', config.admin, npm, config.treasury, 'Vote Escrow NPM', 'veNPM')
 }
 
 deploy().catch(console.error)

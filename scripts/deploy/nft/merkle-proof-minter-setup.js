@@ -17,7 +17,7 @@ const getDependencies = async (deployer, chainId) => {
   return { neptuneLegends: neptuneLegends.address, merkleProofMinter: merkleProofMinter.address }
 }
 
-const deploy = async () => {
+const setup = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
@@ -36,4 +36,4 @@ const deploy = async () => {
   await minter.setBoundaries(...boundaries)
 }
 
-deploy().catch(console.error)
+setup().catch(console.error)

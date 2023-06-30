@@ -2,6 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
+const config = require('../../config/accounts.json')
 
 const getDependencies = async (chainId) => {
   if (chainId !== 31337) {
@@ -23,11 +24,11 @@ const deploy = async () => {
   const { npm, gaugeControllerRegistry } = await getDependencies(chainId)
 
   if (!gaugeControllerRegistry) {
-    await factory.deployUpgradeable('GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm)
+    await factory.deployUpgradeable('GaugeControllerRegistry', 0, config.admin, config.governanceAdmin, config.pausers, npm)
     return
   }
 
-  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm)
+  await factory.upgrade(gaugeControllerRegistry, 'GaugeControllerRegistry', 0, config.admin, config.governanceAdmin, config.pausers, npm)
 }
 
 deploy().catch(console.error)

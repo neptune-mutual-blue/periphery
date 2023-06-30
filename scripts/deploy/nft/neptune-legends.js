@@ -2,6 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
+const config = require('../../config/accounts.json')
 
 const getDependencies = async (deployer, chainId) => {
   if (chainId !== 31337) {
@@ -23,11 +24,11 @@ const deploy = async () => {
   const { neptuneLegends } = await getDependencies(deployer, chainId)
 
   if (!neptuneLegends) {
-    await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
+    await factory.deployUpgradeable('NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', config.admin, config.admin)
     return
   }
 
-  await factory.upgrade(neptuneLegends, 'NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', deployer.address, deployer.address)
+  await factory.upgrade(neptuneLegends, 'NeptuneLegends', 'https://nft.neptunemutual.net/metadata/', config.admin, config.admin)
 }
 
 deploy().catch(console.error)

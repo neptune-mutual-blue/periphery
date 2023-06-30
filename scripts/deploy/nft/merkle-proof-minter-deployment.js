@@ -2,6 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
+const config = require('../../config/accounts.json')
 
 const getDependencies = async (deployer, chainId) => {
   if (chainId !== 31337) {
@@ -25,11 +26,11 @@ const deploy = async () => {
   const { neptuneLegends, merkleProofMinter, npm } = await getDependencies(deployer, chainId)
 
   if (!merkleProofMinter) {
-    await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, npm, deployer.address, deployer.address)
+    await factory.deployUpgradeable('MerkleProofMinter', neptuneLegends, npm, config.admin, config.governanceAdmin)
     return
   }
 
-  await factory.upgrade(merkleProofMinter, 'MerkleProofMinter', neptuneLegends, npm, deployer.address, deployer.address)
+  await factory.upgrade(merkleProofMinter, 'MerkleProofMinter', neptuneLegends, npm, config.admin, config.governanceAdmin)
 }
 
 deploy().catch(console.error)

@@ -1,9 +1,9 @@
 const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
-const { boundaries } = require('../../../specs/util/boundaries')
 const key = require('../../../specs/util/key')
 const deployments = require('../../util/deployments')
+
 const GRIM_WYVERN = 180000
 const TOTAL_NFTS = 10_000
 
@@ -19,7 +19,7 @@ const getDependencies = async (deployer, chainId) => {
   return { store: store.address, neptuneLegends: neptuneLegends.address, policyProofMinter: policyProofMinter.address }
 }
 
-const deploy = async () => {
+const setup = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
@@ -35,4 +35,4 @@ const deploy = async () => {
   await nft.grantRole(key.ACCESS_CONTROL.ROLE_MINTER, minter.address)
 }
 
-deploy().catch(console.error)
+setup().catch(console.error)

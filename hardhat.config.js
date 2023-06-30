@@ -39,6 +39,13 @@ const config = {
       accounts: [process.env.PRIVATE_KEY],
       gasPrice: 0.1 * GWEI,
       explorer: 'https://arbiscan.io'
+    },
+    bsc: {
+      url: process.env.BSC_RPC_URL,
+      chainId: 56,
+      accounts: [process.env.PRIVATE_KEY],
+      gasPrice: 3 * GWEI,
+      explorer: 'https://bscscan.com'
     }
   },
   solidity: {
@@ -66,6 +73,7 @@ const config = {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY,
       arbitrumOne: process.env.ARBISCAN_API_KEY,
+      bsc: process.env.BSCSCAN_API_KEY,
       basegoerli: 'base'
     },
     customChains: [
