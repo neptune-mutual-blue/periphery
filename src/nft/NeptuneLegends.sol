@@ -161,7 +161,9 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   }
 
   function pause() external {
-    _throwIfSenderIsNot(NS_ROLES_PAUSER);
+    if (_pausers[_msgSender()] == false) {
+      revert AccessDeniedError("Pauser");
+    }
 
     super._pause();
   }
