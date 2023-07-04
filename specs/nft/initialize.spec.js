@@ -12,6 +12,10 @@ describe('NFT: Initializer', () => {
       .should.be.rejectedWith('InvalidArgumentError')
     await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, zerox)
       .should.be.rejectedWith('InvalidArgumentError')
+  })
+
+  it('must not be re-initialized', async () => {
+    const [owner] = await ethers.getSigners()
 
     const nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
 

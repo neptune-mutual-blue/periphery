@@ -12,8 +12,14 @@ describe('NFT: setBaseURI', () => {
   it('must revert if invalid arguments.', async () => {
     await nft.setBaseUri('')
       .should.be.rejectedWith('InvalidArgumentError')
+  })
 
+  it('must set baseUri if valid arguments and is admin.', async () => {
     await nft.setBaseUri('https://test.neptunemutual.com')
+
+    const baseURI = await nft._uri()
+
+    baseURI.should.equal('https://test.neptunemutual.com')
   })
 
   it('must revert if not admin.', async () => {

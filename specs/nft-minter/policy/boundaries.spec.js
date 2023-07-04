@@ -1,7 +1,6 @@
 const { ethers } = require('hardhat')
 const { deployUpgradeable, deployProtocol } = require('../../util/factory')
 const key = require('../../util/key')
-const { expect } = require('chai')
 
 describe('Soulbound NFT Minter: Boundaries', () => {
   let minter, nft, contracts
@@ -31,6 +30,6 @@ describe('Soulbound NFT Minter: Boundaries', () => {
 
     const newMax = await minter._max()
 
-    expect(newMax.toNumber()).to.equal(10001)
+    newMax.toNumber().should.equal(10001)
   })
 })

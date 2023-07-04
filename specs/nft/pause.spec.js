@@ -12,10 +12,7 @@ describe('NFT: Pause/Unpause', () => {
     const [owner, bob] = await ethers.getSigners()
     nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
 
-    const pausers = [bob.address]
-    const statuses = [true]
-
-    await nft.setPausers(pausers, statuses)
+    await nft.grantRole(ethers.utils.formatBytes32String('role:pauser'), bob.address)
   })
 
   it('must allow pausers to pause', async () => {
@@ -28,7 +25,7 @@ describe('NFT: Pause/Unpause', () => {
   it('must not allow non pausers to pause', async () => {
     await nft.pause()
       .should.be.revertedWithCustomError(nft, 'AccessDeniedError')
-      .withArgs(helper.toBytes32('Pauser'))
+      .withArgs(helper.toBytes32('role:pauser'))
   })
 
   it('must not allow non owners to unpause', async () => {

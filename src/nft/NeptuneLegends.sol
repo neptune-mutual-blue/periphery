@@ -154,16 +154,8 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setPausers(address[] calldata accounts, bool[] calldata statuses) external {
-    _throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
-
-    super._setPausers(_pausers, accounts, statuses);
-  }
-
   function pause() external {
-    if (_pausers[_msgSender()] == false) {
-      revert AccessDeniedError("Pauser");
-    }
+    _throwIfSenderIsNot(NS_ROLES_PAUSER);
 
     super._pause();
   }

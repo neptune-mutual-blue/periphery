@@ -8,10 +8,7 @@ describe('NFT: Grant Roles', () => {
     const [owner] = await ethers.getSigners()
     nft = await deployUpgradeable('NeptuneLegends', 'https://neptunemutual.com', owner.address, owner.address)
 
-    const pausers = [owner.address]
-    const statuses = [true]
-
-    await nft.setPausers(pausers, statuses)
+    await nft.grantRole(ethers.utils.formatBytes32String('role:pauser'), owner.address)
   })
 
   it('must revert if no detail is provided.', async () => {
