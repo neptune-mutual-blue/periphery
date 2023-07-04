@@ -62,8 +62,7 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
       revert TokenIdOutOfBoundsError(_min, _max);
     }
 
-    // Check if the given token id was already minted here
-    if (_souls[tokenId] != address(0)) {
+    if (_nft._soulbound(tokenId)) {
       revert TokenAlreadySoulbound(tokenId);
     }
 
@@ -72,9 +71,11 @@ contract PolicyProofMinter is IThrowable, IPolicyProofMinter, IAccessControlUtil
       revert TokenAlreadyMintedError(tokenId);
     }
 
-    if (_nft._soulbound(tokenId)) {
+    // Check if the given token id was already minted here
+    if (_souls[tokenId] != address(0)) {
       revert TokenAlreadySoulbound(tokenId);
     }
+
 
     _souls[tokenId] = _msgSender();
 
