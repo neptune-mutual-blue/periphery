@@ -48,4 +48,14 @@ describe('Vote Escrow Token: unlock', () => {
       ;(await contracts.npm.balanceOf(account.address)).should.equal(amounts[i])
     }
   })
+
+  it('must not allow unlocking 0 amount', async () => {
+    const signers = await ethers.getSigners()
+
+    for (let i = 0; i < 2; i++) {
+      const account = signers[i]
+      await contracts.veNpm.connect(account).unlock()
+        .should.be.revertedWithCustomError(contracts.veNpm, 'ZeroAmountError')
+    }
+  })
 })
