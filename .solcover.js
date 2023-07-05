@@ -1,0 +1,20 @@
+module.exports = {
+  skipFiles: [
+    "fakes/escrow/FakeVoteEscrowBoosterV2.sol",
+    "fakes/escrow/FakeVoteEscrowLockerV2.sol",
+    "fakes/escrow/FakeVoteEscrowTokenStateV2.sol",
+    "fakes/escrow/FakeVoteEscrowTokenV2.sol",
+    "fakes/FakeCxToken.sol",
+    "fakes/FakeProtocol.sol",
+    "fakes/FakeToken.sol",
+    "fakes/ForceEther.sol",
+    "fakes/Store.sol",
+    "fakes/StoreBase.sol",
+    "fakes/nft/FakeNeptuneLegends.sol",
+    "fakes/nft/FakeNeptuneLegendsState.sol",
+    "fakes/nft/FakeNftMint.sol",
+    "fakes/nft/FakeNoMintedNft.sol",
+    "fakes/nft/FakeNoSoulboundNft.sol",
+    "dependencies/ABDKMath64x64.sol",
+  ],
+};
