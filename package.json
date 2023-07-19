@@ -11,7 +11,7 @@
     "clean": "forge clean && npx hardhat clean && rm -rf cache_foundry && rm -rf artifacts && rm -rf coverage",
     "abi": "rm -rf ./abis && mkdir abis && node ./scripts/util/extract-abis.js",
     "test": "hardhat test",
-    "coverage": "hardhat coverage"
+    "coverage": "hardhat clean && hardhat coverage"
   },
   "standard": {
     "env": [
