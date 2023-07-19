@@ -3,7 +3,6 @@
 pragma solidity ^0.8.12;
 
 import "../../nft/NeptuneLegends.sol";
-import "hardhat/console.sol";
 
 contract FakeNftMint is NeptuneLegends {
   function fakeMint(uint256 tokenId) public {

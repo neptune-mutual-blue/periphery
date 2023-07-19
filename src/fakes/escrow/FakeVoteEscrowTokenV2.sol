@@ -7,7 +7,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../../util/TokenRecovery.sol";
-import "../../util/ProtocolMembership.sol";
 import "../../util/WithPausability.sol";
 import "../../util/WhitelistedTransfer.sol";
 import "./FakeVoteEscrowBoosterV2.sol";
