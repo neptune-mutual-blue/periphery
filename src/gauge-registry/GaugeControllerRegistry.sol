@@ -48,14 +48,14 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
-    _setupRole(NS_GAUGE_AGENT, gaugeAgent);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(NS_GAUGE_AGENT, gaugeAgent);
 
     for (uint256 i = 0; i < pausers.length; i++) {
-      _setupRole(NS_ROLES_PAUSER, pausers[i]);
+      _grantRole(NS_ROLES_PAUSER, pausers[i]);
     }
 
-    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
     _rewardToken = rewardToken;
   }
 

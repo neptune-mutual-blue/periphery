@@ -46,9 +46,9 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
 
     _setRoleAdmin(NS_ROLES_PROOF_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
-    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
-    _setupRole(NS_ROLES_PROOF_AGENT, prover);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _grantRole(NS_ROLES_PROOF_AGENT, prover);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

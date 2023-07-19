@@ -42,9 +42,9 @@ contract Token is ERC20Upgradeable, AccessControlUpgradeable, PausableUpgradeabl
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
-    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
-    _setupRole(NS_ROLES_MINTER, minter);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _grantRole(NS_ROLES_MINTER, minter);
   }
 
   function mint(address account, uint256 amount) external whenNotPaused onlyRole(NS_ROLES_MINTER) {
