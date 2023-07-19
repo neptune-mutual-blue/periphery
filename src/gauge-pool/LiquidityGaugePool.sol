@@ -29,7 +29,7 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
 
     _setPool(args);
   }

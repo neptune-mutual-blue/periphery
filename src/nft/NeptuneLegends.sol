@@ -43,9 +43,9 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
     _setRoleAdmin(NS_ROLES_ROYALTY_ADMIN, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
-    _setupRole(NS_ROLES_RECOVERY_AGENT, admin);
-    _setupRole(NS_ROLES_MINTER, minter);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _grantRole(NS_ROLES_MINTER, minter);
   }
 
   function _baseURI() internal view override returns (string memory) {
