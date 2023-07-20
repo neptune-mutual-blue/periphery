@@ -8,7 +8,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-describe('Vote Escrow Token: lock', () => {
+describe('Vote Escrow Token: lock extension', () => {
   let contracts, name, symbol
 
   before(async () => {

@@ -9,7 +9,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-describe('Vote Escrow Token: unlock', () => {
+describe('Vote Escrow Token: unlock prematurely', () => {
   let contracts, name, symbol, durations, amounts
 
   before(async () => {
