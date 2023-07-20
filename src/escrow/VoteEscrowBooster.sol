@@ -35,11 +35,11 @@ abstract contract VoteEscrowBooster is VoteEscrowLocker {
     return result;
   }
 
-  function _getVotingPower(uint256 balance, uint256 unlockDate, uint256 currentTimestamp) internal pure returns (uint256) {
-    if (unlockDate <= currentTimestamp) {
-      return 0;
+  function _getVotingPower(uint256 balance, uint256 unlockTimestamp, uint256 currentTimestamp) internal pure returns (uint256) {
+    if (unlockTimestamp <= currentTimestamp) {
+      return balance;
     }
 
-    return (balance * _calculateBoost(unlockDate - currentTimestamp)) / _denominator();
+    return (balance * _calculateBoost(unlockTimestamp - currentTimestamp)) / _denominator();
   }
 }
