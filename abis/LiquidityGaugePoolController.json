@@ -16,17 +16,6 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "endsAt",
-        "type": "uint256"
-      }
-    ],
-    "name": "EpochStillActiveError",
-    "type": "error"
-  },
-  {
     "inputs": [],
     "name": "EpochUnavailableError",
     "type": "error"

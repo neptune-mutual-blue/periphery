@@ -30,6 +30,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     for (const pool of pools) {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
+      pool.info = ''
       pool.stakingToken = fakePod.address
       pool.veToken = contracts.veNpm.address
       pool.rewardToken = contracts.npm.address
@@ -68,12 +69,27 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     }
   })
 
-  it('must not allow setting gauge before previous epoch ends', async () => {
+  it('must allow setting even gauge before previous epoch ends', async () => {
     const [owner] = await ethers.getSigners()
     await contracts.npm.mint(owner.address, helper.ether(total))
     await contracts.npm.approve(contracts.registry.address, helper.ether(total))
     await contracts.registry.setGauge(2, helper.ether(total), 28 * DAYS, distribution)
-      .should.be.revertedWithCustomError(contracts.poolInfo[0].deployed, 'EpochStillActiveError')
+      .should.not.be.rejected
+
+    for (const pool of contracts.poolInfo) {
+      ;(await pool.deployed._epoch()).should.equal(2)
+    }
+
+    await mine(1, { interval: 14 * DAYS })
+
+    await contracts.npm.mint(owner.address, helper.ether(total))
+    await contracts.npm.approve(contracts.registry.address, helper.ether(total))
+    await contracts.registry.setGauge(3, helper.ether(total), 28 * DAYS, distribution)
+      .should.not.be.rejected
+
+    for (const pool of contracts.poolInfo) {
+      ;(await pool.deployed._epoch()).should.equal(3)
+    }
 
     // Complete epoch
     await mine(1, { interval: 28 * DAYS })

@@ -68,10 +68,6 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
   }
 
   function _setEpochDuration(uint256 epochDuration) internal {
-    if (_epochEndTimestamp > block.timestamp) {
-      revert EpochStillActiveError(_epochEndTimestamp);
-    }
-
     emit EpochDurationUpdated(_poolInfo.key, _poolInfo.epochDuration, epochDuration);
 
     _poolInfo.epochDuration = epochDuration;
