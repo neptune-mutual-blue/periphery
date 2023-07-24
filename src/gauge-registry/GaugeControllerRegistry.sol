@@ -29,12 +29,6 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
       revert InvalidArgumentError("pausers");
     }
 
-    for (uint256 i = 0; i < pausers.length; i++) {
-      if (pausers[i] == address(0)) {
-        revert InvalidArgumentError("pausers");
-      }
-    }
-
     if (address(rewardToken) == address(0)) {
       revert InvalidArgumentError("rewardToken");
     }
@@ -43,6 +37,7 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     super.__Pausable_init();
 
     _epoch = lastEpoch;
+    _rewardToken = rewardToken;
 
     _setRoleAdmin(NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
@@ -50,13 +45,14 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
 
     _grantRole(DEFAULT_ADMIN_ROLE, admin);
     _grantRole(NS_GAUGE_AGENT, gaugeAgent);
+    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
 
     for (uint256 i = 0; i < pausers.length; i++) {
+      if (pausers[i] == address(0)) {
+        revert InvalidArgumentError("pausers");
+      }
       _grantRole(NS_ROLES_PAUSER, pausers[i]);
     }
-
-    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
-    _rewardToken = rewardToken;
   }
 
   function addOrEditPools(ILiquidityGaugePool[] calldata pools) external onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
