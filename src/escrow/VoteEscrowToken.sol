@@ -10,7 +10,6 @@ import "../util/TokenRecovery.sol";
 import "../util/WithPausability.sol";
 import "../util/WhitelistedTransfer.sol";
 import "./VoteEscrowBooster.sol";
-import "./VoteEscrowLocker.sol";
 import "./interfaces/IVoteEscrowToken.sol";
 
 contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster {
