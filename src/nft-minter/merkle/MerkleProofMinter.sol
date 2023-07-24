@@ -54,7 +54,7 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Validations
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view {
+  function validate(uint256 boundTokenId, uint8 level, bytes32 family, uint8 persona, uint256 tokenId) public view returns (bool) {
     if (tokenId == 0 || boundTokenId == 0) {
       revert InvalidTokenIdError(tokenId);
     }
@@ -98,14 +98,18 @@ contract MerkleProofMinter is IAccessControlUtil, AccessControlUpgradeable, Paus
         revert PreviousLevelMissingError();
       }
     }
+
+    return true;
   }
 
-  function validateProof(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona) public view {
+  function validateProof(bytes32[] calldata proof, uint8 level, bytes32 family, uint8 persona) public view returns (bool) {
     bytes32 leaf = keccak256(abi.encodePacked(_msgSender(), level, family, persona));
 
     if (proof.verify(_merkleRoot, leaf) == false) {
       revert InvalidProofError();
     }
+
+    return true;
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
