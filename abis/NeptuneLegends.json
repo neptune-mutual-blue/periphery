@@ -1080,12 +1080,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "_tokenId",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "salePrice",
+        "name": "_salePrice",
         "type": "uint256"
       }
     ],
@@ -1201,24 +1201,6 @@
       }
     ],
     "name": "setDefaultRoyalty",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "accounts",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bool[]",
-        "name": "statuses",
-        "type": "bool[]"
-      }
-    ],
-    "name": "setPausers",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
