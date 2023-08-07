@@ -16,7 +16,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.fakeRegistry = owner
 
@@ -29,7 +29,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
       stakingToken: contracts.fakePod.address,
-      veToken: contracts.veNpm.address,
+      veToken: contracts.veToken.address,
       rewardToken: contracts.npm.address,
       registry: contracts.fakeRegistry.address,
       treasury: helper.randomAddress()
@@ -55,7 +55,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
     _info.veBoostRatio.should.equal(1000)
     _info.platformFee.should.equal(info.platformFee)
     _info.stakingToken.should.equal(contracts.fakePod.address)
-    _info.veToken.should.equal(contracts.veNpm.address)
+    _info.veToken.should.equal(contracts.veToken.address)
     _info.rewardToken.should.equal(contracts.npm.address)
     _info.registry.should.equal(contracts.fakeRegistry.address)
     _info.treasury.should.equal(info.treasury)

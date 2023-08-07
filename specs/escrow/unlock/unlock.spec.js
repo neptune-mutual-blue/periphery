@@ -11,14 +11,14 @@ describe('Vote Escrow Token: unlock', () => {
   let contracts, name, symbol, durations, amounts
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
-    await contracts.store.setBool(key.qualifyMember(contracts.veNpm.address), true)
+    await contracts.store.setBool(key.qualifyMember(contracts.veToken.address), true)
 
     amounts = [helper.ether(20_000), helper.ether(50_000)]
     durations = [10, 20]
@@ -26,11 +26,11 @@ describe('Vote Escrow Token: unlock', () => {
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.approve(contracts.veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
+    await contracts.npm.approve(contracts.veToken.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veToken.address, amounts[1])
 
-    await contracts.veNpm.lock(amounts[0], durations[0]).should.not.be.rejected
-    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
+    await contracts.veToken.lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veToken.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
   })
 
   it('must allow unlocking as soon as the lock period is over', async () => {
@@ -38,13 +38,13 @@ describe('Vote Escrow Token: unlock', () => {
 
     for (let i = 0; i < 2; i++) {
       const account = signers[i]
-      const unlocks = await contracts.veNpm._unlockAt(account.address)
+      const unlocks = await contracts.veToken._unlockAt(account.address)
 
       await time.increaseTo(unlocks)
 
       ;(await contracts.npm.balanceOf(account.address)).should.equal(0)
-      await contracts.veNpm.approve(contracts.veNpm.address, amounts[i])
-      await contracts.veNpm.connect(account).unlock()
+      await contracts.veToken.approve(contracts.veToken.address, amounts[i])
+      await contracts.veToken.connect(account).unlock()
       ;(await contracts.npm.balanceOf(account.address)).should.equal(amounts[i])
     }
   })
@@ -54,8 +54,8 @@ describe('Vote Escrow Token: unlock', () => {
 
     for (let i = 0; i < 2; i++) {
       const account = signers[i]
-      await contracts.veNpm.connect(account).unlock()
-        .should.be.revertedWithCustomError(contracts.veNpm, 'ZeroAmountError')
+      await contracts.veToken.connect(account).unlock()
+        .should.be.revertedWithCustomError(contracts.veToken, 'ZeroAmountError')
     }
   })
 })

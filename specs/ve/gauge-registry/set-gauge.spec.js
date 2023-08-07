@@ -21,18 +21,19 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
 
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
     contracts.pools = []
     contracts.poolInfo = []
 
+    pools.length.should.be.greaterThan(1)
     for (const pool of pools) {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
       pool.info = ''
       pool.stakingToken = fakePod.address
-      pool.veToken = contracts.veNpm.address
+      pool.veToken = contracts.veToken.address
       pool.rewardToken = contracts.npm.address
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()

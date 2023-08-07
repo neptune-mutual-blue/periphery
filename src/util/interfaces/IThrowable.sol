@@ -5,8 +5,6 @@ pragma solidity ^0.8.12;
 interface IThrowable {
   error AccessDeniedError(bytes32 requiredRole);
   error AlreadyInitializedError();
-  error ProtocolStoreNotFoundError();
-  error ProtocolPausedError();
   error RelatedArrayItemCountMismatchError();
   error ExternalContractInvocationRevertError();
   error InvalidArgumentError(bytes32 argument);

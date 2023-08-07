@@ -17,8 +17,8 @@ describe('Vote Escrow Token: calculateBoost', () => {
   let contracts, amounts, durations, timestamps, unlocks
 
   before(async () => {
-    const name = 'Vote Escrow NPM'
-    const symbol = 'veNPM'
+    const name = 'Vote Escrow Token'
+    const symbol = 'veToken'
 
     amounts = [helper.ether(20_000), helper.ether(50_000)]
     durations = [208, 160]
@@ -27,22 +27,22 @@ describe('Vote Escrow Token: calculateBoost', () => {
 
     const [owner, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.approve(contracts.veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
+    await contracts.npm.approve(contracts.veToken.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veToken.address, amounts[1])
 
-    await contracts.veNpm.lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veToken.lock(amounts[0], durations[0]).should.not.be.rejected
     timestamps.push(await time.latest())
 
-    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
+    await contracts.veToken.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
     timestamps.push(await time.latest())
 
-    unlocks.push(await contracts.veNpm._unlockAt(owner.address))
-    unlocks.push(await contracts.veNpm._unlockAt(account2.address))
+    unlocks.push(await contracts.veToken._unlockAt(owner.address))
+    unlocks.push(await contracts.veToken._unlockAt(account2.address))
   })
 
   it('must correctly return voting power', async () => {
@@ -57,7 +57,7 @@ describe('Vote Escrow Token: calculateBoost', () => {
           continue
         }
 
-        const actual = (await contracts.veNpm.calculateBoost(lockDuration)).toString()
+        const actual = (await contracts.veToken.calculateBoost(lockDuration)).toString()
         const expected = BigInt(Math.floor(calculateBoost(lockDuration))).toString()
 
         actual.should.equal(expected)
@@ -69,12 +69,12 @@ describe('Vote Escrow Token: calculateBoost', () => {
   })
 
   it('must correctly return boost when duration is too low', async () => {
-    const actual = (await contracts.veNpm.calculateBoost(0)).toString()
+    const actual = (await contracts.veToken.calculateBoost(0)).toString()
     actual.should.equal(BOOST_FLOOR.toString())
   })
 
   it('must correctly return boost when duration is too high', async () => {
-    const actual = (await contracts.veNpm.calculateBoost(50_000 * DAYS)).toString()
+    const actual = (await contracts.veToken.calculateBoost(50_000 * DAYS)).toString()
     actual.should.equal(BOOST_CEILING.toString())
   })
 })

@@ -27,8 +27,8 @@ const _setup = async (signers, contracts, skipVeNPM) => {
 
     if (npm[i] > 0 && skipVeNPM === false) {
       await contracts.npm.mint(account.address, helper.ether(npm[i]))
-      await contracts.npm.connect(account).approve(contracts.veNpm.address, helper.ether(npm[i]))
-      await contracts.veNpm.connect(account).lock(helper.ether(npm[i]), 208)
+      await contracts.npm.connect(account).approve(contracts.veToken.address, helper.ether(npm[i]))
+      await contracts.veToken.connect(account).lock(helper.ether(npm[i]), 208)
     }
 
     // Mint and approve staking tokens in advance
@@ -46,7 +46,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.fakeRegistry = owner
 
@@ -59,7 +59,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
       veBoostRatio: 1000,
       platformFee: helper.percentage(0),
       stakingToken: contracts.fakePod.address,
-      veToken: contracts.veNpm.address,
+      veToken: contracts.veToken.address,
       rewardToken: contracts.npm.address,
       registry: contracts.fakeRegistry.address,
       treasury: helper.randomAddress()
@@ -72,7 +72,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
     contracts.gaugePool.setEpoch(1, 0, helper.ether(1_000_000))
   })
 
-  it('must correctly distribute rewards based on veNPM boost', async () => {
+  it('must correctly distribute rewards based on veToken boost', async () => {
     const signers = await ethers.getSigners()
     await _setup(signers, contracts, false)
 
@@ -90,7 +90,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
       await contracts.gaugePool.connect(account).withdrawRewards()
 
       const rewardReceived = await contracts.npm.balanceOf(account.address)
-      const votingPower = await contracts.veNpm.getVotingPower(account.address)
+      const votingPower = await contracts.veToken.getVotingPower(account.address)
 
       votingPower.should.equal(evp[i])
       rewardReceived.should.equal(erVe[i])
@@ -100,7 +100,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
     }
   })
 
-  it('must correctly distribute rewards based without veNPM boost', async () => {
+  it('must correctly distribute rewards based without veToken boost', async () => {
     const signers = await ethers.getSigners()
     await _setup(signers, contracts, true)
 

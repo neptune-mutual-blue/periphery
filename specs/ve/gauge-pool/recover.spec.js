@@ -17,7 +17,7 @@ describe('Liquidity Gauge Pool: Recover Token', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.weth = await factory.deployUpgradeable('FakeToken', 'Wrapped ETH', 'WETH')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
@@ -31,7 +31,7 @@ describe('Liquidity Gauge Pool: Recover Token', () => {
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
       stakingToken: contracts.fakePod.address,
-      veToken: contracts.veNpm.address,
+      veToken: contracts.veToken.address,
       rewardToken: contracts.npm.address,
       registry: contracts.registry.address,
       treasury: helper.randomAddress()
@@ -93,7 +93,7 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
@@ -106,7 +106,7 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
       stakingToken: contracts.fakePod.address,
-      veToken: contracts.veNpm.address,
+      veToken: contracts.veToken.address,
       rewardToken: contracts.npm.address,
       registry: contracts.registry.address,
       treasury: helper.randomAddress()
