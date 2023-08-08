@@ -9,7 +9,7 @@ import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 import "../util/interfaces/IAccessControlUtil.sol";
 
-contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, AccessControlUpgradeable, WithPausability, TokenRecovery, LiquidityGaugePoolReward {
+contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, WithPausability, LiquidityGaugePoolReward {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -137,7 +137,7 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                 Gauge Controller Registry Only
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
+  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override nonReentrant onlyRegistry {
     _updateReward(address(0));
 
     if (epochDuration > 0) {

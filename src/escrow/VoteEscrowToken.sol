@@ -12,7 +12,7 @@ import "../util/WhitelistedTransfer.sol";
 import "./VoteEscrowBooster.sol";
 import "./interfaces/IVoteEscrowToken.sol";
 
-contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, WithPausability, WhitelistedTransfer, TokenRecovery, VoteEscrowBooster {
+contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, WithPausability, WhitelistedTransfer, VoteEscrowBooster {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -61,7 +61,7 @@ contract VoteEscrowToken is IVoteEscrowToken, ERC20Upgradeable, OwnableUpgradeab
     super._transfer(_msgSender(), address(this), amount);
     super._burn(address(this), amount);
 
-    // Transfer NPM
+    // Transfer underlying token
     IERC20Upgradeable(_underlyingToken).safeTransfer(_msgSender(), amount - penalty);
 
     if (penalty > 0) {

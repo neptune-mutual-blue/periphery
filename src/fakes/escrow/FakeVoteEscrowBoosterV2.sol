@@ -3,8 +3,9 @@
 pragma solidity ^0.8.12;
 
 import "../../dependencies/ABDKMath64x64.sol";
+import "./FakeVoteEscrowLockerV2.sol";
 
-abstract contract FakeVoteEscrowBoosterV2 {
+abstract contract FakeVoteEscrowBoosterV2 is FakeVoteEscrowLockerV2 {
   using ABDKMath64x64 for uint256;
   using ABDKMath64x64 for int128;
 
