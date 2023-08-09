@@ -20,7 +20,7 @@ describe('Liquidity Gauge Pool: Recover token', () => {
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
     // Make bob recovery agent
-    const recoveryAgentRole = await contracts.registry.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.registry._NS_ROLES_RECOVERY_AGENT()
     await contracts.registry.grantRole(recoveryAgentRole, bob.address)
   })
 
@@ -52,7 +52,7 @@ describe('Liquidity Gauge Pool: Recover token', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    const recoveryAgentRole = await contracts.registry.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.registry._NS_ROLES_RECOVERY_AGENT()
     await contracts.registry.connect(charlie).recoverToken(contracts.weth.address, receiver)
       .should.be.rejectedWith(`AccessControl: account ${charlie.address.toLowerCase()} is missing role ${recoveryAgentRole}`)
   })
@@ -70,7 +70,7 @@ describe('Liquidity Gauge Pool: Recover ETH', () => {
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
     // Make bob recovery agent
-    const recoveryAgentRole = await contracts.registry.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.registry._NS_ROLES_RECOVERY_AGENT()
     await contracts.registry.grantRole(recoveryAgentRole, bob.address)
   })
 
@@ -101,7 +101,7 @@ describe('Liquidity Gauge Pool: Recover ETH', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    const recoveryAgentRole = await contracts.registry.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.registry._NS_ROLES_RECOVERY_AGENT()
     await contracts.registry.connect(charlie).recoverEther(receiver)
       .should.be.rejectedWith(`AccessControl: account ${charlie.address.toLowerCase()} is missing role ${recoveryAgentRole}`)
   })

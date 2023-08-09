@@ -17,7 +17,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
 
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
     contracts.pools = []
@@ -27,7 +27,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
       pool.stakingToken = fakePod.address
-      pool.veToken = contracts.veNpm.address
+      pool.veToken = contracts.veToken.address
       pool.rewardToken = contracts.npm.address
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()
@@ -107,7 +107,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
       pool.stakingToken = fakePod.address
-      pool.veToken = contracts.veNpm.address
+      pool.veToken = contracts.veToken.address
       pool.rewardToken = contracts.npm.address
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()
@@ -128,7 +128,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
   it('must not allow adding pools when paused', async () => {
     const [, bob] = await ethers.getSigners()
 
-    const pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    const pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     await contracts.registry.grantRole(pauserRole, bob.address)
 
     await contracts.registry.connect(bob).pause()

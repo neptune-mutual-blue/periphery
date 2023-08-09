@@ -13,14 +13,14 @@ describe('Vote Escrow Token: unlock prematurely', () => {
   let contracts, name, symbol, durations, amounts
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner, account1, account2] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
 
-    await contracts.store.setBool(key.qualifyMember(contracts.veNpm.address), true)
+    await contracts.store.setBool(key.qualifyMember(contracts.veToken.address), true)
 
     amounts = [helper.ether(20_000), helper.ether(50_000)]
     durations = [10, 20]
@@ -28,11 +28,11 @@ describe('Vote Escrow Token: unlock prematurely', () => {
     await contracts.npm.mint(account1.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.connect(account1).approve(contracts.veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
+    await contracts.npm.connect(account1).approve(contracts.veToken.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veToken.address, amounts[1])
 
-    await contracts.veNpm.connect(account1).lock(amounts[0], durations[0]).should.not.be.rejected
-    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
+    await contracts.veToken.connect(account1).lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veToken.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
 
     await mine(MIN_LOCK_HEIGHT)
   })
@@ -45,10 +45,10 @@ describe('Vote Escrow Token: unlock prematurely', () => {
       const account = signers[i + 1]
 
       ;(await contracts.npm.balanceOf(account.address)).should.equal(0)
-      ;(await contracts.veNpm._balances(account.address)).should.equal(amounts[i])
+      ;(await contracts.veToken._balances(account.address)).should.equal(amounts[i])
 
-      await contracts.veNpm.approve(contracts.veNpm.address, amounts[i])
-      await contracts.veNpm.connect(account).unlockPrematurely()
+      await contracts.veToken.approve(contracts.veToken.address, amounts[i])
+      await contracts.veToken.connect(account).unlockPrematurely()
 
       const balance = await contracts.npm.balanceOf(account.address)
       balance.should.equal((amounts[i] * (100n - PENALTY_RATE)) / 100n)

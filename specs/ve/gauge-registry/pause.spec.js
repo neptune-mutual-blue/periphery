@@ -12,11 +12,11 @@ describe('Gauge Controller Registry: Pause', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     await contracts.registry.grantRole(pauserRole, bob.address)
   })
 
@@ -47,11 +47,11 @@ describe('Gauge Controller Registry: Unpause', () => {
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow NPM', 'veNPM')
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, 'Vote Escrow Token', 'veToken')
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     adminRole = await contracts.registry.DEFAULT_ADMIN_ROLE()
     await contracts.registry.grantRole(pauserRole, bob.address)
     await contracts.registry.grantRole(adminRole, charlie.address)

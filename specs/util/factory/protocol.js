@@ -6,15 +6,11 @@ const deployProtocol = async (signer) => {
 
   const cxToken = await deployUpgradeable('FakeCxToken', 'Fake CxToken', 'cxUSD', '3894077181')
   const npm = await deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
-  const protocol = await deployUpgradeable('FakeProtocol', store.address)
 
-  await store.setBool(key.qualify(protocol.address), true)
   await store.setBool(key.qualifyCxToken(cxToken.address), true)
-  await store.setBool(key.qualifyMember(protocol.address), true)
-  await store.setAddress(key.PROTOCOL.CNS.CORE, protocol.address)
   await store.setAddress(key.PROTOCOL.CNS.NPM, npm.address)
 
-  return { cxToken, npm, store, protocol }
+  return { cxToken, npm, store }
 }
 
 module.exports = { deployProtocol }

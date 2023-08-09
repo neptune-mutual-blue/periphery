@@ -10,12 +10,12 @@ describe('Vote Escrow Token: Recover Token', () => {
   let contracts, name, symbol
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
     contracts.weth = await factory.deployUpgradeable('FakeToken', 'Wrapped ETH', 'WETH')
   })
 
@@ -25,8 +25,8 @@ describe('Vote Escrow Token: Recover Token', () => {
     await contracts.weth.mint(owner.address, helper.ether(100_000_000))
     const receiver = helper.randomAddress()
 
-    await contracts.weth.transfer(contracts.veNpm.address, helper.ether(12340))
-    await contracts.veNpm.recoverToken(contracts.weth.address, receiver)
+    await contracts.weth.transfer(contracts.veToken.address, helper.ether(12340))
+    await contracts.veToken.recoverToken(contracts.weth.address, receiver)
 
     const balance = await contracts.weth.balanceOf(receiver)
     balance.should.equal(helper.ether(12340))
@@ -35,7 +35,7 @@ describe('Vote Escrow Token: Recover Token', () => {
   it('must not throw when contract token balance is zero', async () => {
     const receiver = helper.randomAddress()
 
-    await contracts.veNpm.recoverToken(contracts.weth.address, receiver)
+    await contracts.veToken.recoverToken(contracts.weth.address, receiver)
       .should.not.be.rejected
 
     const balance = await contracts.weth.balanceOf(receiver)
@@ -46,7 +46,7 @@ describe('Vote Escrow Token: Recover Token', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    await contracts.veNpm.connect(charlie).recoverToken(contracts.weth.address, receiver)
+    await contracts.veToken.connect(charlie).recoverToken(contracts.weth.address, receiver)
       .should.be.rejectedWith('Ownable: caller is not the owner')
   })
 })
@@ -55,22 +55,22 @@ describe('Vote Escrow Token: Recover Ether', () => {
   let contracts, name, symbol
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
     contracts.weth = await factory.deployUpgradeable('FakeToken', 'Wrapped ETH', 'WETH')
   })
 
   it('must allow recovering ether', async () => {
     const [owner] = await ethers.getSigners()
 
-    await forceSendEther(contracts.veNpm.address, owner)
+    await forceSendEther(contracts.veToken.address, owner)
     const receiver = helper.randomAddress()
 
-    await contracts.veNpm.recoverEther(receiver)
+    await contracts.veToken.recoverEther(receiver)
 
     const balance = await owner.provider.getBalance(receiver)
     balance.should.equal(helper.ether(1))
@@ -80,7 +80,7 @@ describe('Vote Escrow Token: Recover Ether', () => {
     const [, bob] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    await contracts.veNpm.recoverEther(receiver)
+    await contracts.veToken.recoverEther(receiver)
       .should.not.be.rejected
 
     const balance = await bob.provider.getBalance(receiver)
@@ -91,7 +91,7 @@ describe('Vote Escrow Token: Recover Ether', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    await contracts.veNpm.connect(charlie).recoverEther(receiver)
+    await contracts.veToken.connect(charlie).recoverEther(receiver)
       .should.be.rejectedWith('Ownable: caller is not the owner')
   })
 })

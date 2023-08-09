@@ -9,7 +9,7 @@ import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 import "../util/interfaces/IAccessControlUtil.sol";
 
-contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, AccessControlUpgradeable, WithPausability, TokenRecovery, LiquidityGaugePoolReward {
+contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, WithPausability, LiquidityGaugePoolReward {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
@@ -26,8 +26,8 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
     super.__Pausable_init();
     super.__ReentrancyGuard_init();
 
-    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
-    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
     _grantRole(DEFAULT_ADMIN_ROLE, admin);
 
@@ -137,7 +137,7 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                 Gauge Controller Registry Only
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override onlyRegistry {
+  function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override nonReentrant onlyRegistry {
     _updateReward(address(0));
 
     if (epochDuration > 0) {
@@ -171,18 +171,18 @@ contract LiquidityGaugePool is IAccessControlUtil, ReentrancyGuardUpgradeable, A
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverEther(address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverEther(sendTo);
   }
 
-  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function pause() external onlyRole(NS_ROLES_PAUSER) {
+  function pause() external onlyRole(_NS_ROLES_PAUSER) {
     super._pause();
   }
 

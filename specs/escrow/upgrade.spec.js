@@ -10,31 +10,31 @@ describe('Vote Escrow Token: Upgradeability', () => {
   let contracts, name, symbol
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
   })
 
   it('must correctly set the state upon construction', async () => {
     const [owner] = await ethers.getSigners()
 
-    ; (await contracts.veNpm._underlyingToken()).should.equal(contracts.npm.address)
-    ; (await contracts.veNpm.owner()).should.equal(owner.address)
-    ; (await contracts.veNpm._feeTo()).should.equal(owner.address)
-    ; (await contracts.veNpm.name()).should.equal(name)
-    ; (await contracts.veNpm.symbol()).should.equal(symbol)
-    ; (await contracts.veNpm.paused()).should.equal(false)
+    ; (await contracts.veToken._underlyingToken()).should.equal(contracts.npm.address)
+    ; (await contracts.veToken.owner()).should.equal(owner.address)
+    ; (await contracts.veToken._feeTo()).should.equal(owner.address)
+    ; (await contracts.veToken.name()).should.equal(name)
+    ; (await contracts.veToken.symbol()).should.equal(symbol)
+    ; (await contracts.veToken.paused()).should.equal(false)
   })
 
   it('must correctly upgrade', async () => {
     const [owner, account1] = await ethers.getSigners()
 
-    const previous = await upgrades.erc1967.getImplementationAddress(contracts.veNpm.address)
+    const previous = await upgrades.erc1967.getImplementationAddress(contracts.veToken.address)
     const ContractFactory = await ethers.getContractFactory('FakeVoteEscrowTokenV2')
-    const v2 = await upgrades.upgradeProxy(contracts.veNpm, ContractFactory)
+    const v2 = await upgrades.upgradeProxy(contracts.veToken, ContractFactory)
     const current = await upgrades.erc1967.getImplementationAddress(v2.address)
 
     previous.should.not.equal(current)
@@ -46,12 +46,12 @@ describe('Vote Escrow Token: Upgradeability', () => {
     const amount = helper.ether(100_000)
 
     await contracts.npm.mint(owner.address, amount)
-    await contracts.npm.approve(contracts.veNpm.address, amount)
+    await contracts.npm.approve(contracts.veToken.address, amount)
 
     await v2.lock(amount, 100).should.not.be.rejected
 
     // Proxy address is same
-    v2.address.should.equal(contracts.veNpm.address)
+    v2.address.should.equal(contracts.veToken.address)
 
     ; (await v2._underlyingToken()).should.equal(contracts.npm.address)
     ; (await v2.owner()).should.equal(owner.address)

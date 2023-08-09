@@ -136,16 +136,6 @@
   },
   {
     "inputs": [],
-    "name": "ProtocolPausedError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ProtocolStoreNotFoundError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "RelatedArrayItemCountMismatchError",
     "type": "error"
   },

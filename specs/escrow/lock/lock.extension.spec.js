@@ -12,12 +12,12 @@ describe('Vote Escrow Token: lock extension', () => {
   let contracts, name, symbol
 
   before(async () => {
-    name = 'Vote Escrow NPM'
-    symbol = 'veNPM'
+    name = 'Vote Escrow Token'
+    symbol = 'veToken'
 
     const [owner] = await ethers.getSigners()
     contracts = await factory.deployProtocol(owner)
-    contracts.veNpm = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
+    contracts.veToken = await factory.deployUpgradeable('VoteEscrowToken', owner.address, contracts.npm.address, owner.address, name, symbol)
   })
 
   it('must correctly extend existing locks', async () => {
@@ -32,13 +32,13 @@ describe('Vote Escrow Token: lock extension', () => {
     await contracts.npm.mint(owner.address, amounts[0])
     await contracts.npm.mint(account2.address, amounts[1])
 
-    await contracts.npm.approve(contracts.veNpm.address, amounts[0])
-    await contracts.npm.connect(account2).approve(contracts.veNpm.address, amounts[1])
+    await contracts.npm.approve(contracts.veToken.address, amounts[0])
+    await contracts.npm.connect(account2).approve(contracts.veToken.address, amounts[1])
 
-    await contracts.veNpm.lock(amounts[0], durations[0]).should.not.be.rejected
+    await contracts.veToken.lock(amounts[0], durations[0]).should.not.be.rejected
     originalLockTimestamps.push(await time.latest())
 
-    await contracts.veNpm.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
+    await contracts.veToken.connect(account2).lock(amounts[1], durations[1]).should.not.be.rejected
     // first transaction after the previous vote escrow lock
     // increase the time offset
     blockSecondsElapsed[0]++
@@ -47,16 +47,16 @@ describe('Vote Escrow Token: lock extension', () => {
 
     await time.increase(increaseTimeByWeeks * WEEKS)
 
-    await contracts.veNpm.lock(0, durations[0]).should.not.be.rejected
+    await contracts.veToken.lock(0, durations[0]).should.not.be.rejected
     blockSecondsElapsed[0]++
     blockSecondsElapsed[1]++
 
-    ;(await contracts.veNpm._unlockAt(owner.address)).should.equal(originalLockTimestamps[0] + blockSecondsElapsed[0] + ((durations[0] + increaseTimeByWeeks) * WEEKS))
+    ;(await contracts.veToken._unlockAt(owner.address)).should.equal(originalLockTimestamps[0] + blockSecondsElapsed[0] + ((durations[0] + increaseTimeByWeeks) * WEEKS))
 
-    await contracts.veNpm.connect(account2).lock(0, durations[1]).should.not.be.rejected
+    await contracts.veToken.connect(account2).lock(0, durations[1]).should.not.be.rejected
     blockSecondsElapsed[0]++
     blockSecondsElapsed[1]++
 
-    ;(await contracts.veNpm._unlockAt(account2.address)).should.equal(originalLockTimestamps[1] + blockSecondsElapsed[1] + ((durations[1] + increaseTimeByWeeks) * WEEKS))
+    ;(await contracts.veToken._unlockAt(account2.address)).should.equal(originalLockTimestamps[1] + blockSecondsElapsed[1] + ((durations[1] + increaseTimeByWeeks) * WEEKS))
   })
 })
