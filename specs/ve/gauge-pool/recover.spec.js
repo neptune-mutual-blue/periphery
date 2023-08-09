@@ -47,7 +47,7 @@ describe('Liquidity Gauge Pool: Recover Token', () => {
     await contracts.registry.setGauge(1, emission, 28 * DAYS, distribution)
 
     // Make bob recovery agent
-    const recoveryAgentRole = await contracts.gaugePool.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.gaugePool._NS_ROLES_RECOVERY_AGENT()
     await contracts.gaugePool.grantRole(recoveryAgentRole, bob.address)
   })
 
@@ -79,7 +79,7 @@ describe('Liquidity Gauge Pool: Recover Token', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    const recoveryAgentRole = await contracts.gaugePool.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.gaugePool._NS_ROLES_RECOVERY_AGENT()
     await contracts.gaugePool.connect(charlie).recoverToken(contracts.weth.address, receiver)
       .should.be.rejectedWith(`AccessControl: account ${charlie.address.toLowerCase()} is missing role ${recoveryAgentRole}`)
   })
@@ -122,7 +122,7 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
     await contracts.registry.setGauge(1, emission, 28 * DAYS, distribution)
 
     // Make bob recovery agent
-    const recoveryAgentRole = await contracts.gaugePool.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.gaugePool._NS_ROLES_RECOVERY_AGENT()
     await contracts.gaugePool.grantRole(recoveryAgentRole, bob.address)
   })
 
@@ -153,7 +153,7 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
 
-    const recoveryAgentRole = await contracts.gaugePool.NS_ROLES_RECOVERY_AGENT()
+    const recoveryAgentRole = await contracts.gaugePool._NS_ROLES_RECOVERY_AGENT()
     await contracts.gaugePool.connect(charlie).recoverEther(receiver)
       .should.be.rejectedWith(`AccessControl: account ${charlie.address.toLowerCase()} is missing role ${recoveryAgentRole}`)
   })

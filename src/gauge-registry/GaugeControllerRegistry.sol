@@ -39,19 +39,19 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     _epoch = lastEpoch;
     _rewardToken = rewardToken;
 
-    _setRoleAdmin(NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
-    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
-    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_GAUGE_AGENT, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
     _grantRole(DEFAULT_ADMIN_ROLE, admin);
-    _grantRole(NS_GAUGE_AGENT, gaugeAgent);
-    _grantRole(NS_ROLES_RECOVERY_AGENT, admin);
+    _grantRole(_NS_GAUGE_AGENT, gaugeAgent);
+    _grantRole(_NS_ROLES_RECOVERY_AGENT, admin);
 
     for (uint256 i = 0; i < pausers.length; i++) {
       if (pausers[i] == address(0)) {
         revert InvalidArgumentError("pausers");
       }
-      _grantRole(NS_ROLES_PAUSER, pausers[i]);
+      _grantRole(_NS_ROLES_PAUSER, pausers[i]);
     }
   }
 
@@ -77,7 +77,7 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
     _deletePool(key);
   }
 
-  function setGauge(uint256 epoch, uint256 amountToDeposit, uint256 epochDuration, Gauge[] calldata distribution) external onlyRole(NS_GAUGE_AGENT) whenNotPaused {
+  function setGauge(uint256 epoch, uint256 amountToDeposit, uint256 epochDuration, Gauge[] calldata distribution) external onlyRole(_NS_GAUGE_AGENT) whenNotPaused {
     if (epoch == 0) {
       revert InvalidArgumentError("epoch");
     }
@@ -152,18 +152,18 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverEther(address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverEther(sendTo);
   }
 
-  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function pause() external onlyRole(NS_ROLES_PAUSER) {
+  function pause() external onlyRole(_NS_ROLES_PAUSER) {
     super._pause();
   }
 

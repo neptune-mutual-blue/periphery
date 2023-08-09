@@ -16,7 +16,7 @@ describe('Gauge Controller Registry: Pause', () => {
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     await contracts.registry.grantRole(pauserRole, bob.address)
   })
 
@@ -51,7 +51,7 @@ describe('Gauge Controller Registry: Unpause', () => {
     contracts.fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     adminRole = await contracts.registry.DEFAULT_ADMIN_ROLE()
     await contracts.registry.grantRole(pauserRole, bob.address)
     await contracts.registry.grantRole(adminRole, charlie.address)

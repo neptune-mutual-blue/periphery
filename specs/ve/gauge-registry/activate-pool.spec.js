@@ -75,7 +75,7 @@ describe('Gauge Controller Registry: Activate Pool', () => {
   it('must not allow activating a pool when paused', async () => {
     const [, bob] = await ethers.getSigners()
 
-    const pauserRole = await contracts.registry.NS_ROLES_PAUSER()
+    const pauserRole = await contracts.registry._NS_ROLES_PAUSER()
     await contracts.registry.grantRole(pauserRole, bob.address)
 
     await contracts.registry.connect(bob).pause()

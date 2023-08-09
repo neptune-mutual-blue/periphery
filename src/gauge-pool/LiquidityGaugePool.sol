@@ -26,8 +26,8 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
     super.__Pausable_init();
     super.__ReentrancyGuard_init();
 
-    _setRoleAdmin(NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
-    _setRoleAdmin(NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
+    _setRoleAdmin(_NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
     _grantRole(DEFAULT_ADMIN_ROLE, admin);
 
@@ -171,18 +171,18 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function recoverEther(address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverEther(address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverEther(sendTo);
   }
 
-  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(NS_ROLES_RECOVERY_AGENT) {
+  function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
     super._recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  function pause() external onlyRole(NS_ROLES_PAUSER) {
+  function pause() external onlyRole(_NS_ROLES_PAUSER) {
     super._pause();
   }
 

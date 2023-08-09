@@ -89,7 +89,7 @@ describe('Liquidity Gauge Pool: Withdraw', () => {
   it('must not allow withdrawing when paused', async () => {
     const [, bob] = await ethers.getSigners()
 
-    const pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
+    const pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
     await contracts.gaugePool.grantRole(pauserRole, bob.address)
 
     await contracts.gaugePool.connect(bob).pause()

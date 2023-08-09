@@ -37,7 +37,7 @@ describe('Liquidity Gauge Pool: Pause', () => {
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
 
-    pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
+    pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
     await contracts.gaugePool.grantRole(pauserRole, bob.address)
   })
 
@@ -89,7 +89,7 @@ describe('Liquidity Gauge Pool: Unpause', () => {
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
 
-    pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
+    pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
     adminRole = await contracts.gaugePool.DEFAULT_ADMIN_ROLE()
     await contracts.gaugePool.grantRole(pauserRole, bob.address)
     await contracts.gaugePool.grantRole(adminRole, charlie.address)

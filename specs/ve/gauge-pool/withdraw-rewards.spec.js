@@ -74,7 +74,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     const [owner, bob] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
-    const pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
+    const pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
     await contracts.gaugePool.grantRole(pauserRole, bob.address)
 
     await contracts.fakePod.mint(owner.address, amountToDeposit)

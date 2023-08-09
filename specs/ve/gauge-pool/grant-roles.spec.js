@@ -37,8 +37,8 @@ describe('Liquidity Gauge Pool: Grant Roles', () => {
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
 
-    pauserRole = await contracts.gaugePool.NS_ROLES_PAUSER()
-    recoveryAgentRole = await contracts.gaugePool.NS_ROLES_RECOVERY_AGENT()
+    pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
+    recoveryAgentRole = await contracts.gaugePool._NS_ROLES_RECOVERY_AGENT()
     await contracts.gaugePool.grantRole(pauserRole, bob.address)
   })
 

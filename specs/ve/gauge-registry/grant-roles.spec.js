@@ -14,8 +14,8 @@ describe('Gauge Controller Registry: Grant Roles', () => {
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
     contracts.registry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, owner.address, owner.address, [owner.address], contracts.npm.address)
 
-    pauserRole = await contracts.registry.NS_ROLES_PAUSER()
-    recoveryAgentRole = await contracts.registry.NS_ROLES_RECOVERY_AGENT()
+    pauserRole = await contracts.registry._NS_ROLES_PAUSER()
+    recoveryAgentRole = await contracts.registry._NS_ROLES_RECOVERY_AGENT()
     await contracts.registry.grantRole(pauserRole, bob.address)
   })
 
