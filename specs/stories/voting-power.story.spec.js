@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const { time, mine } = require('@nomicfoundation/hardhat-network-helpers')
 const factory = require('../util/factory')
 const helper = require('../util/helper')
@@ -44,8 +45,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     ;(await contracts.veToken._unlockAt(bob.address)).should.equal(t0 + 208 * WEEKS)
     ;(await contracts.veToken._minUnlockHeights(bob.address)).should.equal(latestBlockNumber + MIN_LOCK_HEIGHT)
 
-    console.log('[Bob]      Voting Power at t0', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(400000000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -58,8 +59,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week1)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 1 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 1 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 1 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 1 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(397340000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -84,8 +85,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week3)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 3 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 3 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 3 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 3 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(392080000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(209540000000000000000))
@@ -98,8 +99,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week4)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 4 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 4 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 4 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 4 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(389470000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(208140000000000000000))
@@ -112,8 +113,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week5)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 5 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 5 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 5 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 5 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(386880000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(206760000000000000000))
@@ -126,8 +127,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week6)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 6 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 6 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 6 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 6 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(384310000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(205400000000000000000))
@@ -140,8 +141,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week7)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 7 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 7 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 7 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 7 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(381760000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(204020000000000000000))
@@ -164,8 +165,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     event.args.penalty.should.equal(helper.ether(25))
     balanceAfter.should.equal(balanceBefore.toBigInt() + helper.ether(75))
 
-    console.log('[Bob]      Voting Power at t0 + 8 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 8 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 8 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 8 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(0))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(202680000000000000000))
@@ -184,8 +185,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     const balanceAfter = await contracts.npm.balanceOf(bob.address)
     balanceAfter.should.equal(balanceBefore.toBigInt() - helper.ether(100))
 
-    console.log('[Bob]      Voting Power at t0 + 9 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 9 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 9 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 9 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(102700000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(201320000000000000000))
@@ -203,8 +204,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     const balanceAfter = await contracts.npm.balanceOf(charlie.address)
     balanceAfter.should.equal(balanceBefore.toBigInt() + helper.ether(200))
 
-    console.log('[Bob]      Voting Power at t0 + 10 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 10 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 10 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 10 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(102010000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -217,8 +218,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week11)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 11 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 11 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 11 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 11 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(101340000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -231,8 +232,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week12)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 12 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 12 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 12 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 12 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(100660000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -245,8 +246,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week13)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 13 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 13 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 13 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 13 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(100000000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -259,8 +260,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     await time.setNextBlockTimestamp(week14)
     await mine(1)
 
-    console.log('[Bob]      Voting Power at t0 + 14 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 14 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 14 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 14 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(100000000000000000000))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
@@ -278,8 +279,8 @@ describe('Vote Escrow Token: Voting Power Story', () => {
     const balanceAfter = await contracts.npm.balanceOf(bob.address)
     balanceAfter.should.equal(balanceBefore.toBigInt() + helper.ether(100))
 
-    console.log('[Bob]      Voting Power at t0 + 15 week(s)', (await contracts.veToken.getVotingPower(bob.address)).toString())
-    console.log('[Charlie]  Voting Power at t0 + 15 week(s)', (await contracts.veToken.getVotingPower(charlie.address)).toString())
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Bob]'), 't0 + 15 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(bob.address)).toString(), 'NPM'))
+    console.log('%s- %s Time: %s / Voting Power: %s', ' '.repeat(4), chalk.green('[Charlie]'), 't0 + 15 week(s)', helper.weiAsToken((await contracts.veToken.getVotingPower(charlie.address)).toString(), 'NPM'))
 
     ;(await contracts.veToken.getVotingPower(bob.address)).should.equal(BigInt(0))
     ;(await contracts.veToken.getVotingPower(charlie.address)).should.equal(BigInt(0))
