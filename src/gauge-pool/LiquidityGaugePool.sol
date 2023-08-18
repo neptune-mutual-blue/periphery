@@ -14,7 +14,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
-    super._disableInitializers();
+    _disableInitializers();
   }
 
   function initialize(address admin, PoolInfo calldata args) external initializer {
@@ -22,9 +22,9 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
       revert InvalidArgumentError("admin");
     }
 
-    super.__AccessControl_init();
-    super.__Pausable_init();
-    super.__ReentrancyGuard_init();
+    __AccessControl_init();
+    __Pausable_init();
+    __ReentrancyGuard_init();
 
     _setRoleAdmin(_NS_ROLES_PAUSER, DEFAULT_ADMIN_ROLE);
     _setRoleAdmin(_NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
@@ -48,7 +48,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
 
     for (uint256 i = 0; i < detail.length; i++) {
       for (uint256 j = 0; j < detail[i].roles.length; j++) {
-        super.grantRole(detail[i].roles[j], detail[i].account);
+        grantRole(detail[i].roles[j], detail[i].account);
       }
     }
   }
@@ -172,22 +172,22 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function recoverEther(address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
-    super._recoverEther(sendTo);
+    _recoverEther(sendTo);
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
-    super._recoverToken(malicious, sendTo);
+    _recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function pause() external onlyRole(_NS_ROLES_PAUSER) {
-    super._pause();
+    _pause();
   }
 
   function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-    super._unpause();
+    _unpause();
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

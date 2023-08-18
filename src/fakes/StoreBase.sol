@@ -88,7 +88,7 @@ abstract contract StoreBase is IStore, PausableUpgradeable, OwnableUpgradeable {
    */
   function pause() external {
     require(pausers[msg.sender], "Forbidden");
-    super._pause();
+    _pause();
   }
 
   /**
@@ -98,7 +98,7 @@ abstract contract StoreBase is IStore, PausableUpgradeable, OwnableUpgradeable {
    *
    */
   function unpause() external onlyOwner {
-    super._unpause();
+    _unpause();
   }
 
   function isMember(address member) public view returns (bool) {
@@ -106,7 +106,7 @@ abstract contract StoreBase is IStore, PausableUpgradeable, OwnableUpgradeable {
   }
 
   function _throwIfPaused() internal view {
-    require(super.paused() == false, "Pausable: paused");
+    require(paused() == false, "Pausable: paused");
   }
 
   function _throwIfSenderNotMember() internal view {

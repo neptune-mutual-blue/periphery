@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
 contract FakeToken is ERC20Upgradeable {
   function initialize(string memory tokenName, string memory tokenSymbol) public initializer {
-    super.__ERC20_init(tokenName, tokenSymbol);
+    __ERC20_init(tokenName, tokenSymbol);
   }
 
   function mint(address account, uint256 amount) external {
