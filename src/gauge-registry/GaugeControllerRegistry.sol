@@ -25,10 +25,6 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
       revert InvalidArgumentError("gaugeAgent");
     }
 
-    if (pausers.length == 0) {
-      revert InvalidArgumentError("pausers");
-    }
-
     if (address(rewardToken) == address(0)) {
       revert InvalidArgumentError("rewardToken");
     }
