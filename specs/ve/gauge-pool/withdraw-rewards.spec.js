@@ -36,7 +36,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
 
     const emission = helper.ether(100_00)

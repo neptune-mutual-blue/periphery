@@ -26,7 +26,7 @@ const getDependencies = async (chainId) => {
     const info = await ipfs.write(pool.infoDetails)
     pool.info = info
 
-    const instance = await factory.deployUpgradeable('LiquidityGaugePool', config.admin, pool)
+    const instance = await factory.deployUpgradeable('LiquidityGaugePool', pool, config.admin, [])
     liquidityGaugePools.push({ key: pool.key, address: instance.address })
   }
 

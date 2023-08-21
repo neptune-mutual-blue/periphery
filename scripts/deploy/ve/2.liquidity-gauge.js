@@ -38,7 +38,7 @@ const deploy = async () => {
       pool.registry = gaugeControllerRegistry
       pool.info = info
 
-      const instance = await factory.deployUpgradeable('LiquidityGaugePool', config.admin, pool)
+      const instance = await factory.deployUpgradeable('LiquidityGaugePool', pool, config.admin, [])
       console.log('%s --> %s', pool.key, instance.address)
     }
 
@@ -54,7 +54,7 @@ const deploy = async () => {
 
     const current = liquidityGaugePools.find(x => x.key === pool.key)
 
-    const instance = await factory.upgrade(current.address, 'LiquidityGaugePool', config.admin, pool)
+    const instance = await factory.upgrade(current.address, 'LiquidityGaugePool', pool, config.admin, [])
     console.log('%s --> %s', pool.key, instance.address)
   }
 }

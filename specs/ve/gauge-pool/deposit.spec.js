@@ -35,7 +35,7 @@ describe('Liquidity Gauge Pool: Deposit', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
   })
 

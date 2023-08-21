@@ -35,7 +35,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
   })
 
   it('must correctly set the state upon construction', async () => {
@@ -64,7 +64,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
   it('must not allow to be initialized twice', async () => {
     const [owner] = await ethers.getSigners()
 
-    await contracts.gaugePool.initialize(owner.address, info)
+    await contracts.gaugePool.initialize(info, owner.address, [])
       .should.be.rejectedWith('Initializable: contract is already initialized')
   })
 })

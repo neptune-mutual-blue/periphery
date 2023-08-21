@@ -17,7 +17,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
     _disableInitializers();
   }
 
-  function initialize(address admin, PoolInfo calldata args) external initializer {
+  function initialize(PoolInfo calldata args, address admin, address[] calldata pausers) external initializer {
     if (admin == address(0)) {
       revert InvalidArgumentError("admin");
     }
@@ -30,6 +30,14 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
     _setRoleAdmin(_NS_ROLES_RECOVERY_AGENT, DEFAULT_ADMIN_ROLE);
 
     _grantRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(_NS_ROLES_RECOVERY_AGENT, admin);
+
+    for (uint256 i = 0; i < pausers.length; i++) {
+      if (pausers[i] == address(0)) {
+        revert InvalidArgumentError("pausers");
+      }
+      _grantRole(_NS_ROLES_PAUSER, pausers[i]);
+    }
 
     _setPool(args);
   }

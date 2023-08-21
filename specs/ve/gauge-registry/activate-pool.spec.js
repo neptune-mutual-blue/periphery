@@ -31,7 +31,7 @@ describe('Gauge Controller Registry: Activate Pool', () => {
       pool.treasury = helper.randomAddress()
       pool.info = info
 
-      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
+      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', pool, owner.address, [])
 
       pool.deployed = deployed
       pool.stakingTokenDeployed = fakePod
