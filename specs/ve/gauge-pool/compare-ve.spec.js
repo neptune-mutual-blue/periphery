@@ -65,7 +65,7 @@ describe('Compare Liquidity Gauge Pool Reward', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info)
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
 
     await contracts.npm.mint(contracts.gaugePool.address, helper.ether(10_000_000))
 

@@ -25,16 +25,12 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
       revert InvalidArgumentError("gaugeAgent");
     }
 
-    if (pausers.length == 0) {
-      revert InvalidArgumentError("pausers");
-    }
-
     if (address(rewardToken) == address(0)) {
       revert InvalidArgumentError("rewardToken");
     }
 
-    super.__AccessControl_init();
-    super.__Pausable_init();
+    __AccessControl_init();
+    __Pausable_init();
 
     _epoch = lastEpoch;
     _rewardToken = rewardToken;
@@ -144,7 +140,7 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
 
     for (uint256 i = 0; i < detail.length; i++) {
       for (uint256 j = 0; j < detail[i].roles.length; j++) {
-        super.grantRole(detail[i].roles[j], detail[i].account);
+        grantRole(detail[i].roles[j], detail[i].account);
       }
     }
   }
@@ -153,21 +149,21 @@ contract GaugeControllerRegistry is IAccessControlUtil, AccessControlUpgradeable
   //                                          Recoverable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function recoverEther(address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
-    super._recoverEther(sendTo);
+    _recoverEther(sendTo);
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
-    super._recoverToken(malicious, sendTo);
+    _recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                            Pausable
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function pause() external onlyRole(_NS_ROLES_PAUSER) {
-    super._pause();
+    _pause();
   }
 
   function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
-    super._unpause();
+    _unpause();
   }
 }

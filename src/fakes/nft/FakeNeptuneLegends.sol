@@ -14,14 +14,14 @@ import "./FakeNeptuneLegendsState.sol";
 contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, FakeNeptuneLegendsState {
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
-    super._disableInitializers();
+    _disableInitializers();
   }
 
   function initialize(string calldata tokenUri, address admin, address minter) external initializer {
-    super.__AccessControl_init();
-    super.__ERC721_init("Neptune Legends", "NLG");
-    super.__ERC2981_init();
-    super.__Pausable_init();
+    __AccessControl_init();
+    __ERC721_init("Neptune Legends", "NLG");
+    __ERC2981_init();
+    __Pausable_init();
 
     _uri = tokenUri;
 
@@ -64,7 +64,7 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
       emit SoulBound(info.id);
     }
 
-    super._safeMint(info.sendTo, info.id, "");
+    _safeMint(info.sendTo, info.id, "");
   }
 
   function mintMany(MintInfo[] calldata info) external override {
@@ -82,7 +82,7 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
       }
 
       _minted[info[i].id] = true;
-      super._safeMint(info[i].sendTo, info[i].id, "");
+      _safeMint(info[i].sendTo, info[i].id, "");
     }
   }
 
@@ -93,36 +93,36 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
       revert InvalidArgumentError("baseUri");
     }
 
-    emit BaseUriSet(super._baseURI(), baseUri);
+    emit BaseUriSet(_baseURI(), baseUri);
     _uri = baseUri;
   }
 
   function setDefaultRoyalty(address receiver, uint96 feeNumerator) external {
     //_throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._setDefaultRoyalty(receiver, feeNumerator);
+    _setDefaultRoyalty(receiver, feeNumerator);
     emit DefaultRoyaltySet(_msgSender(), receiver, feeNumerator);
   }
 
   function deleteDefaultRoyalty() external {
     //_throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._deleteDefaultRoyalty();
-    emit DefaultRoyaltyDeleted(super._msgSender());
+    _deleteDefaultRoyalty();
+    emit DefaultRoyaltyDeleted(_msgSender());
   }
 
   function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external {
     //_throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._setTokenRoyalty(tokenId, receiver, feeNumerator);
-    emit TokenRoyaltySet(super._msgSender(), tokenId, receiver, feeNumerator);
+    _setTokenRoyalty(tokenId, receiver, feeNumerator);
+    emit TokenRoyaltySet(_msgSender(), tokenId, receiver, feeNumerator);
   }
 
   function resetTokenRoyalty(uint256 tokenId) external {
     //_throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._resetTokenRoyalty(tokenId);
-    emit TokenRoyaltyReset(super._msgSender(), tokenId);
+    _resetTokenRoyalty(tokenId);
+    emit TokenRoyaltyReset(_msgSender(), tokenId);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -131,13 +131,13 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
   function recoverEther(address sendTo) external {
     //_throwIfSenderIsNot(NS_ROLES_RECOVERY_AGENT);
 
-    super._recoverEther(sendTo);
+    _recoverEther(sendTo);
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external {
     //_throwIfSenderIsNot(NS_ROLES_RECOVERY_AGENT);
 
-    super._recoverToken(malicious, sendTo);
+    _recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -146,26 +146,26 @@ contract FakeNeptuneLegends is AccessControlUpgradeable, ERC721BurnableUpgradeab
   function setPausers(address[] calldata accounts, bool[] calldata statuses) external {
     //_throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
-    super._setPausers(_pausers, accounts, statuses);
+    _setPausers(_pausers, accounts, statuses);
   }
 
   function pause() external {
     //_throwIfSenderIsNot(NS_ROLES_PAUSER);
 
-    super._pause();
+    _pause();
   }
 
   function unpause() external {
     //_throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
-    super._unpause();
+    _unpause();
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                             Views
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function feeDenominator() external pure returns (uint96) {
-    return super._feeDenominator();
+    return _feeDenominator();
   }
 
   function supportsInterface(bytes4 interfaceId) public pure virtual override(AccessControlUpgradeable, ERC721Upgradeable, ERC2981Upgradeable) returns (bool) {

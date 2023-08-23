@@ -38,7 +38,7 @@ describe('Gauge Controller Registry: Set Gauge', () => {
       pool.registry = contracts.registry.address
       pool.treasury = helper.randomAddress()
 
-      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
+      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', pool, owner.address, [])
 
       pool.deployed = deployed
       pool.stakingTokenDeployed = fakePod

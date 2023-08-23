@@ -14,7 +14,7 @@ contract Store is StoreBase {
 
     __Ownable_init();
 
-    super.transferOwnership(owner);
+    transferOwnership(owner);
   }
 
   function setAddress(bytes32 k, address v) external override {

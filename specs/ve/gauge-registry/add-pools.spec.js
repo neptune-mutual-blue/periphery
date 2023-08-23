@@ -33,7 +33,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
       pool.treasury = helper.randomAddress()
       pool.info = ''
 
-      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
+      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', pool, owner.address, [])
 
       pool.deployed = deployed
       pool.stakingTokenDeployed = fakePod
@@ -113,7 +113,7 @@ describe('Gauge Controller Registry: Add or Edit Pool', () => {
       pool.treasury = helper.randomAddress()
       pool.info = ''
 
-      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, pool)
+      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', pool, owner.address, [])
 
       pool.deployed = deployed
       pool.stakingTokenDeployed = fakePod

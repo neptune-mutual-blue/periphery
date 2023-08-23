@@ -15,7 +15,7 @@ import "../util/interfaces/IAccessControlUtil.sol";
 contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721BurnableUpgradeable, ERC2981Upgradeable, WithPausability, TokenRecovery, NeptuneLegendsState {
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() {
-    super._disableInitializers();
+    _disableInitializers();
   }
 
   function initialize(string calldata tokenUri, address admin, address minter) external initializer {
@@ -31,10 +31,10 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
       revert InvalidArgumentError("minter");
     }
 
-    super.__AccessControl_init();
-    super.__ERC721_init("Neptune Legends", "NLG");
-    super.__ERC2981_init();
-    super.__Pausable_init();
+    __AccessControl_init();
+    __ERC721_init("Neptune Legends", "NLG");
+    __ERC2981_init();
+    __Pausable_init();
 
     _uri = tokenUri;
 
@@ -80,7 +80,7 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
       emit SoulBound(info.id);
     }
 
-    super._safeMint(info.sendTo, info.id, "");
+    _safeMint(info.sendTo, info.id, "");
   }
 
   function mint(MintInfo calldata info) external override {
@@ -104,36 +104,36 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
       revert InvalidArgumentError("baseUri");
     }
 
-    emit BaseUriSet(super._baseURI(), baseUri);
+    emit BaseUriSet(_baseURI(), baseUri);
     _uri = baseUri;
   }
 
   function setDefaultRoyalty(address receiver, uint96 feeNumerator) external {
     _throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._setDefaultRoyalty(receiver, feeNumerator);
+    _setDefaultRoyalty(receiver, feeNumerator);
     emit DefaultRoyaltySet(_msgSender(), receiver, feeNumerator);
   }
 
   function deleteDefaultRoyalty() external {
     _throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._deleteDefaultRoyalty();
-    emit DefaultRoyaltyDeleted(super._msgSender());
+    _deleteDefaultRoyalty();
+    emit DefaultRoyaltyDeleted(_msgSender());
   }
 
   function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external {
     _throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._setTokenRoyalty(tokenId, receiver, feeNumerator);
-    emit TokenRoyaltySet(super._msgSender(), tokenId, receiver, feeNumerator);
+    _setTokenRoyalty(tokenId, receiver, feeNumerator);
+    emit TokenRoyaltySet(_msgSender(), tokenId, receiver, feeNumerator);
   }
 
   function resetTokenRoyalty(uint256 tokenId) external {
     _throwIfSenderIsNot(NS_ROLES_ROYALTY_ADMIN);
 
-    super._resetTokenRoyalty(tokenId);
-    emit TokenRoyaltyReset(super._msgSender(), tokenId);
+    _resetTokenRoyalty(tokenId);
+    emit TokenRoyaltyReset(_msgSender(), tokenId);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -142,13 +142,13 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   function recoverEther(address sendTo) external {
     _throwIfSenderIsNot(NS_ROLES_RECOVERY_AGENT);
 
-    super._recoverEther(sendTo);
+    _recoverEther(sendTo);
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external {
     _throwIfSenderIsNot(NS_ROLES_RECOVERY_AGENT);
 
-    super._recoverToken(malicious, sendTo);
+    _recoverToken(malicious, sendTo);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -157,13 +157,13 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   function pause() external {
     _throwIfSenderIsNot(NS_ROLES_PAUSER);
 
-    super._pause();
+    _pause();
   }
 
   function unpause() external {
     _throwIfSenderIsNot(DEFAULT_ADMIN_ROLE);
 
-    super._unpause();
+    _unpause();
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -176,7 +176,7 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
 
     for (uint256 i = 0; i < detail.length; i++) {
       for (uint256 j = 0; j < detail[i].roles.length; j++) {
-        super.grantRole(detail[i].roles[j], detail[i].account);
+        grantRole(detail[i].roles[j], detail[i].account);
       }
     }
   }
@@ -185,7 +185,7 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   //                                             Views
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function feeDenominator() external pure returns (uint96) {
-    return super._feeDenominator();
+    return _feeDenominator();
   }
 
   function supportsInterface(bytes4 interfaceId) public pure virtual override(AccessControlUpgradeable, ERC721Upgradeable, ERC2981Upgradeable) returns (bool) {
@@ -209,7 +209,7 @@ contract NeptuneLegends is IAccessControlUtil, AccessControlUpgradeable, ERC721B
   }
 
   function _throwIfSenderIsNot(bytes32 role) private view {
-    if (super.hasRole(role, _msgSender()) == false) {
+    if (hasRole(role, _msgSender()) == false) {
       revert AccessDeniedError(role);
     }
   }

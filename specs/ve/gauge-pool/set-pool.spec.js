@@ -50,7 +50,7 @@ describe('Liquidity Gauge Pool: setPool', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', owner.address, info1)
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info1, owner.address, [])
   })
 
   it('must correctly set the state upon construction', async () => {
