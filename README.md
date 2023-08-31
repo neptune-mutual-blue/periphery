@@ -63,15 +63,3 @@ yarn coverage
 
 open ./coverage/index.html
 ```
-
-**Deploy**
-
-```
-chmod +x ./deploy.sh
-./deploy.sh
-```
-
----
-
-[comment]: #solidoc Start
-[comment]: #solidoc End
