@@ -108,4 +108,27 @@ describe('Liquidity Gauge Pool: Withdraw', () => {
     await contracts.gaugePool.withdraw(amountToDeposit)
       .should.be.rejected
   })
+
+  it('throws during reentrancy attack', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    const fakePod = await factory.deployUpgradeable('FakeTokenWithReentrancy', gaugePool.address, key.toBytes32('withdraw'))
+
+    await gaugePool.setPool({ ...info, stakingToken: fakePod.address, registry: owner.address })
+
+    await contracts.npm.mint(gaugePool.address, helper.ether(100_00))
+    await gaugePool.setEpoch(1, 28 * DAYS, helper.ether(100_00))
+
+    await fakePod.mint(owner.address, amountToDeposit)
+    await fakePod.approve(gaugePool.address, amountToDeposit)
+
+    await gaugePool.deposit(amountToDeposit)
+
+    await mine(info.lockupPeriodInBlocks)
+
+    await gaugePool.withdraw(amountToDeposit)
+      .should.be.rejectedWith('ReentrancyGuard: reentrant call')
+  })
 })

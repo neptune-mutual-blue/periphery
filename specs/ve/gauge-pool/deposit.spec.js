@@ -87,4 +87,21 @@ describe('Liquidity Gauge Pool: Deposit', () => {
       .should.be.revertedWithCustomError(contracts.gaugePool, 'ZeroAmountError')
       .withArgs(key.toBytes32('amount'))
   })
+
+  it('throws during reentrancy attack', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', contracts.gaugePool.address, key.toBytes32('deposit'))
+    contracts.npm.mint(owner.address, amountToDeposit)
+    contracts.npm.approve(contracts.gaugePool.address, amountToDeposit)
+
+    await contracts.gaugePool.setPool({
+      ...info,
+      stakingToken: contracts.npm.address
+    })
+
+    await contracts.gaugePool.deposit(amountToDeposit)
+      .should.be.rejectedWith('ReentrancyGuard: reentrant call')
+  })
 })

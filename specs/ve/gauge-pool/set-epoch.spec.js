@@ -69,4 +69,20 @@ describe('Liquidity Gauge Pool: Set Epoch', () => {
       .should.be.revertedWithCustomError(contracts.gaugePool, 'AccessDeniedError')
       .withArgs(key.toBytes32('Registry'))
   })
+
+  it('throws during reentrancy attack', async () => {
+    const [owner, , registry] = await ethers.getSigners()
+    const rewards = helper.ether(10)
+
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', contracts.gaugePool.address, key.toBytes32('setEpoch'))
+
+    await contracts.gaugePool.setPool({
+      ...info,
+      rewardToken: contracts.npm.address
+    })
+
+    await contracts.gaugePool.connect(registry).setEpoch(2, 1000, rewards)
+      .should.be.rejectedWith('ReentrancyGuard: reentrant call')
+  })
 })
