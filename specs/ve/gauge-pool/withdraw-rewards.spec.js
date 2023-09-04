@@ -91,7 +91,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.gaugePool.withdrawRewards()
   })
 
-  it('must not allow withdrawing rewards after exit', async () => {
+  it('must allow withdrawing rewards after exit', async () => {
     const [owner] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
@@ -107,5 +107,25 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     pendingRewards.should.be.equal(0)
 
     await contracts.gaugePool.withdrawRewards()
+  })
+
+  it('throws when platform fee is too high', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    await contracts.fakePod.mint(owner.address, amountToDeposit)
+    await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
+    await contracts.gaugePool.deposit(amountToDeposit)
+
+    await mine(info.lockupPeriodInBlocks / 2)
+
+    await contracts.gaugePool.setPool({
+      ...info,
+      platformFee: 100_000
+    })
+
+    await contracts.gaugePool.withdrawRewards()
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'PlatformFeeTooHighError')
+      .withArgs(100_000)
   })
 })

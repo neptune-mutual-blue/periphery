@@ -8,7 +8,7 @@ require('chai')
 
 const DAYS = 86400
 
-describe('Liquidity Gauge Pool: setPool', () => {
+describe('Liquidity Gauge Pool: Set Pool', () => {
   let contracts, info1, info2
 
   before(async () => {
@@ -23,7 +23,7 @@ describe('Liquidity Gauge Pool: setPool', () => {
     info1 = {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info1'),
       lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
@@ -84,6 +84,63 @@ describe('Liquidity Gauge Pool: setPool', () => {
     _info.key.should.equal(info2.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(info2.info)
+    _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
+    _info.epochDuration.should.equal(info2.epochDuration)
+    _info.veBoostRatio.should.equal(info2.veBoostRatio)
+    _info.platformFee.should.equal(info2.platformFee)
+    _info.stakingToken.should.equal(info2.stakingToken)
+    _info.veToken.should.equal(info2.veToken)
+    _info.rewardToken.should.equal(info2.rewardToken)
+    _info.registry.should.equal(info2.registry)
+    _info.treasury.should.equal(info2.treasury)
+  })
+
+  it('throws when not accessed by admin', async () => {
+    const [, bob] = await ethers.getSigners()
+    const adminRole = await contracts.gaugePool.DEFAULT_ADMIN_ROLE()
+
+    await contracts.gaugePool.connect(bob).setPool(info2)
+      .should.be.rejectedWith(`AccessControl: account ${bob.address.toLowerCase()} is missing role ${adminRole}`)
+  })
+
+  it('must allow to just update name', async () => {
+    // Before
+    let _info = await contracts.gaugePool._poolInfo()
+
+    _info.key.should.equal(info2.key)
+    _info.name.should.equal(info2.name)
+    _info.info.should.equal(info2.info)
+    _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
+    _info.epochDuration.should.equal(info2.epochDuration)
+    _info.veBoostRatio.should.equal(info2.veBoostRatio)
+    _info.platformFee.should.equal(info2.platformFee)
+    _info.stakingToken.should.equal(info2.stakingToken)
+    _info.veToken.should.equal(info2.veToken)
+    _info.rewardToken.should.equal(info2.rewardToken)
+    _info.registry.should.equal(info2.registry)
+    _info.treasury.should.equal(info2.treasury)
+
+    await contracts.gaugePool.setPool({
+      key: key.toBytes32(''),
+      name: '',
+      info: key.toBytes32('info2'),
+      lockupPeriodInBlocks: 0,
+      epochDuration: 0 * DAYS,
+      veBoostRatio: 0,
+      platformFee: helper.percentage(0),
+      stakingToken: helper.zerox,
+      veToken: helper.zerox,
+      rewardToken: helper.zerox,
+      registry: helper.zerox,
+      treasury: helper.zerox
+    })
+
+    // After
+    _info = await contracts.gaugePool._poolInfo()
+
+    _info.key.should.equal(info2.key)
+    _info.name.should.equal(info2.name)
+    _info.info.should.equal(key.toBytes32('info2'))
     _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)

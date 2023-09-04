@@ -77,4 +77,17 @@ describe('Liquidity Gauge Pool: Exit', () => {
     await contracts.gaugePool.exit()
       .should.be.rejectedWith('WithdrawalLockedError')
   })
+
+  it('must not allow to exit when paused', async () => {
+    const [, bob] = await ethers.getSigners()
+
+    const pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
+    await contracts.gaugePool.grantRole(pauserRole, bob.address)
+    await contracts.gaugePool.connect(bob).pause()
+
+    await contracts.gaugePool.exit()
+      .should.be.rejectedWith('Pausable: paused')
+
+    await contracts.gaugePool.unpause()
+  })
 })
