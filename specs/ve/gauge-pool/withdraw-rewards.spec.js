@@ -91,7 +91,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.gaugePool.withdrawRewards()
   })
 
-  it('must not allow withdrawing rewards after exit', async () => {
+  it('must allow withdrawing rewards after exit', async () => {
     const [owner] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
@@ -107,5 +107,48 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     pendingRewards.should.be.equal(0)
 
     await contracts.gaugePool.withdrawRewards()
+  })
+
+  it('throws when platform fee is too high', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    await contracts.fakePod.mint(owner.address, amountToDeposit)
+    await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
+    await contracts.gaugePool.deposit(amountToDeposit)
+
+    await mine(info.lockupPeriodInBlocks / 2)
+
+    await contracts.gaugePool.setPool({
+      ...info,
+      platformFee: 100_000
+    })
+
+    await contracts.gaugePool.withdrawRewards()
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'PlatformFeeTooHighError')
+      .withArgs(100_000)
+  })
+
+  it('throws during reentrancy attack', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', gaugePool.address, key.toBytes32('withdrawRewards'))
+
+    await gaugePool.setPool({ ...info, rewardToken: contracts.npm.address, registry: owner.address })
+
+    await contracts.npm.mint(gaugePool.address, helper.ether(100_00))
+    await gaugePool.setEpoch(1, 1 * DAYS, helper.ether(100_00))
+
+    await contracts.fakePod.mint(owner.address, amountToDeposit)
+    await contracts.fakePod.approve(gaugePool.address, amountToDeposit)
+
+    await gaugePool.deposit(amountToDeposit)
+
+    await mine(info.lockupPeriodInBlocks)
+
+    await gaugePool.withdrawRewards()
+      .should.be.rejectedWith('ReentrancyGuard: reentrant call')
   })
 })

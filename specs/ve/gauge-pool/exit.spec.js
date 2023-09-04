@@ -77,4 +77,40 @@ describe('Liquidity Gauge Pool: Exit', () => {
     await contracts.gaugePool.exit()
       .should.be.rejectedWith('WithdrawalLockedError')
   })
+
+  it('must not allow to exit when paused', async () => {
+    const [, bob] = await ethers.getSigners()
+
+    const pauserRole = await contracts.gaugePool._NS_ROLES_PAUSER()
+    await contracts.gaugePool.grantRole(pauserRole, bob.address)
+    await contracts.gaugePool.connect(bob).pause()
+
+    await contracts.gaugePool.exit()
+      .should.be.rejectedWith('Pausable: paused')
+
+    await contracts.gaugePool.unpause()
+  })
+
+  it('throws during reentrancy attack', async () => {
+    const [owner] = await ethers.getSigners()
+    const amountToDeposit = helper.ether(10)
+
+    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', gaugePool.address, key.toBytes32('exit'))
+
+    await gaugePool.setPool({ ...info, rewardToken: contracts.npm.address, registry: owner.address })
+
+    await contracts.npm.mint(gaugePool.address, helper.ether(100_00))
+    await gaugePool.setEpoch(1, 1 * DAYS, helper.ether(100_00))
+
+    await contracts.fakePod.mint(owner.address, amountToDeposit)
+    await contracts.fakePod.approve(gaugePool.address, amountToDeposit)
+
+    await gaugePool.deposit(amountToDeposit)
+
+    await mine(info.lockupPeriodInBlocks)
+
+    await gaugePool.exit()
+      .should.be.rejectedWith('ReentrancyGuard: reentrant call')
+  })
 })

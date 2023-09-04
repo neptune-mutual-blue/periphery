@@ -12,7 +12,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
   let contracts, info
 
   before(async () => {
-    const [owner] = await ethers.getSigners()
+    const [owner, pauser1, pauser2] = await ethers.getSigners()
     contracts = {}
 
     contracts.npm = await factory.deployUpgradeable('FakeToken', 'Fake Neptune Mutual Token', 'NPM')
@@ -35,7 +35,7 @@ describe('Liquidity Gauge Pool: Constructor', () => {
       treasury: helper.randomAddress()
     }
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [pauser1.address, pauser2.address])
   })
 
   it('must correctly set the state upon construction', async () => {
@@ -66,5 +66,19 @@ describe('Liquidity Gauge Pool: Constructor', () => {
 
     await contracts.gaugePool.initialize(info, owner.address, [])
       .should.be.rejectedWith('Initializable: contract is already initialized')
+  })
+
+  it('throws if pauser is invalid', async () => {
+    const [owner] = await ethers.getSigners()
+
+    await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [helper.zerox])
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'InvalidArgumentError')
+      .withArgs(key.toBytes32('pausers'))
+  })
+
+  it('throws if admin is invalid', async () => {
+    await factory.deployUpgradeable('LiquidityGaugePool', info, helper.zerox, [])
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'InvalidArgumentError')
+      .withArgs(key.toBytes32('admin'))
   })
 })
