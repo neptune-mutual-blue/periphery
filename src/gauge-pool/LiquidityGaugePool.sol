@@ -39,7 +39,47 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       _grantRole(_NS_ROLES_PAUSER, pausers[i]);
     }
 
-    _setPool(args);
+    if (args.key == 0) {
+      revert InvalidArgumentError("args.key");
+    }
+
+    if (bytes(args.name).length == 0) {
+      revert InvalidArgumentError("args.name");
+    }
+
+    if (bytes(args.info).length == 0) {
+      revert InvalidArgumentError("args.info");
+    }
+
+    if (args.epochDuration == 0) {
+      revert InvalidArgumentError("args.epochDuration");
+    }
+
+    if (args.veBoostRatio == 0) {
+      revert InvalidArgumentError("args.veBoostRatio");
+    }
+
+    if (args.stakingToken == address(0)) {
+      revert InvalidArgumentError("args.stakingToken");
+    }
+
+    if (args.veToken == address(0)) {
+      revert InvalidArgumentError("args.veToken");
+    }
+
+    if (args.rewardToken == address(0)) {
+      revert InvalidArgumentError("args.rewardToken");
+    }
+
+    if (args.registry == address(0)) {
+      revert InvalidArgumentError("args.registry");
+    }
+
+    if (args.treasury == address(0)) {
+      revert InvalidArgumentError("args.treasury");
+    }
+
+    _poolInfo = args;
   }
 
   function setPool(PoolInfo calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
