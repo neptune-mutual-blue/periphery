@@ -1,4 +1,4 @@
-const helper = require('../util/key')
+const key = require('../util/key')
 const { deployUpgradeable } = require('../util/factory')
 
 require('chai')
@@ -25,7 +25,7 @@ describe('NFT: Pause/Unpause', () => {
   it('must not allow non pausers to pause', async () => {
     await nft.pause()
       .should.be.revertedWithCustomError(nft, 'AccessDeniedError')
-      .withArgs(helper.toBytes32('role:pauser'))
+      .withArgs(key.toBytes32('role:pauser'))
   })
 
   it('must not allow non owners to unpause', async () => {

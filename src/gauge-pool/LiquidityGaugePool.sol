@@ -184,6 +184,10 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
+    if (address(malicious) == _poolInfo.stakingToken || address(malicious) == _poolInfo.rewardToken) {
+      revert InvalidArgumentError("malicious");
+    }
+
     _recoverToken(malicious, sendTo);
   }
 

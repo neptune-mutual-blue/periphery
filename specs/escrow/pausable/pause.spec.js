@@ -1,5 +1,5 @@
 const factory = require('../../util/factory')
-const helper = require('../../util/key')
+const key = require('../../util/key')
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -32,7 +32,7 @@ describe('Vote Escrow Token: Pause/Unpause', () => {
   it('must not allow non pausers to pause', async () => {
     await contracts.veToken.pause()
       .should.be.revertedWithCustomError(contracts.veToken, 'AccessDeniedError')
-      .withArgs(helper.toBytes32('Pauser'))
+      .withArgs(key.toBytes32('Pauser'))
   })
 
   it('must not allow non owners to unpause', async () => {
