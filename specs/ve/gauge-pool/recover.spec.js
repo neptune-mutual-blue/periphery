@@ -147,6 +147,24 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
     balance.should.equal(helper.ether('0'))
   })
 
+  it('must not allow to recover staking token', async () => {
+    const [, bob] = await ethers.getSigners()
+    const receiver = helper.randomAddress()
+
+    await contracts.gaugePool.connect(bob).recoverToken(info.stakingToken, receiver)
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'InvalidArgumentError')
+      .withArgs(key.toBytes32('malicious'))
+  })
+
+  it('must not allow to recover reward token', async () => {
+    const [, bob] = await ethers.getSigners()
+    const receiver = helper.randomAddress()
+
+    await contracts.gaugePool.connect(bob).recoverToken(info.rewardToken, receiver)
+      .should.be.revertedWithCustomError(contracts.gaugePool, 'InvalidArgumentError')
+      .withArgs(key.toBytes32('malicious'))
+  })
+
   it('must not allow non recovery agents to recover ether', async () => {
     const [, , charlie] = await ethers.getSigners()
     const receiver = helper.randomAddress()
