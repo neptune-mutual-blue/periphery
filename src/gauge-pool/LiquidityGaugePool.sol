@@ -73,13 +73,13 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert EpochUnavailableError();
     }
 
+    IERC20Upgradeable(_poolInfo.stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
+
     _updateReward(_msgSender());
 
     _lockedByEveryone += amount;
     _lockedByMe[_msgSender()] += amount;
     _lastDepositHeights[_msgSender()] = block.number;
-
-    IERC20Upgradeable(_poolInfo.stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
 
     emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
