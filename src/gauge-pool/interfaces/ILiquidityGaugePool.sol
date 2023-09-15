@@ -7,7 +7,6 @@ interface ILiquidityGaugePool {
     bytes32 key;
     string name;
     string info;
-    uint256 lockupPeriodInBlocks;
     uint256 epochDuration;
     uint256 veBoostRatio;
     uint256 platformFee;

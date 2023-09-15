@@ -24,7 +24,6 @@ describe('Liquidity Gauge Pool: Deposit', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),

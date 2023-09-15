@@ -251,11 +251,6 @@
           },
           {
             "internalType": "uint256",
-            "name": "lockupPeriodInBlocks",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
             "name": "epochDuration",
             "type": "uint256"
           },
@@ -505,7 +500,20 @@
   },
   {
     "inputs": [],
-    "name": "NS_ROLES_PAUSER",
+    "name": "_LOCKUP_PERIOD_IN_BLOCKS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_NS_ROLES_PAUSER",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -518,7 +526,7 @@
   },
   {
     "inputs": [],
-    "name": "NS_ROLES_RECOVERY_AGENT",
+    "name": "_NS_ROLES_RECOVERY_AGENT",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -694,11 +702,6 @@
         "internalType": "string",
         "name": "info",
         "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lockupPeriodInBlocks",
-        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -954,11 +957,6 @@
             "internalType": "string",
             "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lockupPeriodInBlocks",
-            "type": "uint256"
           },
           {
             "internalType": "uint256",

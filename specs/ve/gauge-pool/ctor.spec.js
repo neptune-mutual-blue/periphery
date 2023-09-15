@@ -24,7 +24,6 @@ describe('Liquidity Gauge Pool: Constructor', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -50,7 +49,6 @@ describe('Liquidity Gauge Pool: Constructor', () => {
     _info.key.should.equal(info.key)
     _info.name.should.equal(info.name)
     _info.info.should.equal(info.info)
-    _info.lockupPeriodInBlocks.should.equal(info.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(28 * DAYS)
     _info.veBoostRatio.should.equal(1000)
     _info.platformFee.should.equal(info.platformFee)

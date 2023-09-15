@@ -11,7 +11,7 @@ const DAYS = 86400
 const WEEKS = 7 * DAYS
 
 describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
-  let contracts, info, t0
+  let contracts, info, t0, lockupPeriodInBlocks
 
   before(async () => {
     const [owner] = await ethers.getSigners()
@@ -26,7 +26,6 @@ describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 100,
       epochDuration: 10 * WEEKS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -38,6 +37,7 @@ describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
     }
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    lockupPeriodInBlocks = await contracts.gaugePool._LOCKUP_PERIOD_IN_BLOCKS()
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
 
     const emission = helper.ether(10_000)
@@ -85,7 +85,7 @@ describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
   it('At t0 + 9 week(s), bob exits', async () => {
     const [, bob] = await ethers.getSigners()
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
     const balanceBefore = await contracts.npm.balanceOf(bob.address)
 
     await time.setNextBlockTimestamp(t0 + 9 * WEEKS)
@@ -104,7 +104,7 @@ describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
   it('At t0 + 10 week(s), charlie exits', async () => {
     const [, , charlie] = await ethers.getSigners()
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
     const balanceBefore = await contracts.npm.balanceOf(charlie.address)
 
     await time.setNextBlockTimestamp(t0 + 10 * WEEKS)

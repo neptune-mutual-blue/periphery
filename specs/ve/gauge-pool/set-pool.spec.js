@@ -24,7 +24,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32('info1'),
-      lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -39,7 +38,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
       key: key.toBytes32('foobar2'),
       name: 'Foobar2',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 200,
       epochDuration: 14 * DAYS,
       veBoostRatio: 500,
       platformFee: helper.percentage(3.5),
@@ -66,7 +64,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     _info.key.should.equal(info1.key)
     _info.name.should.equal(info1.name)
     _info.info.should.equal(info1.info)
-    _info.lockupPeriodInBlocks.should.equal(info1.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(info1.epochDuration)
     _info.veBoostRatio.should.equal(info1.veBoostRatio)
     _info.platformFee.should.equal(info1.platformFee)
@@ -84,7 +81,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     _info.key.should.equal(info2.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(info2.info)
-    _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
@@ -110,7 +106,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     _info.key.should.equal(info2.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(info2.info)
-    _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
@@ -124,7 +119,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
       key: key.toBytes32(''),
       name: '',
       info: key.toBytes32('info2'),
-      lockupPeriodInBlocks: 0,
       epochDuration: 0 * DAYS,
       veBoostRatio: 0,
       platformFee: helper.percentage(0),
@@ -141,7 +135,6 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     _info.key.should.equal(info2.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(key.toBytes32('info2'))
-    _info.lockupPeriodInBlocks.should.equal(info2.lockupPeriodInBlocks)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
