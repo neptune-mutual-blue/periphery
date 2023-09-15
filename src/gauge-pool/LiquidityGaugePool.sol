@@ -93,8 +93,8 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Ree
       revert WithdrawalTooHighError(_lockedByMe[_msgSender()], amount);
     }
 
-    if (block.number < _lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks) {
-      revert WithdrawalLockedError(_lastDepositHeights[_msgSender()] + _poolInfo.lockupPeriodInBlocks);
+    if (block.number < _lastDepositHeights[_msgSender()] + _LOCKUP_PERIOD_IN_BLOCKS) {
+      revert WithdrawalLockedError(_lastDepositHeights[_msgSender()] + _LOCKUP_PERIOD_IN_BLOCKS);
     }
 
     _updateReward(_msgSender());

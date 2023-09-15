@@ -147,11 +147,6 @@
           },
           {
             "internalType": "uint256",
-            "name": "lockupPeriodInBlocks",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
             "name": "epochDuration",
             "type": "uint256"
           },
@@ -385,11 +380,6 @@
             "internalType": "string",
             "name": "info",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lockupPeriodInBlocks",
-            "type": "uint256"
           },
           {
             "internalType": "uint256",

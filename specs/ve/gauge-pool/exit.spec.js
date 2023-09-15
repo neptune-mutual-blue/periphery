@@ -10,7 +10,7 @@ require('chai')
 const DAYS = 86400
 
 describe('Liquidity Gauge Pool: Exit', () => {
-  let contracts, info
+  let contracts, info, lockupPeriodInBlocks
 
   before(async () => {
     const [owner] = await ethers.getSigners()
@@ -25,7 +25,6 @@ describe('Liquidity Gauge Pool: Exit', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -37,6 +36,7 @@ describe('Liquidity Gauge Pool: Exit', () => {
     }
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
+    lockupPeriodInBlocks = await contracts.gaugePool._LOCKUP_PERIOD_IN_BLOCKS()
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
 
     const emission = helper.ether(100_00)
@@ -56,7 +56,7 @@ describe('Liquidity Gauge Pool: Exit', () => {
     const balanceBeforeDeposit = await contracts.fakePod.balanceOf(owner.address)
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
 
     await contracts.gaugePool.exit()
     const balanceAfterExit = await contracts.fakePod.balanceOf(owner.address)
@@ -72,7 +72,7 @@ describe('Liquidity Gauge Pool: Exit', () => {
 
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks / 2)
+    await mine(lockupPeriodInBlocks / 2)
 
     await contracts.gaugePool.exit()
       .should.be.rejectedWith('WithdrawalLockedError')
@@ -108,7 +108,7 @@ describe('Liquidity Gauge Pool: Exit', () => {
 
     await gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
 
     await gaugePool.exit()
       .should.be.rejectedWith('ReentrancyGuard: reentrant call')

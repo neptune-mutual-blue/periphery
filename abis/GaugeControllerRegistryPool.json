@@ -338,7 +338,7 @@
   },
   {
     "inputs": [],
-    "name": "NS_GAUGE_AGENT",
+    "name": "_NS_GAUGE_AGENT",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -351,7 +351,7 @@
   },
   {
     "inputs": [],
-    "name": "NS_ROLES_PAUSER",
+    "name": "_NS_ROLES_PAUSER",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -364,7 +364,7 @@
   },
   {
     "inputs": [],
-    "name": "NS_ROLES_RECOVERY_AGENT",
+    "name": "_NS_ROLES_RECOVERY_AGENT",
     "outputs": [
       {
         "internalType": "bytes32",

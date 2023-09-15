@@ -10,7 +10,7 @@ require('chai')
 const DAYS = 86400
 
 describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
-  let contracts, info
+  let contracts, info, lockupPeriodInBlocks
 
   before(async () => {
     const [owner] = await ethers.getSigners()
@@ -25,7 +25,6 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
       info: key.toBytes32(''),
-      lockupPeriodInBlocks: 100,
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -38,6 +37,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
     await contracts.registry.addOrEditPools([contracts.gaugePool.address])
+    lockupPeriodInBlocks = await contracts.gaugePool._LOCKUP_PERIOD_IN_BLOCKS()
 
     const emission = helper.ether(100_00)
     const distribution = [{ key: info.key, emission }]
@@ -54,7 +54,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks / 2)
+    await mine(lockupPeriodInBlocks / 2)
 
     const balanceBeforeWithdraw = await contracts.npm.balanceOf(owner.address)
 
@@ -81,7 +81,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks / 2)
+    await mine(lockupPeriodInBlocks / 2)
 
     await contracts.gaugePool.connect(bob).pause()
     await contracts.gaugePool.withdrawRewards()
@@ -99,7 +99,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
 
     await contracts.gaugePool.exit()
 
@@ -117,7 +117,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     await contracts.fakePod.approve(contracts.gaugePool.address, amountToDeposit)
     await contracts.gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks / 2)
+    await mine(lockupPeriodInBlocks / 2)
 
     await contracts.gaugePool.setPool({
       ...info,
@@ -146,7 +146,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
 
     await gaugePool.deposit(amountToDeposit)
 
-    await mine(info.lockupPeriodInBlocks)
+    await mine(lockupPeriodInBlocks)
 
     await gaugePool.withdrawRewards()
       .should.be.rejectedWith('ReentrancyGuard: reentrant call')
