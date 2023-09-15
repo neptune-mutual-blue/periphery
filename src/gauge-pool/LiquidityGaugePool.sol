@@ -3,13 +3,13 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "../util/TokenRecovery.sol";
-import "../util/WithPausability.sol";
 import "./LiquidityGaugePoolReward.sol";
 import "../util/interfaces/IAccessControlUtil.sol";
 
-contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, WithPausability, LiquidityGaugePoolReward {
+contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TokenRecovery, LiquidityGaugePoolReward {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
