@@ -79,10 +79,18 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert InvalidArgumentError("args.treasury");
     }
 
+    if (args.platformFee > _MAX_PLATFORM_FEE) {
+      revert InvalidArgumentError("args.platformFee");
+    }
+
     _poolInfo = args;
   }
 
   function setPool(PoolInfo calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (args.platformFee > _MAX_PLATFORM_FEE) {
+      revert InvalidArgumentError("args.platformFee");
+    }
+
     _setPool(args);
   }
 
