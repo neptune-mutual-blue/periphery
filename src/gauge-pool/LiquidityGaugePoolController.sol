@@ -24,28 +24,8 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
       _poolInfo.veBoostRatio = args.veBoostRatio;
     }
 
-    if (args.stakingToken != address(0)) {
-      _poolInfo.stakingToken = args.stakingToken;
-    }
-
-    if (args.veToken != address(0)) {
-      _poolInfo.veToken = args.veToken;
-    }
-
-    if (args.rewardToken != address(0)) {
-      _poolInfo.rewardToken = args.rewardToken;
-    }
-
-    if (args.registry != address(0)) {
-      _poolInfo.registry = args.registry;
-    }
-
     if (args.treasury != address(0)) {
       _poolInfo.treasury = args.treasury;
-    }
-
-    if (args.key > 0) {
-      _poolInfo.key = args.key;
     }
 
     if (bytes(args.name).length > 0) {
