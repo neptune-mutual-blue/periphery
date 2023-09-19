@@ -83,6 +83,10 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function setPool(PoolInfo calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    if (block.timestamp <= _epochEndTimestamp) {
+      revert EpochUnavailableError();
+    }
+    
     _setPool(args);
   }
 
