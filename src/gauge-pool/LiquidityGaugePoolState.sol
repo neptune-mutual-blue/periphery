@@ -9,6 +9,7 @@ abstract contract LiquidityGaugePoolState is ILiquidityGaugePool {
   //                                           Version 1
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   uint256 public constant _LOCKUP_PERIOD_IN_BLOCKS = 100;
+  uint256 public constant _MAX_PLATFORM_FEE = 2000;
   bytes32 public constant _NS_ROLES_PAUSER = "role:pauser";
   bytes32 public constant _NS_ROLES_RECOVERY_AGENT = "role:recovery:agent";
 
