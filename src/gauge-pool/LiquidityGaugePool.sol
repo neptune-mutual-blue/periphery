@@ -127,7 +127,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
 
     IERC20Upgradeable(_poolInfo.stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
 
-    _updateReward(_msgSender());
+    _updateReward(_msgSender(), false);
 
     _lockedByEveryone += amount;
     _lockedByMe[_msgSender()] += amount;
@@ -136,7 +136,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
   }
 
-  function _withdraw(uint256 amount) private {
+  function _withdraw(uint256 amount, bool emergency) private {
     if (amount == 0) {
       revert ZeroAmountError("amount");
     }
@@ -149,7 +149,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert WithdrawalLockedError(_lastDepositHeights[_msgSender()] + _LOCKUP_PERIOD_IN_BLOCKS);
     }
 
-    _updateReward(_msgSender());
+    _updateReward(_msgSender(), emergency);
 
     _lockedByEveryone -= amount;
     _lockedByMe[_msgSender()] -= amount;
@@ -159,11 +159,11 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function withdraw(uint256 amount) external override nonReentrant whenNotPaused {
-    _withdraw(amount);
+    _withdraw(amount, false);
   }
 
   function _withdrawRewards() private {
-    _updateReward(_msgSender());
+    _updateReward(_msgSender(), false);
 
     uint256 rewards = _pendingRewardToDistribute[_msgSender()];
 
@@ -190,15 +190,19 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function exit() external override nonReentrant whenNotPaused {
-    _withdraw(_lockedByMe[_msgSender()]);
+    _withdraw(_lockedByMe[_msgSender()], false);
     _withdrawRewards();
+  }
+
+  function emergencyWithdraw() external override nonReentrant {
+    _withdraw(_lockedByMe[_msgSender()], true);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   //                                 Gauge Controller Registry Only
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external override nonReentrant onlyRegistry {
-    _updateReward(address(0));
+    _updateReward(address(0), false);
 
     if (epochDuration > 0) {
       _setEpochDuration(epochDuration);

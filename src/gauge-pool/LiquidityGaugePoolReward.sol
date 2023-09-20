@@ -32,7 +32,7 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
     return pending + ((myWeight * (_getRewardPerTokenUnit() - _lastRewardPerTokenUnit[account])) / 1e18);
   }
 
-  function _updateReward(address account) internal {
+  function _updateReward(address account, bool emergency) internal {
     _rewardPerTokenUnit = _getRewardPerTokenUnit();
     _lastRewardTimestamp = _getEpochEndTimestamp();
 
@@ -41,7 +41,9 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
       _lastRewardPerTokenUnit[account] = _rewardPerTokenUnit;
     }
 
-    _updateVotingPowers();
+    if(!emergency){
+      _updateVotingPowers();
+    }
   }
 
   function _updateVotingPowers() private {
