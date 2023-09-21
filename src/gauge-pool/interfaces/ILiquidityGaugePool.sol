@@ -36,5 +36,4 @@ interface ILiquidityGaugePool {
 
   error WithdrawalLockedError(uint256 waitUntilHeight);
   error EpochUnavailableError();
-  error PlatformFeeTooHighError(uint256 platformFee);
 }
