@@ -29,6 +29,7 @@ interface ILiquidityGaugePool {
   function withdraw(uint256 amount) external;
   function withdrawRewards() external;
   function exit() external;
+  function emergencyWithdraw() external;
 
   function setPool(PoolInfo calldata args) external;
   function setEpoch(uint256 epoch, uint256 epochDuration, uint256 rewards) external;
