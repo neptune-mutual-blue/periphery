@@ -91,14 +91,21 @@ describe('Liquidity Gauge Pool: Deposit', () => {
     const [owner] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
-    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', contracts.gaugePool.address, key.toBytes32('deposit'))
-    contracts.npm.mint(owner.address, amountToDeposit)
-    contracts.npm.approve(contracts.gaugePool.address, amountToDeposit)
+    const npmToken = await factory.deployUpgradeable('FakeTokenWithReentrancy', key.toBytes32('deposit'))
 
-    await contracts.gaugePool.setPool({
-      ...info,
-      stakingToken: contracts.npm.address
-    })
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', { ...info, stakingToken: npmToken.address }, owner.address, [])
+    npmToken.setPool(contracts.gaugePool.address)
+
+    await contracts.registry.addOrEditPools([contracts.gaugePool.address])
+
+    const emission = helper.ether(100_00)
+    const distribution = [{ key: info.key, emission }]
+    await contracts.npm.mint(owner.address, emission)
+    await contracts.npm.approve(contracts.registry.address, emission)
+    await contracts.registry.setGauge(2, emission, 28 * DAYS, distribution)
+
+    npmToken.mint(owner.address, amountToDeposit)
+    npmToken.approve(contracts.gaugePool.address, amountToDeposit)
 
     await contracts.gaugePool.deposit(amountToDeposit)
       .should.be.rejectedWith('ReentrancyGuard: reentrant call')

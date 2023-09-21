@@ -95,12 +95,12 @@ describe('Liquidity Gauge Pool: Exit', () => {
     const [owner] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
-    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
-    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', gaugePool.address, key.toBytes32('exit'))
+    const npmToken = await factory.deployUpgradeable('FakeTokenWithReentrancy', key.toBytes32('exit'))
+    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', { ...info, rewardToken: npmToken.address, registry: owner.address }, owner.address, [])
 
-    await gaugePool.setPool({ ...info, rewardToken: contracts.npm.address, registry: owner.address })
+    npmToken.setPool(gaugePool.address)
 
-    await contracts.npm.mint(gaugePool.address, helper.ether(100_00))
+    await npmToken.mint(gaugePool.address, helper.ether(100_00))
     await gaugePool.setEpoch(1, 1 * DAYS, helper.ether(100_00))
 
     await contracts.fakePod.mint(owner.address, amountToDeposit)

@@ -18,9 +18,12 @@ contract FakeTokenWithReentrancy {
   mapping(address => mapping (address => uint256)) allowed;
   uint256 totalSupply_;
 
-  function initialize(ILiquidityGaugePool pool, bytes32 target) public {
-    _pool = pool;
+  function initialize(bytes32 target) public {
     _target = target;
+  }
+
+  function setPool(ILiquidityGaugePool pool) public {
+    _pool = pool;
   }
 
   function totalSupply() public view returns (uint256) {

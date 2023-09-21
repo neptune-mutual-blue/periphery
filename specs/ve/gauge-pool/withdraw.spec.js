@@ -24,7 +24,7 @@ describe('Liquidity Gauge Pool: Withdraw', () => {
     info = {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info'),
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -113,10 +113,10 @@ describe('Liquidity Gauge Pool: Withdraw', () => {
     const [owner] = await ethers.getSigners()
     const amountToDeposit = helper.ether(10)
 
-    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
-    const fakePod = await factory.deployUpgradeable('FakeTokenWithReentrancy', gaugePool.address, key.toBytes32('withdraw'))
+    const fakePod = await factory.deployUpgradeable('FakeTokenWithReentrancy', key.toBytes32('withdraw'))
+    const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', { ...info, stakingToken: fakePod.address, registry: owner.address }, owner.address, [])
 
-    await gaugePool.setPool({ ...info, stakingToken: fakePod.address, registry: owner.address })
+    fakePod.setPool(gaugePool.address)
 
     await contracts.npm.mint(gaugePool.address, helper.ether(100_00))
     await gaugePool.setEpoch(1, 28 * DAYS, helper.ether(100_00))

@@ -35,23 +35,23 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     }
 
     info2 = {
-      key: key.toBytes32('foobar2'),
+      key: key.toBytes32(''),
       name: 'Foobar2',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info2'),
       epochDuration: 14 * DAYS,
       veBoostRatio: 500,
       platformFee: helper.percentage(3.5),
-      stakingToken: helper.randomAddress(),
-      veToken: helper.randomAddress(),
-      rewardToken: helper.randomAddress(),
-      registry: helper.randomAddress(),
+      stakingToken: helper.zerox,
+      veToken: helper.zerox,
+      rewardToken: helper.zerox,
+      registry: helper.zerox,
       treasury: helper.randomAddress()
     }
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info1, owner.address, [])
   })
 
-  it('must correctly set the state upon construction', async () => {
+  it('must correctly set the pool info', async () => {
     const [owner] = await ethers.getSigners()
 
     ;(await contracts.gaugePool._epoch()).should.equal(0)
@@ -78,16 +78,16 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     // After
     _info = await contracts.gaugePool._poolInfo()
 
-    _info.key.should.equal(info2.key)
+    _info.key.should.equal(info1.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(info2.info)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
-    _info.stakingToken.should.equal(info2.stakingToken)
-    _info.veToken.should.equal(info2.veToken)
-    _info.rewardToken.should.equal(info2.rewardToken)
-    _info.registry.should.equal(info2.registry)
+    _info.stakingToken.should.equal(info1.stakingToken)
+    _info.veToken.should.equal(info1.veToken)
+    _info.rewardToken.should.equal(info1.rewardToken)
+    _info.registry.should.equal(info1.registry)
     _info.treasury.should.equal(info2.treasury)
   })
 
@@ -103,16 +103,17 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     // Before
     let _info = await contracts.gaugePool._poolInfo()
 
-    _info.key.should.equal(info2.key)
+    _info.key.should.equal(info1.key)
+
     _info.name.should.equal(info2.name)
     _info.info.should.equal(info2.info)
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
-    _info.stakingToken.should.equal(info2.stakingToken)
-    _info.veToken.should.equal(info2.veToken)
-    _info.rewardToken.should.equal(info2.rewardToken)
-    _info.registry.should.equal(info2.registry)
+    _info.stakingToken.should.equal(info1.stakingToken)
+    _info.veToken.should.equal(info1.veToken)
+    _info.rewardToken.should.equal(info1.rewardToken)
+    _info.registry.should.equal(info1.registry)
     _info.treasury.should.equal(info2.treasury)
 
     await contracts.gaugePool.setPool({
@@ -132,16 +133,16 @@ describe('Liquidity Gauge Pool: Set Pool', () => {
     // After
     _info = await contracts.gaugePool._poolInfo()
 
-    _info.key.should.equal(info2.key)
+    _info.key.should.equal(info1.key)
     _info.name.should.equal(info2.name)
     _info.info.should.equal(key.toBytes32('info2'))
     _info.epochDuration.should.equal(info2.epochDuration)
     _info.veBoostRatio.should.equal(info2.veBoostRatio)
     _info.platformFee.should.equal(info2.platformFee)
-    _info.stakingToken.should.equal(info2.stakingToken)
-    _info.veToken.should.equal(info2.veToken)
-    _info.rewardToken.should.equal(info2.rewardToken)
-    _info.registry.should.equal(info2.registry)
+    _info.stakingToken.should.equal(info1.stakingToken)
+    _info.veToken.should.equal(info1.veToken)
+    _info.rewardToken.should.equal(info1.rewardToken)
+    _info.registry.should.equal(info1.registry)
     _info.treasury.should.equal(info2.treasury)
   })
 })
