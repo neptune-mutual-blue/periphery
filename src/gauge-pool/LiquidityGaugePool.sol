@@ -170,10 +170,6 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     if (rewards > 0) {
       uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
 
-      if (rewards <= platformFee) {
-        revert PlatformFeeTooHighError(_poolInfo.platformFee);
-      }
-
       _pendingRewardToDistribute[_msgSender()] = 0;
       IERC20Upgradeable(_poolInfo.rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
