@@ -25,7 +25,7 @@ describe('Liquidity Gauge Pool: Recover Token', () => {
     info = {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info'),
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -99,7 +99,7 @@ describe('Liquidity Gauge Pool: Recover Ether', () => {
     info = {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info'),
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),

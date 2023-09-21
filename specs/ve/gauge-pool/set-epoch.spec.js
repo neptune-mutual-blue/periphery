@@ -22,7 +22,7 @@ describe('Liquidity Gauge Pool: Set Epoch', () => {
     info = {
       key: key.toBytes32('foobar'),
       name: 'Foobar',
-      info: key.toBytes32(''),
+      info: key.toBytes32('info'),
       epochDuration: 28 * DAYS,
       veBoostRatio: 1000,
       platformFee: helper.percentage(6.5),
@@ -73,13 +73,10 @@ describe('Liquidity Gauge Pool: Set Epoch', () => {
     const [owner, , registry] = await ethers.getSigners()
     const rewards = helper.ether(10)
 
-    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
-    contracts.npm = await factory.deployUpgradeable('FakeTokenWithReentrancy', contracts.gaugePool.address, key.toBytes32('setEpoch'))
+    const npmToken = await factory.deployUpgradeable('FakeTokenWithReentrancy', key.toBytes32('setEpoch'))
+    contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', { ...info, rewardToken: npmToken.address }, owner.address, [])
 
-    await contracts.gaugePool.setPool({
-      ...info,
-      rewardToken: contracts.npm.address
-    })
+    npmToken.setPool(contracts.gaugePool.address)
 
     await contracts.gaugePool.connect(registry).setEpoch(2, 1000, rewards)
       .should.be.rejectedWith('ReentrancyGuard: reentrant call')

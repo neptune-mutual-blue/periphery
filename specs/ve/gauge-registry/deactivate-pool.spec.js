@@ -1,5 +1,6 @@
 const factory = require('../../util/factory')
 const helper = require('../../util/helper')
+const key = require('../../util/key')
 const pools = require('../../../scripts/ve/pools.baseGoerli.json')
 
 require('chai')
@@ -23,6 +24,7 @@ describe('Gauge Controller Registry: Deactivate Pool', () => {
     for (const pool of pools) {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
+      pool.info = key.toBytes32('info')
       pool.stakingToken = fakePod.address
       pool.veToken = contracts.veToken.address
       pool.rewardToken = contracts.npm.address
