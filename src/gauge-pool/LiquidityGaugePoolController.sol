@@ -8,7 +8,7 @@ import "./LiquidityGaugePoolState.sol";
 
 abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgradeable, LiquidityGaugePoolState {
   modifier onlyRegistry() {
-    if (_msgSender() != _poolInfo.registry) {
+    if (_msgSender() != _registry) {
       revert AccessDeniedError("Registry");
     }
 
@@ -16,35 +16,37 @@ abstract contract LiquidityGaugePoolController is IThrowable, AccessControlUpgra
   }
 
   function _setPool(PoolInfo calldata args) internal {
-    if (args.epochDuration > 0) {
-      _poolInfo.epochDuration = args.epochDuration;
+    if (bytes(args.name).length == 0) {
+      revert InvalidArgumentError("args.name");
     }
 
-    if (args.veBoostRatio > 0) {
-      _poolInfo.veBoostRatio = args.veBoostRatio;
+    if (bytes(args.info).length == 0) {
+      revert InvalidArgumentError("args.info");
     }
 
-    if (args.treasury != address(0)) {
-      _poolInfo.treasury = args.treasury;
+    if (args.epochDuration == 0) {
+      revert InvalidArgumentError("args.epochDuration");
     }
 
-    if (bytes(args.name).length > 0) {
-      _poolInfo.name = args.name;
+    if (args.veBoostRatio == 0) {
+      revert InvalidArgumentError("args.veBoostRatio");
     }
 
-    if (bytes(args.info).length > 0) {
-      _poolInfo.info = args.info;
+    if (args.treasury == address(0)) {
+      revert InvalidArgumentError("args.treasury");
     }
 
-    if (args.platformFee > 0) {
-      _poolInfo.platformFee = args.platformFee;
+    if (args.platformFee > _MAX_PLATFORM_FEE) {
+      revert InvalidArgumentError("args.platformFee");
     }
+    
+    _poolInfo = args;
 
-    emit LiquidityGaugePoolSet(_poolInfo.key, _msgSender(), address(this), args);
+    emit LiquidityGaugePoolSet(_key, _msgSender(), address(this), args);
   }
 
   function _setEpochDuration(uint256 epochDuration) internal {
-    emit EpochDurationUpdated(_poolInfo.key, _poolInfo.epochDuration, epochDuration);
+    emit EpochDurationUpdated(_key, _poolInfo.epochDuration, epochDuration);
 
     _poolInfo.epochDuration = epochDuration;
   }

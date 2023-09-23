@@ -21,6 +21,12 @@ abstract contract LiquidityGaugePoolState is ILiquidityGaugePool {
   uint256 public _rewardPerTokenUnit;
   uint256 public _totalVotingPower;
 
+  bytes32 public _key;
+  address public _registry;
+  address public _rewardToken;
+  address public _stakingToken;
+  address public _veToken;
+
   PoolInfo public _poolInfo;
 
   mapping(address => uint256) public _lastDepositHeights;

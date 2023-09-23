@@ -4,22 +4,27 @@ pragma solidity ^0.8.12;
 
 interface ILiquidityGaugePool {
   struct PoolInfo {
-    bytes32 key;
     string name;
     string info;
     uint256 epochDuration;
     uint256 veBoostRatio;
     uint256 platformFee;
+    address treasury;
+  }
+
+  struct InitializationArgs {
+    bytes32 key;
     address stakingToken;
     address veToken;
     address rewardToken;
     address registry;
-    address treasury;
+    PoolInfo poolInfo;
   }
 
   event EpochRewardSet(bytes32 indexed key, address indexed triggeredBy, uint256 rewards);
   event EpochDurationUpdated(bytes32 indexed key, uint256 previous, uint256 current);
   event VotingPowersUpdated(bytes32 indexed key, address indexed triggeredBy, uint256 previous, uint256 current, uint256 previousTotal, uint256 currentTotal);
+  event LiquidityGaugePoolInitialized(bytes32 indexed key, address indexed initializedBy, InitializationArgs args);
   event LiquidityGaugePoolSet(bytes32 indexed key, address indexed triggeredBy, address liquidityGaugePool, PoolInfo args);
   event LiquidityGaugeDeposited(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);
   event LiquidityGaugeWithdrawn(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);

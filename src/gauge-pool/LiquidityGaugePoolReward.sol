@@ -50,11 +50,11 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
     uint256 previous = _myVotingPower[_msgSender()];
     uint256 previousTotal = _totalVotingPower;
 
-    uint256 current = IVoteEscrowToken(_poolInfo.veToken).getVotingPower(_msgSender());
+    uint256 current = IVoteEscrowToken(_veToken).getVotingPower(_msgSender());
 
     _totalVotingPower = _totalVotingPower + current - previous;
     _myVotingPower[_msgSender()] = current;
 
-    emit VotingPowersUpdated(_poolInfo.key, _msgSender(), previous, current, previousTotal, _totalVotingPower);
+    emit VotingPowersUpdated(_key, _msgSender(), previous, current, previousTotal, _totalVotingPower);
   }
 }
