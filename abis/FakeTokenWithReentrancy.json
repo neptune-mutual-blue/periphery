@@ -158,11 +158,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract ILiquidityGaugePool",
-        "name": "pool",
-        "type": "address"
-      },
-      {
         "internalType": "bytes32",
         "name": "target",
         "type": "bytes32"
@@ -202,6 +197,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract ILiquidityGaugePool",
+        "name": "pool",
+        "type": "address"
+      }
+    ],
+    "name": "setPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
