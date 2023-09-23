@@ -17,7 +17,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     _disableInitializers();
   }
 
-  function initialize(PoolInfo calldata args, address admin, address[] calldata pausers) external initializer {
+  function initialize(InitializationArgs calldata args, address admin, address[] calldata pausers) external initializer {
     if (admin == address(0)) {
       revert InvalidArgumentError("admin");
     }
@@ -43,20 +43,12 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert InvalidArgumentError("args.key");
     }
 
-    if (bytes(args.name).length == 0) {
-      revert InvalidArgumentError("args.name");
+    if (args.registry == address(0)) {
+      revert InvalidArgumentError("args.registry");
     }
 
-    if (bytes(args.info).length == 0) {
-      revert InvalidArgumentError("args.info");
-    }
-
-    if (args.epochDuration == 0) {
-      revert InvalidArgumentError("args.epochDuration");
-    }
-
-    if (args.veBoostRatio == 0) {
-      revert InvalidArgumentError("args.veBoostRatio");
+    if (args.rewardToken == address(0)) {
+      revert InvalidArgumentError("args.rewardToken");
     }
 
     if (args.stakingToken == address(0)) {
@@ -67,32 +59,20 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert InvalidArgumentError("args.veToken");
     }
 
-    if (args.rewardToken == address(0)) {
-      revert InvalidArgumentError("args.rewardToken");
-    }
+    _key = args.key;
+    _registry = args.registry;
+    _rewardToken = args.rewardToken;
+    _stakingToken = args.stakingToken;
+    _veToken = args.veToken;
 
-    if (args.registry == address(0)) {
-      revert InvalidArgumentError("args.registry");
-    }
+    _setPool(args.poolInfo);
 
-    if (args.treasury == address(0)) {
-      revert InvalidArgumentError("args.treasury");
-    }
-
-    if (args.platformFee > _MAX_PLATFORM_FEE) {
-      revert InvalidArgumentError("args.platformFee");
-    }
-
-    _poolInfo = args;
+    emit LiquidityGaugePoolInitialized(args.key, _msgSender(), args);
   }
 
   function setPool(PoolInfo calldata args) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     if (block.timestamp <= _epochEndTimestamp) {
       revert EpochUnavailableError();
-    }
-
-    if (args.platformFee > _MAX_PLATFORM_FEE) {
-      revert InvalidArgumentError("args.platformFee");
     }
 
     _setPool(args);
@@ -125,7 +105,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       revert EpochUnavailableError();
     }
 
-    IERC20Upgradeable(_poolInfo.stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
+    IERC20Upgradeable(_stakingToken).safeTransferFrom(_msgSender(), address(this), amount);
 
     _updateReward(_msgSender(), false);
 
@@ -133,7 +113,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     _lockedByMe[_msgSender()] += amount;
     _lastDepositHeights[_msgSender()] = block.number;
 
-    emit LiquidityGaugeDeposited(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
+    emit LiquidityGaugeDeposited(_key, _msgSender(), _stakingToken, amount);
   }
 
   function _withdraw(uint256 amount, bool emergency) private {
@@ -153,9 +133,9 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
 
     _lockedByEveryone -= amount;
     _lockedByMe[_msgSender()] -= amount;
-    IERC20Upgradeable(_poolInfo.stakingToken).safeTransfer(_msgSender(), amount);
+    IERC20Upgradeable(_stakingToken).safeTransfer(_msgSender(), amount);
 
-    emit LiquidityGaugeWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.stakingToken, amount);
+    emit LiquidityGaugeWithdrawn(_key, _msgSender(), _stakingToken, amount);
   }
 
   function withdraw(uint256 amount) external override nonReentrant whenNotPaused {
@@ -171,13 +151,13 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
 
       _pendingRewardToDistribute[_msgSender()] = 0;
-      IERC20Upgradeable(_poolInfo.rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
+      IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
       if (platformFee > 0) {
-        IERC20Upgradeable(_poolInfo.rewardToken).safeTransfer(_poolInfo.treasury, platformFee);
+        IERC20Upgradeable(_rewardToken).safeTransfer(_poolInfo.treasury, platformFee);
       }
 
-      emit LiquidityGaugeRewardsWithdrawn(_poolInfo.key, _msgSender(), _poolInfo.treasury, rewards, platformFee);
+      emit LiquidityGaugeRewardsWithdrawn(_key, _msgSender(), _poolInfo.treasury, rewards, platformFee);
     }
   }
 
@@ -218,14 +198,14 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
 
     _epoch = epoch;
 
-    if (_poolInfo.epochDuration * _rewardPerSecond > IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this))) {
-      revert InsufficientDepositError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_poolInfo.rewardToken).balanceOf(address(this)));
+    if (_poolInfo.epochDuration * _rewardPerSecond > IERC20Upgradeable(_rewardToken).balanceOf(address(this))) {
+      revert InsufficientDepositError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_rewardToken).balanceOf(address(this)));
     }
 
     _lastRewardTimestamp = block.timestamp;
     _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
 
-    emit EpochRewardSet(_poolInfo.key, _msgSender(), rewards);
+    emit EpochRewardSet(_key, _msgSender(), rewards);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -236,7 +216,7 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function recoverToken(IERC20Upgradeable malicious, address sendTo) external onlyRole(_NS_ROLES_RECOVERY_AGENT) {
-    if (address(malicious) == _poolInfo.stakingToken || address(malicious) == _poolInfo.rewardToken) {
+    if (address(malicious) == _stakingToken || address(malicious) == _rewardToken) {
       revert InvalidArgumentError("malicious");
     }
 
@@ -262,6 +242,6 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
   }
 
   function getKey() external view override returns (bytes32) {
-    return _poolInfo.key;
+    return _key;
   }
 }
