@@ -31,14 +31,23 @@ describe('Gauge Controller Registry: Set Gauge', () => {
     for (const pool of pools) {
       const fakePod = await factory.deployUpgradeable('FakeToken', 'Yield Earning USDC', 'iUSDC-FOO')
 
-      pool.info = key.toBytes32('foobar')
-      pool.stakingToken = fakePod.address
-      pool.veToken = contracts.veToken.address
-      pool.rewardToken = contracts.npm.address
-      pool.registry = contracts.registry.address
-      pool.treasury = helper.randomAddress()
+      const info = {
+        key: pool.key,
+        stakingToken: fakePod.address,
+        veToken: contracts.veToken.address,
+        rewardToken: contracts.npm.address,
+        registry: contracts.registry.address,
+        poolInfo: {
+          name: pool.name,
+          info: key.toBytes32('info'),
+          epochDuration: pool.epochDuration,
+          veBoostRatio: pool.veBoostRatio,
+          platformFee: pool.platformFee,
+          treasury: helper.randomAddress()
+        }
+      }
 
-      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', pool, owner.address, [])
+      const deployed = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
 
       pool.deployed = deployed
       pool.stakingTokenDeployed = fakePod

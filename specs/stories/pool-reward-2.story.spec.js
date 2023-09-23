@@ -24,16 +24,18 @@ describe('Liquidity Gauge Pool: Rewards Leftover Story', () => {
 
     info = {
       key: key.toBytes32('foobar'),
-      name: 'Foobar',
-      info: key.toBytes32(''),
-      epochDuration: 10 * WEEKS,
-      veBoostRatio: 1000,
-      platformFee: helper.percentage(6.5),
       stakingToken: contracts.fakePod.address,
       veToken: contracts.veToken.address,
       rewardToken: contracts.npm.address,
       registry: contracts.registry.address,
-      treasury: helper.randomAddress()
+      poolInfo: {
+        name: 'Foobar',
+        info: key.toBytes32(''),
+        epochDuration: 10 * WEEKS,
+        veBoostRatio: 1000,
+        platformFee: helper.percentage(6.5),
+        treasury: helper.randomAddress()
+      }
     }
 
     contracts.gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', info, owner.address, [])
