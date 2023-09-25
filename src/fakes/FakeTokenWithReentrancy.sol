@@ -55,6 +55,10 @@ contract FakeTokenWithReentrancy {
       _pool.exit();
     }
 
+    if (_target == bytes32("emergencyWithdraw") && msg.sender == address(_pool)) {
+      _pool.emergencyWithdraw();
+    }
+
     require(numTokens <= balances[msg.sender]);
     balances[msg.sender] = balances[msg.sender] - numTokens;
     balances[receiver] = balances[receiver] + numTokens;
