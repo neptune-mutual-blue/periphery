@@ -197,15 +197,19 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     }
 
     _epoch = epoch;
+    _rewardAllocation = _poolInfo.epochDuration * _rewardPerSecond;
 
-    if (_poolInfo.epochDuration * _rewardPerSecond > IERC20Upgradeable(_rewardToken).balanceOf(address(this))) {
-      revert InsufficientDepositError(_poolInfo.epochDuration * _rewardPerSecond, IERC20Upgradeable(_rewardToken).balanceOf(address(this)));
+    uint256 requiredBalance = _rewardToken == _stakingToken ? _rewardAllocation + _lockedByEveryone : _rewardAllocation;
+    uint256 rewardTokenBalance = IERC20Upgradeable(_rewardToken).balanceOf(address(this));
+
+    if (requiredBalance > rewardTokenBalance) {
+      revert InsufficientDepositError(requiredBalance, rewardTokenBalance);
     }
 
     _lastRewardTimestamp = block.timestamp;
     _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
 
-    emit EpochRewardSet(_key, _msgSender(), rewards);
+    emit EpochRewardSet(_key, _msgSender(), _rewardAllocation);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -17,6 +17,7 @@ abstract contract LiquidityGaugePoolState is ILiquidityGaugePool {
   uint256 public _epochEndTimestamp;
   uint256 public _lastRewardTimestamp;
   uint256 public _lockedByEveryone;
+  uint256 public _rewardAllocation;
   uint256 public _rewardPerSecond;
   uint256 public _rewardPerTokenUnit;
   uint256 public _totalVotingPower;
