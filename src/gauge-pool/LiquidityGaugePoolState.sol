@@ -30,6 +30,7 @@ abstract contract LiquidityGaugePoolState is ILiquidityGaugePool {
 
   PoolInfo public _poolInfo;
 
+  mapping(uint256 => uint256) public _epochRewardDistributions;
   mapping(address => uint256) public _lastDepositHeights;
   mapping(address => uint256) public _lastRewardPerTokenUnit;
   mapping(address => uint256) public _lockedByMe;
