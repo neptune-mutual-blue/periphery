@@ -21,4 +21,5 @@ abstract contract VoteEscrowTokenState {
   mapping(address => uint256) public _unlockAt;
   mapping(address => uint256) public _minUnlockHeights;
   // slither-disable-end uninitialized-state
+  uint256[50] __gap;
 }

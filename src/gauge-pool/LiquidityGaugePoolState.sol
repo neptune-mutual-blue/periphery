@@ -35,4 +35,5 @@ abstract contract LiquidityGaugePoolState is ILiquidityGaugePool {
   mapping(address => uint256) public _lockedByMe;
   mapping(address => uint256) public _myVotingPower;
   mapping(address => uint256) public _pendingRewardToDistribute;
+  uint256[50] __gap;
 }
