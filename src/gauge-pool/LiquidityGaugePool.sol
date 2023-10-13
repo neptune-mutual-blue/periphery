@@ -151,6 +151,8 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
       uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
 
       _pendingRewardToDistribute[_msgSender()] = 0;
+      _epochRewardDistributions[_epoch] += rewards;
+
       IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
       if (platformFee > 0) {
@@ -210,6 +212,24 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
 
     emit EpochRewardSet(_key, _msgSender(), _rewardAllocation);
+  }
+
+  function collectUnclaimed() external onlyRole(DEFAULT_ADMIN_ROLE) {
+    uint256 remainingRewardForCurrentEpoch = _rewardAllocation - _epochRewardDistributions[_epoch];
+
+    uint256 unclaimed = IERC20Upgradeable(_rewardToken).balanceOf(address(this)) - remainingRewardForCurrentEpoch;
+
+    if (_rewardToken == _stakingToken){
+      unclaimed -= _lockedByEveryone;
+    }
+
+    if (unclaimed == 0) {
+      revert ZeroAmountError("unclaimed");
+    }
+
+    IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), unclaimed);
+
+    emit UnclaimedRewardsCollected(_key, _msgSender(), unclaimed);
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
