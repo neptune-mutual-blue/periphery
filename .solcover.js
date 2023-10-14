@@ -7,6 +7,7 @@ module.exports = {
     "fakes/FakeCxToken.sol",
     "fakes/FakeProtocol.sol",
     "fakes/FakeToken.sol",
+    "fakes/FakeTokenWithReentrancy.sol",
     "fakes/ForceEther.sol",
     "fakes/Store.sol",
     "fakes/StoreBase.sol",
@@ -15,6 +16,10 @@ module.exports = {
     "fakes/nft/FakeNftMint.sol",
     "fakes/nft/FakeNoMintedNft.sol",
     "fakes/nft/FakeNoSoulboundNft.sol",
+    "fakes/gauge-pool/FakeLiquidityGaugePoolControllerV2.sol",
+    "fakes/gauge-pool/FakeLiquidityGaugePoolRewardV2.sol",
+    "fakes/gauge-pool/FakeLiquidityGaugePoolStateV2.sol",
+    "fakes/gauge-pool/FakeLiquidityGaugePoolV2.sol",
     "dependencies/ABDKMath64x64.sol",
   ],
 };

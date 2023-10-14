@@ -1,4 +1,4 @@
-const { attach, deploy, deployUpgradeable, upgrade } = require('./deployer')
+const { attach, deploy, deployUpgradeable, upgrade, validateUpgrade } = require('./deployer')
 const { deployProtocol } = require('./protocol')
 
-module.exports = { attach, deploy, deployUpgradeable, upgrade, deployProtocol }
+module.exports = { attach, deploy, deployUpgradeable, upgrade, deployProtocol, validateUpgrade }
