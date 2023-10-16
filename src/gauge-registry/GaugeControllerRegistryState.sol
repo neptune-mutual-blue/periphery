@@ -23,4 +23,5 @@ abstract contract GaugeControllerRegistryState is IGaugeControllerRegistry {
   mapping(uint256 => uint256) public _epochDurations;
   mapping(uint256 => uint256) public _gaugeAllocations;
   mapping(bytes32 => ILiquidityGaugePool) public _pools;
+  uint256[50] __gap;
 }
