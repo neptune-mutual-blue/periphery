@@ -29,6 +29,7 @@ interface ILiquidityGaugePool {
   event LiquidityGaugeDeposited(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);
   event LiquidityGaugeWithdrawn(bytes32 indexed key, address indexed account, address indexed stakingToken, uint256 amount);
   event LiquidityGaugeRewardsWithdrawn(bytes32 indexed key, address indexed account, address indexed treasury, uint256 rewards, uint256 platformFee);
+  event DustCollected(bytes32 indexed key, address indexed account, uint256 amount);
 
   function deposit(uint256 amount) external;
   function withdraw(uint256 amount) external;
