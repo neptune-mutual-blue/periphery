@@ -22,6 +22,10 @@ contract FakeTokenWithReentrancy {
     _target = target;
   }
 
+  function setTarget(bytes32 target) public {
+    _target = target;
+  }
+
   function setPool(ILiquidityGaugePool pool) public {
     _pool = pool;
   }
