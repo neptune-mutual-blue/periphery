@@ -150,7 +150,9 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     if (rewards > 0) {
       uint256 platformFee = (rewards * _poolInfo.platformFee) / _denominator();
 
+      _totalPendingRewards -= rewards;
       _pendingRewardToDistribute[_msgSender()] = 0;
+
       IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), rewards - platformFee);
 
       if (platformFee > 0) {
@@ -209,7 +211,22 @@ contract LiquidityGaugePool is IAccessControlUtil, AccessControlUpgradeable, Pau
     _lastRewardTimestamp = block.timestamp;
     _epochEndTimestamp = block.timestamp + _poolInfo.epochDuration;
 
+    _collectDust();
+
     emit EpochRewardSet(_key, _msgSender(), _rewardAllocation);
+  }
+
+  function _collectDust() private {
+    uint256 dust = IERC20Upgradeable(_rewardToken).balanceOf(address(this)) - (_totalPendingRewards + _rewardAllocation);
+
+    if (_rewardToken == _stakingToken){
+      dust -= _lockedByEveryone;
+    }
+
+    if (dust > 0) {
+      IERC20Upgradeable(_rewardToken).safeTransfer(_msgSender(), dust);
+      emit DustCollected(_key, _msgSender(), dust);
+    }
   }
 
   // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

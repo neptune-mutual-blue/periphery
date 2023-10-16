@@ -37,7 +37,11 @@ abstract contract LiquidityGaugePoolReward is LiquidityGaugePoolController {
     _lastRewardTimestamp = _getEpochEndTimestamp();
 
     if (account != address(0)) {
-      _pendingRewardToDistribute[account] = _getPendingRewards(account);
+      uint256 previous = _pendingRewardToDistribute[account];
+      uint256 current = _getPendingRewards(account);
+
+      _pendingRewardToDistribute[account] = current;
+      _totalPendingRewards = _totalPendingRewards + current - previous;
       _lastRewardPerTokenUnit[account] = _rewardPerTokenUnit;
     }
 
