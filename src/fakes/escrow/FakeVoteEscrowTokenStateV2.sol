@@ -30,4 +30,5 @@ abstract contract FakeVoteEscrowTokenStateV2 {
   uint256 public _lastInitializedOn;
   mapping(address => bool) public _members;
   mapping(address => uint256) public _boosts;
+  uint256[45] __gap;
 }

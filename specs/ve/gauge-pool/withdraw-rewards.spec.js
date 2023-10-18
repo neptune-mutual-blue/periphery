@@ -119,6 +119,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
     const gaugePool = await factory.deployUpgradeable('LiquidityGaugePool', { ...info, rewardToken: npmToken.address, registry: owner.address }, owner.address, [])
 
     npmToken.setPool(gaugePool.address)
+    npmToken.setTarget(key.toBytes32(''))
 
     await npmToken.mint(gaugePool.address, helper.ether(100_00))
     await gaugePool.setEpoch(1, 1 * DAYS, helper.ether(100_00))
@@ -130,6 +131,7 @@ describe('Liquidity Gauge Pool: Withdraw Rewards', () => {
 
     await mine(lockupPeriodInBlocks)
 
+    npmToken.setTarget(key.toBytes32('withdrawRewards'))
     await gaugePool.withdrawRewards()
       .should.be.rejectedWith('ReentrancyGuard: reentrant call')
   })
