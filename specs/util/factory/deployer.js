@@ -47,4 +47,11 @@ const upgrade = async (existingAddress, newContractName, ...args) => {
   return instance
 }
 
-module.exports = { attach, deploy, deployUpgradeable, upgrade }
+const validateUpgrade = async (oldContractName, newContractName) => {
+  const OldContractFactory = await ethers.getContractFactory(oldContractName)
+  const NewContractFactory = await ethers.getContractFactory(newContractName)
+
+  await upgrades.validateUpgrade(OldContractFactory, NewContractFactory)
+}
+
+module.exports = { attach, deploy, deployUpgradeable, upgrade, validateUpgrade }
