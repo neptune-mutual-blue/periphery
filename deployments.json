@@ -12,19 +12,6 @@
     "stablecoinSymbol": "USDC",
     "stablecoinDecimals": 6
   },
-  "42161": {
-    "name": "Arbitrum One",
-    "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
-    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
-    "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
-    "veNPM": "",
-    "gaugeControllerRegistry": "",
-    "liquidityGaugePool": "",
-    "stablecoin": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-    "stablecoinName": "USD Coin",
-    "stablecoinSymbol": "USDC",
-    "stablecoinDecimals": 6
-  },
   "56": {
     "name": "BNB Smart Chain",
     "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
@@ -40,6 +27,44 @@
     "neptuneLegends": "0xAAF54CEf71aa3B2Cba33fE06042A5C5e89de57eB",
     "policyProofMinter": "0x51899ea193DB0d7ff61fD62dC569Fe5a941D77c5",
     "merkleProofMinter": "0x7C0A47f9e4C91003081350aeaC9170510C754EF1"
+  },
+  "42161": {
+    "name": "Arbitrum One",
+    "store": "0x6579dF8f986e4A982F200DAfa0c1b955A438f620",
+    "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
+    "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
+    "veNPM": "",
+    "gaugeControllerRegistry": "",
+    "liquidityGaugePools": [],
+    "stablecoin": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    "stablecoinName": "USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 6
+  },
+  "80001": {
+    "name": "Mumbai Testnet",
+    "store": "0xA483aF3eD0DF092EC4b9b93DA400f84922c92Be9",
+    "protocol": "0xf3393dD20B442DF5c4685fecd829656d9A49f9b6",
+    "npm": "0x88180bDc1Fa041d5Fce608B732D48373b2a12D62",
+    "stablecoin": "0x5248bB560Ba0c9e0f5C56d759e899eEE17DF53CE",
+    "neptuneLegends": "",
+    "policyProofMinter": "",
+    "merkleProofMinter": "",
+    "veNPM": "0x149274e4160c4663b48Cf55F82e20A29c5441CF7",
+    "gaugeControllerRegistry": "0xecEE2e24190b016C7c27B063bC3176466FE2e9bf",
+    "liquidityGaugePools": [
+      {
+        "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
+        "address": "0xcA34542fbb30F2b3F0FD21570F6d9cE938Fb8A7e"
+      },
+      {
+        "key": "0x6465666900000000000000000000000000000000000000000000000000000000",
+        "address": "0x32AC1b64D9D16E52C1f43eAA255B1dcB2F05d508"
+      }
+    ],
+    "stablecoinName": "Fake USD Coin",
+    "stablecoinSymbol": "USDC",
+    "stablecoinDecimals": 6
   },
   "84531": {
     "name": "Base Goerli",

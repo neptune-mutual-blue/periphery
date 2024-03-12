@@ -41,7 +41,7 @@ abstract contract FakeLiquidityGaugePoolRewardV2 is FakeLiquidityGaugePoolContro
       _lastRewardPerTokenUnit[account] = _rewardPerTokenUnit;
     }
 
-    if(!emergency){
+    if (!emergency) {
       _updateVotingPowers();
     }
   }
