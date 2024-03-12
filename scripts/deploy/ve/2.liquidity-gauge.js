@@ -2,7 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
-const pools = require('../../ve/pools.baseGoerli.json')
+const pools = require('../../ve/pools.mumbai.json')
 const ipfs = require('../../../specs/util/ipfs')
 const config = require('../../config/accounts.json')
 
@@ -24,39 +24,58 @@ const deploy = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
+  config.admin = deployer.address
+
   console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config
   const { npm, veNPM, gaugeControllerRegistry, liquidityGaugePools } = await getDependencies(chainId)
 
-  if (!liquidityGaugePools || liquidityGaugePools.length === 0) {
-    for (const pool of pools) {
-      const info = await ipfs.write(pool.infoDetails)
-
-      pool.veToken = veNPM
-      pool.rewardToken = npm
-      pool.registry = gaugeControllerRegistry
-      pool.info = info
-
-      const instance = await factory.deployUpgradeable('LiquidityGaugePool', pool, config.admin, [])
-      console.log('%s --> %s', pool.key, instance.address)
+  const finalLiquidityGaugePools = Array.isArray(liquidityGaugePools) ? liquidityGaugePools : []
+  for (const pool of pools) {
+    const initializationArgs = {
+      key: pool.key,
+      stakingToken: pool.stakingToken,
+      veToken: veNPM,
+      rewardToken: npm,
+      registry: gaugeControllerRegistry,
+      poolInfo: {
+        name: pool.name,
+        info: pool.info || '',
+        epochDuration: pool.epochDuration,
+        veBoostRatio: pool.veBoostRatio,
+        platformFee: pool.platformFee,
+        treasury: config.treasury
+      }
     }
 
-    return
-  }
+    if (!initializationArgs.poolInfo.info && pool.infoDetails) {
+      const info = await ipfs.write(pool.infoDetails)
 
-  console.log('Upgrading Liquidity Gauge Pools')
+      initializationArgs.poolInfo.info = info
+    }
 
-  for (const pool of pools) {
-    pool.veToken = veNPM
-    pool.rewardToken = npm
-    pool.registry = gaugeControllerRegistry
+    const found = Array.isArray(liquidityGaugePools) ? liquidityGaugePools.find(x => x.key.trim().toLowerCase() === pool.key.trim().toLowerCase()) : null
 
-    const current = liquidityGaugePools.find(x => x.key === pool.key)
+    if (found) {
+      console.log('Upgrading Liquidity Gauge Pool: %s', pool.key)
 
-    const instance = await factory.upgrade(current.address, 'LiquidityGaugePool', pool, config.admin, [])
+      const instance = await factory.upgrade(found.address, 'LiquidityGaugePool', initializationArgs, config.admin, config.pausers)
+      console.log('%s --> %s', pool.key, instance.address)
+
+      return
+    }
+
+    console.log('Deploying Liquidity Gauge Pool: %s', pool.key)
+
+    const instance = await factory.deployUpgradeable('LiquidityGaugePool', initializationArgs, config.admin, config.pausers)
+
+    finalLiquidityGaugePools.push({ key: pool.key, address: instance.address })
+
     console.log('%s --> %s', pool.key, instance.address)
   }
+
+  await deployments.set(chainId, 'liquidityGaugePools', finalLiquidityGaugePools)
 }
 
-deploy().catch(console.error)
+module.exports = { deploy }

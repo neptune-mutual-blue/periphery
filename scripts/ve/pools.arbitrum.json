@@ -1,0 +1,24 @@
+[
+  {
+    "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
+    "name": "Prime dApps",
+    "infoDetails": {
+      "description": ""
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 2500,
+    "platformFee": 650,
+    "stakingToken": "0xf65269e0bb707cce1f494091ceb90d62461fd71b"
+  },
+  {
+    "key": "0x706f70756c61722d646566692d61707073000000000000000000000000000000",
+    "name": "Popular DeFi Apps",
+    "infoDetails": {
+      "description": ""
+    },
+    "epochDuration": 2419200,
+    "veBoostRatio": 2500,
+    "platformFee": 650,
+    "stakingToken": "0x5946c61ac14e6f5b9ad96602387121316753fab9"
+  }
+]

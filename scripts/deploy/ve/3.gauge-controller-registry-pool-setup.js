@@ -2,7 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
-const pools = require('../../ve/pools.baseGoerli.json')
+const pools = require('../../ve/pools.arbitrum.json')
 const ipfs = require('../../../specs/util/ipfs')
 const config = require('../../config/accounts.json')
 
@@ -12,6 +12,8 @@ const getDependencies = async (chainId) => {
   }
 
   const [deployer] = await ethers.getSigners()
+
+  config.admin = deployer.address
 
   const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
   const veNPM = await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm.address, deployer.address, 'Vote Escrow NPM', 'veNPM')
@@ -46,4 +48,4 @@ const setup = async () => {
   await registry.addOrEditPools(liquidityGaugePools.map(x => x.address))
 }
 
-setup().catch(console.error)
+module.exports = { setup }

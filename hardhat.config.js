@@ -16,7 +16,12 @@ const config = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
-      blockGasLimit: 19_000_000
+      blockGasLimit: 19_000_000,
+      chainId: 42161,
+      forking: {
+        url: 'https://arbitrum.llamarpc.com'
+      },
+      explorer: 'https://arbiscan.io'
     },
     basegoerli: {
       url: 'https://goerli.base.org',
@@ -39,6 +44,13 @@ const config = {
       accounts: [process.env.PRIVATE_KEY],
       gasPrice: 0.1 * GWEI,
       explorer: 'https://arbiscan.io'
+    },
+    polygonMumbai: {
+      url: 'https://rpc-mumbai.maticvigil.com',
+      chainId: 80001,
+      accounts: [process.env.PRIVATE_KEY],
+      gasPrice: 2 * GWEI,
+      explorer: 'https://mumbai.polygonscan.com'
     },
     bsc: {
       url: process.env.BSC_RPC_URL,
@@ -74,6 +86,7 @@ const config = {
       mainnet: process.env.ETHERSCAN_API_KEY,
       arbitrumOne: process.env.ARBISCAN_API_KEY,
       bsc: process.env.BSCSCAN_API_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
       basegoerli: 'base'
     },
     customChains: [
