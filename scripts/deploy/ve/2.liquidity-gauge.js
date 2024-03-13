@@ -24,8 +24,6 @@ const deploy = async () => {
   const [deployer] = await ethers.getSigners()
   const previousBalance = await deployer.getBalance()
 
-  config.admin = deployer.address
-
   console.log('Deployer: %s Balance: %d ETH', deployer.address, formatEther(previousBalance))
 
   const { chainId } = network.config

@@ -13,8 +13,6 @@ const getDependencies = async (chainId) => {
 
   const [deployer] = await ethers.getSigners()
 
-  config.admin = deployer.address
-
   const npm = await factory.deployUpgradeable('FakeToken', 'Fake NPM', 'NPM')
   const veNPM = await factory.deployUpgradeable('VoteEscrowToken', deployer.address, npm.address, deployer.address, 'Vote Escrow NPM', 'veNPM')
   const gaugeControllerRegistry = await factory.deployUpgradeable('GaugeControllerRegistry', 0, deployer.address, deployer.address, [deployer.address], npm.address)
