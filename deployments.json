@@ -34,17 +34,8 @@
     "protocol": "0xB452AC021a1151AAF342c1B75aA914E03e6503b5",
     "npm": "0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4",
     "veNPM": "0x7C0A47f9e4C91003081350aeaC9170510C754EF1",
-    "gaugeControllerRegistry": "0x7a1cbA47C2f701c646a5FB417ac97BD6a1F78cf9",
-    "liquidityGaugePools": [
-      {
-        "key": "0x7072696d65000000000000000000000000000000000000000000000000000000",
-        "address": "0xFF475FE07C7036A2648D110c98190a66440fBF61"
-      },
-      {
-        "key": "0x6465666900000000000000000000000000000000000000000000000000000000",
-        "address": "0x752c1B35ffd482aC1f7e5ce9569f6e19e91F4b04"
-      }
-    ],
+    "gaugeControllerRegistry": "",
+    "liquidityGaugePools": [],
     "stablecoin": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
     "stablecoinName": "USD Coin",
     "stablecoinSymbol": "USDC",

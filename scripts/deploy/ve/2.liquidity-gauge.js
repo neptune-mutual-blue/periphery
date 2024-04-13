@@ -2,7 +2,7 @@ const { formatEther } = require('ethers/lib/utils')
 const { ethers, network } = require('hardhat')
 const factory = require('../../../specs/util/factory')
 const deployments = require('../../util/deployments')
-const pools = require('../../ve/pools.mumbai.json')
+const pools = require('../../ve/pools.arbitrum.json')
 const ipfs = require('../../../specs/util/ipfs')
 const config = require('../../config/accounts.json')
 
