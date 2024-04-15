@@ -42,7 +42,7 @@ const config = {
       url: process.env.ARBITRUM_RPC_URL,
       chainId: 42161,
       accounts: [process.env.PRIVATE_KEY],
-      gasPrice: 0.1 * GWEI,
+      gasPrice: 0.01 * GWEI,
       explorer: 'https://arbiscan.io'
     },
     polygonMumbai: {
